@@ -1,0 +1,18 @@
+# Operating System
+.DS_Store
+Thumbs.db
+
+# Logs and temporary files
+*.log
+scratch/
+tmp/
+.system_generated/
+
+# Python
+__pycache__/
+*.pyc
+
+# Node / JS
+node_modules/
+dist/
+.cache/

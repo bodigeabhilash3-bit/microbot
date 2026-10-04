@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Microbot Architecture Lab — Physical V1 & Cell 2025 Swarm</title>
+  <meta name="description" content="Interactive 3D mechanical prototype, step-by-step physical assembly guide, and Cell Device 2025 magnetic swarm intelligence simulator.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <!-- Three.js and OrbitControls -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <!-- GSAP for smooth timeline animations -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body>
+  <div id="app-container">
+    <!-- 3D WebGL Canvas Container -->
+    <div id="canvas-container"></div>
+
+    <!-- Top HUD Navigation / Status Bar -->
+    <header id="hud-header" class="glass-panel">
+      <div class="brand">
+        <div class="pulse-indicator"></div>
+        <div class="brand-text">
+          <h1 id="header-main-title">MICROBOT ARCHITECTURE LAB</h1>
+          <span id="header-sub-title" class="subtext">PHYSICAL PROTOTYPE ASSEMBLY & CELL 2025 SWARM SIMULATION</span>
+        </div>
+      </div>
+
+      <!-- Main Domain Switcher -->
+      <div class="system-switcher">
+        <button id="tab-v1" class="tab-btn active" title="Mechatronic Single Unit (Servos, Ball & Sockets)">
+          <span class="tab-icon">🤖</span>
+          <span>Physical Microbot V1</span>
+        </button>
+        <button id="tab-swarm" class="tab-btn" title="Cell Device 2025 Untethered Magnetic Swarm Intelligence">
+          <span class="tab-icon">🔬</span>
+          <span>Cell 2025 Swarm Lab</span>
+        </button>
+      </div>
+
+      <!-- Dynamic System Status Badges -->
+      <div id="status-container-v1" class="system-status">
+        <span class="badge">GEOMETRY: HEXAGONAL PYRAMID</span>
+        <span class="badge highlight">BALL: 12mm CHROME STEEL</span>
+        <span class="badge success">MAGNETIC JOINT: PASSIVE NORMAL 5.2N</span>
+      </div>
+
+      <div id="status-container-swarm" class="system-status hidden">
+        <span class="badge">UNIT: 300×300×600 µm³</span>
+        <span class="badge highlight" id="badge-swarm-config">CONFIG: HT ASSEMBLY (0°)</span>
+        <span class="badge success" id="badge-swarm-freq">FIELD: 5.0 Hz ROTATING</span>
+      </div>
+    </header>
+
+    <!-- Floating HUD Left: Mode Controls for Physical Microbot V1 -->
+    <aside id="controls-panel" class="glass-panel">
+      <div class="panel-section">
+        <h2>MECHANISM MODES</h2>
+        <div class="button-group">
+          <button id="btn-mode-assembly" class="btn active" title="View Full Assembled Prototype">Assembled</button>
+          <button id="btn-mode-explode" class="btn" title="Exploded View to Inspect All Components">Exploded</button>
+          <button id="btn-mode-articulate" class="btn" title="Live Kinematic Motion Simulation">Articulation</button>
+          <button id="btn-mode-guide" class="btn" title="Interactive Step-by-Step Physical Assembly Guide">🛠️ Build Guide</button>
+        </div>
+      </div>
+
+      <!-- Interactive Step-by-Step Assembly Guide Section -->
+      <div id="section-guide-controls" class="panel-section hidden">
+        <div class="guide-header">
+          <span class="guide-step-tag" id="guide-step-number">STEP 1 OF 6</span>
+          <h3 id="guide-step-title">12mm Steel Sphere & Equatorial Hub</h3>
+        </div>
+
+        <div class="guide-card">
+          <div class="guide-field">
+            <span class="guide-label">📍 WHERE TO PUT IT</span>
+            <p id="guide-where" class="guide-text"></p>
+          </div>
+          <div class="guide-field">
+            <span class="guide-label">🔧 HOW TO INSTALL IT</span>
+            <p id="guide-how" class="guide-text"></p>
+          </div>
+          <div class="guide-field">
+            <span class="guide-label">⚡ HOW IT WORKS</span>
+            <p id="guide-works" class="guide-text"></p>
+          </div>
+          <div class="guide-field highlight">
+            <span class="guide-label">💡 MAKER PRO-TIP</span>
+            <p id="guide-tip" class="guide-text"></p>
+          </div>
+        </div>
+
+        <div class="guide-nav-buttons">
+          <button id="btn-guide-prev" class="btn btn-secondary" disabled>◀ Prev Step</button>
+          <button id="btn-guide-next" class="btn btn-secondary">Next Step ▶</button>
+        </div>
+
+        <div class="guide-step-pills">
+          <button class="step-pill active" data-step="0">1. Ball & Collar</button>
+          <button class="step-pill" data-step="1">2. Ring Magnets</button>
+          <button class="step-pill" data-step="2">3. 3.7g Servos</button>
+          <button class="step-pill" data-step="3">4. Pushrods</button>
+          <button class="step-pill" data-step="4">5. Pod Shells</button>
+          <button class="step-pill" data-step="5">6. Brain & Wiring</button>
+        </div>
+      </div>
+
+      <!-- Exploded View Slider Controls -->
+      <div id="section-exploded-controls" class="panel-section">
+        <div class="section-header">
+          <label for="slider-explode">EXPLODED DISPERSION</label>
+          <span id="label-explode-val" class="mono-tag">0%</span>
+        </div>
+        <input type="range" id="slider-explode" min="0" max="100" value="0" step="1">
+        <div class="btn-subgroup">
+          <button id="btn-auto-explode" class="btn btn-secondary">Play Explode Cycle</button>
+          <button id="btn-reset-explode" class="btn btn-secondary">Collapse</button>
+        </div>
+      </div>
+
+      <!-- Kinematics Articulation Controls -->
+      <div id="section-kinematics-controls" class="panel-section hidden">
+        <h2>INDEPENDENT ARTICULATION</h2>
+        
+        <div class="control-row">
+          <div class="section-header">
+            <label for="slider-pod1">POD 1 (LEFT / UPPER ARM)</label>
+            <span id="label-pod1-val" class="mono-tag">0°</span>
+          </div>
+          <input type="range" id="slider-pod1" min="-38" max="38" value="0" step="1">
+        </div>
+
+        <div class="control-row">
+          <div class="section-header">
+            <label for="slider-pod2">POD 2 (RIGHT / LOWER ARM)</label>
+            <span id="label-pod2-val" class="mono-tag">0°</span>
+          </div>
+          <input type="range" id="slider-pod2" min="-38" max="38" value="0" step="1">
+        </div>
+
+        <div class="motion-presets">
+          <label>AUTOMATED GAITS</label>
+          <div class="button-group">
+            <button id="btn-gait-antiphase" class="btn btn-secondary">Anti-Phase</button>
+            <button id="btn-gait-inphase" class="btn btn-secondary">In-Phase</button>
+            <button id="btn-gait-stop" class="btn btn-secondary danger">Stop Motion</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- View & Display Toggles -->
+      <div class="panel-section">
+        <h2>VISUAL FILTERS</h2>
+        <div class="toggle-grid">
+          <button id="btn-toggle-xray" class="toggle-btn" data-active="false">
+            <span class="icon">👁️</span>
+            <span>X-Ray Shell (Internal View)</span>
+          </button>
+          <button id="btn-toggle-labels" class="toggle-btn" data-active="true">
+            <span class="icon">🏷️</span>
+            <span>Component 3D Pins</span>
+          </button>
+          <button id="btn-toggle-flux" class="toggle-btn" data-active="true">
+            <span class="icon">🧲</span>
+            <span>Magnetic Field Lines</span>
+          </button>
+          <button id="btn-toggle-cutaway" class="toggle-btn" data-active="false">
+            <span class="icon">✂️</span>
+            <span>Top Shell Removed</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Camera View Angle Quick Switch -->
+      <div class="panel-section">
+        <h2>CAMERA PRESETS</h2>
+        <div class="cam-grid">
+          <button class="cam-btn" data-cam="iso">Isometric</button>
+          <button class="cam-btn" data-cam="joint">Joint Detail</button>
+          <button class="cam-btn" data-cam="top">Top</button>
+          <button class="cam-btn" data-cam="side">Side</button>
+          <button class="cam-btn" data-cam="front">Front</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Floating HUD Left: Mode Controls for Cell 2025 Magnetic Swarm Lab -->
+    <aside id="swarm-controls-panel" class="glass-panel hidden">
+      <div class="panel-section">
+        <h2>SWARM LAB VIEW MODE</h2>
+        <div class="button-group">
+          <button id="btn-swarm-view-micro" class="btn active" title="Micro-Scale Swarm Simulation from the Cell 2025 Paper">🔬 Micro Swarm</button>
+          <button id="btn-swarm-view-hardware" class="btn" title="Physical DIY Desktop Hardware Rig Setup">🛠️ Desktop Rig (BOM)</button>
+        </div>
+      </div>
+
+      <div class="panel-section" id="section-swarm-configs">
+        <h2>SWARM CONFIGURATIONS (CELL 2025)</h2>
+        <div class="swarm-config-list">
+          <button id="btn-swarm-ht" class="swarm-config-btn active">
+            <div class="sc-title">
+              <span class="sc-badge ht">HT (θ = 0°)</span>
+              <strong>Head-to-Tail Assembly</strong>
+            </div>
+            <p class="sc-desc">Longitudinal dipoles form flexible chains. Highest aspect ratio for obstacle climbing & flinging.</p>
+            <div class="sc-stats"><span>CA/V: 3.2 mm⁻¹</span> <span>Stiffness: Low</span> <span>Speed: 64 mm/s</span></div>
+          </button>
+
+          <button id="btn-swarm-sc" class="swarm-config-btn">
+            <div class="sc-title">
+              <span class="sc-badge sc">SC (θ = 45°)</span>
+              <strong>Slipped-Co-Facial Assembly</strong>
+            </div>
+            <p class="sc-desc">Diagonal dipoles form dense 2D rafts. Maximum packing density for cargo transport & circuit bridging.</p>
+            <div class="sc-stats"><span>CA/V: 4.9 mm⁻¹</span> <span>Stiffness: Medium</span> <span>Neighbor: 4.1</span></div>
+          </button>
+
+          <button id="btn-swarm-ff" class="swarm-config-btn">
+            <div class="sc-title">
+              <span class="sc-badge ff">FF (θ = 90°)</span>
+              <strong>Face-to-Face Assembly</strong>
+            </div>
+            <p class="sc-desc">Transverse dipoles form thick rigid columns. Maximum shear stiffness for crushing clots & cutting liquid metal.</p>
+            <div class="sc-stats"><span>CA/V: 6.5 mm⁻¹</span> <span>Stiffness: Ultra High</span> <span>Impact: Max</span></div>
+          </button>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <h2>MAGNETIC FIELD ACTUATION</h2>
+        <div class="control-row">
+          <div class="section-header">
+            <label>ROTATION FREQUENCY</label>
+            <span id="label-swarm-freq" class="mono-tag">5.0 Hz</span>
+          </div>
+          <div class="freq-btn-group">
+            <button class="freq-btn" data-freq="1.5">1.5 Hz</button>
+            <button class="freq-btn" data-freq="2.5">2.5 Hz</button>
+            <button class="freq-btn active" data-freq="5">5.0 Hz</button>
+            <button class="freq-btn" data-freq="10">10 Hz</button>
+            <button class="freq-btn" data-freq="15">15 Hz</button>
+          </div>
+        </div>
+
+        <div class="control-row">
+          <div class="section-header">
+            <label>MOTION ACTUATION MODE</label>
+          </div>
+          <div class="button-group">
+            <button id="btn-motion-spin" class="btn active" title="Low gradient 0.15 T/m: Rotating & Pivoting walking">Spinning & Pivoting</button>
+            <button id="btn-motion-orbital" class="btn" title="High gradient 7.0 T/m: Agile 880 mm/s orbital flight">Orbital Dragging</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <h2>TASK MISSIONS (FROM PAPER)</h2>
+        <div class="mission-grid">
+          <button id="btn-mission-climb" class="mission-btn active">🧗 Obstacle Climbing (HT)</button>
+          <button id="btn-mission-throw" class="mission-btn">🚀 Self-Throwing Fling (HT)</button>
+          <button id="btn-mission-raft" class="mission-btn">🚢 Water Cargo Raft (SC)</button>
+          <button id="btn-mission-bridge" class="mission-btn">💡 LED Circuit Bridge (SC)</button>
+          <button id="btn-mission-unclog" class="mission-btn">💉 Tube Clot Unclogging (FF)</button>
+          <button id="btn-mission-morph" class="mission-btn">💧 Liquid Metal Morph (FF)</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Floating HUD Right: Component Inspector Details -->
+    <aside id="inspector-panel" class="glass-panel">
+      <div class="inspector-header">
+        <span class="badge" id="inspector-badge-title">SPECIFICATION INSPECTOR</span>
+        <button id="btn-close-inspector" class="icon-close" title="Close">✕</button>
+      </div>
+      <div id="inspector-content">
+        <div class="empty-state">
+          <div class="inspect-icon">🔍</div>
+          <h3>Click on any 3D component</h3>
+          <p>Select the Steel Ball, Ring Magnet, Micro Servo, Pushrod Linkage, Equator Collar, or Pod Shell to inspect engineering specs, dimensions, and assembly role.</p>
+        </div>
+        <div id="inspector-details" class="hidden">
+          <h2 id="inspect-title">Component Name</h2>
+          <span id="inspect-category" class="category-tag">CATEGORY</span>
+          <div class="inspect-media-badge" id="inspect-icon-badge">⚙️</div>
+          <p id="inspect-desc" class="desc-text"></p>
+          
+          <table class="specs-table">
+            <tbody id="inspect-table-body">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+
+          <div class="cost-callout">
+            <span class="label">EST. UNIT COST:</span>
+            <span id="inspect-cost" class="cost-val">₹0</span>
+            <span id="inspect-source" class="source-val">Local Maker Lab</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Assembly Sequence Timeline Navigator -->
+      <div class="assembly-tracker" id="tracker-v1">
+        <h3>ASSEMBLY LAYERS</h3>
+        <ol class="layer-list">
+          <li class="active" data-layer="ball"><span>1. Central 12mm Steel Sphere</span></li>
+          <li data-layer="collar"><span>2. Low-Profile Equator Hub</span></li>
+          <li data-layer="magnets"><span>3. Neodymium N42 Ring Magnets</span></li>
+          <li data-layer="servos"><span>4. 3.7g Sub-Micro Servos & Splines</span></li>
+          <li data-layer="linkage"><span>5. 1.0mm Piano Wire Pushrods</span></li>
+          <li data-layer="shells"><span>6. Hexagonal Pyramid Pod Shells</span></li>
+        </ol>
+      </div>
+
+      <!-- Research Paper Swarm Equations Card (Visible when Swarm Lab is Active) -->
+      <div class="assembly-tracker hidden" id="tracker-swarm">
+        <h3>CELL 2025 RESEARCH FORMULAS</h3>
+        <div class="formula-box">
+          <div class="f-row">
+            <span class="f-label">CA/V Ratio:</span>
+            <code class="f-code" id="formula-cav">CA/V = (n - 1) / (a * n)</code>
+          </div>
+          <div class="f-row">
+            <span class="f-label">Magnetic Torque:</span>
+            <code class="f-code">τ = M × B (Aligns with field)</code>
+          </div>
+          <div class="f-row">
+            <span class="f-label">Centrifugal Force:</span>
+            <code class="f-code">F_c = m * r * ω² (Flinging)</code>
+          </div>
+          <div class="f-row">
+            <span class="f-label">Max Field B_max:</span>
+            <code class="f-code">0.35 Tesla (N35 Rig)</code>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Bottom HUD Bar: Telemetry & Dimensions Legend -->
+    <footer id="hud-footer" class="glass-panel">
+      <!-- V1 Telemetry -->
+      <div id="telemetry-v1" class="telemetry-row">
+        <div class="telemetry-item">
+          <span class="t-label">POD TOTAL LENGTH</span>
+          <span class="t-value">58.0 mm</span>
+        </div>
+        <div class="telemetry-item">
+          <span class="t-label">BALL DIAMETER</span>
+          <span class="t-value">12.0 mm (Polished G100)</span>
+        </div>
+        <div class="telemetry-item">
+          <span class="t-label">ARTICULATION RANGE</span>
+          <span class="t-value">±38.0° Independent Pitch</span>
+        </div>
+        <div class="telemetry-item">
+          <span class="t-label">EST. POD MASS</span>
+          <span class="t-value">21.2 g (Tethered V1)</span>
+        </div>
+        <div class="telemetry-item">
+          <span class="t-label">ACTUATOR TORQUE</span>
+          <span class="t-value">0.65 kg·cm (5.0x Margin)</span>
+        </div>
+      </div>
+
+      <!-- Swarm Telemetry -->
+      <div id="telemetry-swarm" class="telemetry-row hidden">
+        <div class="telemetry-item">
+          <span class="t-label">SWARM POPULATION</span>
+          <span class="t-value" id="swarm-tele-count">200 Micro-Units</span>
+        </div>
+        <div class="telemetry-item">
+          <span class="t-label">UNIT DIMENSIONS</span>
+          <span class="t-value">300 × 300 × 600 µm³</span>
+        </div>
+        <div class="telemetry-item">
+          <span class="t-label">ASSEMBLY CA/V</span>
+          <span class="t-value" id="swarm-tele-cav">3.2 mm⁻¹ (HT)</span>
+        </div>
+        <div class="telemetry-item">
+          <span class="t-label">FIELD GRADIENT</span>
+          <span class="t-value" id="swarm-tele-grad">0.15 T/m (Spinning)</span>
+        </div>
+        <div class="telemetry-item">
+          <span class="t-label">PEAK SPEED</span>
+          <span class="t-value" id="swarm-tele-speed">64.0 mm/s (108 BL/s)</span>
+        </div>
+      </div>
+
+      <div class="nav-hint">
+        <span>Rotate: Left Drag | Pan: Right Drag | Zoom: Scroll</span>
+      </div>
+    </footer>
+
+    <!-- 3D Canvas Overlay Labels (Dynamically positioned) -->
+    <div id="annotation-overlay"></div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
