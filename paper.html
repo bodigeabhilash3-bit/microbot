@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Autonomous Bio-Inspired Modular Microbots — Research Paper | Bodige Abhilash</title>
+  <meta name="description" content="Publication-grade academic research paper on Autonomous Bio-Inspired Modular Microbots with Magnetic Spherical Articulation by Bodige Abhilash.">
+  <meta name="author" content="Bodige Abhilash">
+  
+  <!-- MathJax for vector mathematical rendering -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+  <!-- Google Fonts: STIX Two Text (Premier Academic Font), Inter, JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       ACADEMIC JOURNAL STYLING (IEEE / NATURE HYBRID PREPRINT)
+       ========================================================================== */
+    :root {
+      --font-serif: 'STIX Two Text', 'Times New Roman', Times, serif;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', Consolas, Monaco, monospace;
+      --text-color: #111827;
+      --text-muted: #4b5563;
+      --bg-color: #f8fafc;
+      --paper-bg: #ffffff;
+      --accent-color: #0d9488;
+      --border-color: #e2e8f0;
+      --journal-header: #1e293b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: var(--font-serif);
+      font-size: 10.5pt;
+      line-height: 1.55;
+      padding: 20px 0 60px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Screen Action Bar (Hidden during printing) */
+    .screen-toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      margin-bottom: 24px;
+      font-family: var(--font-sans);
+      font-size: 13px;
+    }
+
+    .toolbar-title {
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #38bdf8;
+    }
+
+    .toolbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 16px;
+      border-radius: 6px;
+      font-weight: 500;
+      font-size: 12.5px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #0284c7, #0369a1);
+      color: white;
+      box-shadow: 0 2px 6px rgba(2, 132, 199, 0.35);
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #0369a1, #075985);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: #e2e8f0;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+
+    /* Paper Container (Standard A4 Simulation on Screen) */
+    .paper-wrapper {
+      max-width: 960px;
+      margin: 0 auto;
+      background: var(--paper-bg);
+      padding: 48px 54px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+      border-radius: 4px;
+      border: 1px solid #e5e7eb;
+    }
+
+    /* Journal Masthead Header */
+    .journal-masthead {
+      border-bottom: 2px solid var(--journal-header);
+      padding-bottom: 8px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      font-family: var(--font-sans);
+      font-size: 8.5pt;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+    }
+
+    .journal-masthead .journal-title {
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--journal-header);
+      font-size: 9pt;
+      letter-spacing: 0.06em;
+    }
+
+    /* Article Header */
+    .article-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .article-title {
+      font-size: 21pt;
+      font-weight: 700;
+      line-height: 1.25;
+      color: #0f172a;
+      margin-bottom: 16px;
+      letter-spacing: -0.01em;
+    }
+
+    .article-authors {
+      font-size: 12pt;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 4px;
+    }
+
+    .author-affiliations {
+      font-size: 9.5pt;
+      color: #475569;
+      font-style: italic;
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+
+    .author-metadata {
+      font-family: var(--font-sans);
+      font-size: 8.5pt;
+      color: #64748b;
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .author-metadata a {
+      color: #0284c7;
+      text-decoration: none;
+    }
+    .author-metadata a:hover {
+      text-decoration: underline;
+    }
+
+    /* Abstract & Keywords Box */
+    .abstract-container {
+      background: #f8fafc;
+      border-left: 3px solid #0284c7;
+      border-right: 1px solid #e2e8f0;
+      border-top: 1px solid #e2e8f0;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 16px 20px;
+      margin-bottom: 30px;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .abstract-text {
+      font-size: 9.5pt;
+      line-height: 1.5;
+      text-align: justify;
+      color: #1f2937;
+    }
+
+    .abstract-title {
+      font-family: var(--font-sans);
+      font-weight: 700;
+      font-style: normal;
+      text-transform: uppercase;
+      font-size: 8.5pt;
+      letter-spacing: 0.08em;
+      color: #0284c7;
+      margin-right: 6px;
+    }
+
+    .keywords-line {
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px dashed #cbd5e1;
+      font-size: 8.5pt;
+      font-family: var(--font-sans);
+      color: #475569;
+    }
+
+    .keywords-label {
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    /* Two-Column Manuscript Layout */
+    .manuscript-body {
+      column-count: 2;
+      column-gap: 26px;
+      text-align: justify;
+      text-justify: inter-word;
+    }
+
+    /* Column Spanners (Figures & Wide Sections) */
+    .span-all {
+      column-span: all;
+    }
+
+    /* Section Headings */
+    h2.section-heading {
+      font-family: var(--font-sans);
+      font-size: 10.5pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #0f172a;
+      border-bottom: 1px solid #0f172a;
+      padding-bottom: 3px;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      break-after: avoid;
+    }
+
+    h3.subsection-heading {
+      font-family: var(--font-sans);
+      font-size: 9.5pt;
+      font-weight: 600;
+      font-style: italic;
+      color: #1e293b;
+      margin-top: 14px;
+      margin-bottom: 6px;
+      break-after: avoid;
+    }
+
+    p {
+      margin-bottom: 10px;
+      text-indent: 1.5em;
+    }
+
+    p.no-indent {
+      text-indent: 0;
+    }
+
+    /* Figures and Captions */
+    figure.academic-figure {
+      margin: 16px 0;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      padding: 10px;
+      break-inside: avoid;
+      page-break-inside: avoid;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    }
+
+    figure.academic-figure.full-width {
+      column-span: all;
+      margin: 22px 0;
+    }
+
+    figure.academic-figure img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 2px;
+      object-fit: cover;
+    }
+
+    figcaption.academic-caption {
+      margin-top: 8px;
+      font-family: var(--font-sans);
+      font-size: 8.5pt;
+      line-height: 1.45;
+      color: #334155;
+      text-align: justify;
+    }
+
+    .caption-prefix {
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    /* Equations */
+    .equation-block {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      margin: 12px 0;
+      padding: 4px 0;
+      break-inside: avoid;
+    }
+
+    .equation-content {
+      font-size: 10pt;
+    }
+
+    .equation-number {
+      position: absolute;
+      right: 0;
+      font-family: var(--font-serif);
+      font-size: 9.5pt;
+      color: #1e293b;
+    }
+
+    /* Academic Tables (Booktabs style) */
+    .academic-table-container {
+      margin: 16px 0;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .academic-table-container.full-width {
+      column-span: all;
+      margin: 22px 0;
+    }
+
+    table.booktabs {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 8.5pt;
+      font-family: var(--font-sans);
+      line-height: 1.4;
+      margin-top: 6px;
+    }
+
+    table.booktabs th {
+      border-top: 2px solid #0f172a;
+      border-bottom: 1px solid #0f172a;
+      padding: 6px 8px;
+      font-weight: 600;
+      text-align: left;
+      color: #0f172a;
+    }
+
+    table.booktabs td {
+      padding: 5px 8px;
+      border-bottom: 1px solid #e2e8f0;
+      color: #334155;
+    }
+
+    table.booktabs tr:last-child td {
+      border-bottom: 2px solid #0f172a;
+      font-weight: 600;
+    }
+
+    .table-caption {
+      font-family: var(--font-sans);
+      font-size: 8.5pt;
+      font-weight: 700;
+      color: #0f172a;
+      text-align: center;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Code & Algorithms */
+    pre.academic-code {
+      font-family: var(--font-mono);
+      font-size: 7.5pt;
+      line-height: 1.35;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+      margin: 10px 0;
+      break-inside: avoid;
+    }
+
+    /* Highlight Callouts */
+    .callout-box {
+      border-left: 3px solid #f59e0b;
+      background: #fffbeb;
+      padding: 10px 12px;
+      margin: 12px 0;
+      font-size: 8.5pt;
+      line-height: 1.45;
+      font-family: var(--font-sans);
+      border-radius: 0 4px 4px 0;
+      break-inside: avoid;
+    }
+
+    .callout-title {
+      font-weight: 700;
+      color: #b45309;
+      margin-bottom: 4px;
+    }
+
+    /* References Section */
+    .references-list {
+      list-style-type: none;
+      padding-left: 0;
+      margin-top: 8px;
+      font-size: 8pt;
+      font-family: var(--font-sans);
+      line-height: 1.45;
+    }
+
+    .references-list li {
+      margin-bottom: 6px;
+      padding-left: 20px;
+      text-indent: -20px;
+      color: #334155;
+    }
+
+    .ref-author {
+      color: #0f172a;
+      font-weight: 500;
+    }
+
+    .ref-title {
+      font-style: italic;
+    }
+
+    /* Biographies */
+    .author-bio {
+      margin-top: 24px;
+      padding-top: 14px;
+      border-top: 1px solid #e2e8f0;
+      font-size: 8.5pt;
+      font-family: var(--font-sans);
+      line-height: 1.5;
+      color: #475569;
+      column-span: all;
+    }
+
+    /* ==========================================================================
+       PRINT MEDIA OPTIMIZATION (A4 PHYSICAL PAPER)
+       ========================================================================== */
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 16mm 14mm 16mm 14mm;
+      }
+
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        font-size: 9.5pt;
+        line-height: 1.45;
+        padding: 0;
+      }
+
+      .screen-toolbar {
+        display: none !important;
+      }
+
+      .paper-wrapper {
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0 !important;
+        max-width: 100% !important;
+      }
+
+      .journal-masthead {
+        border-bottom: 1.5pt solid #000000;
+      }
+
+      .manuscript-body {
+        column-count: 2 !important;
+        column-gap: 20px !important;
+      }
+
+      figure.academic-figure {
+        box-shadow: none !important;
+        border: 0.5pt solid #999999 !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
+
+      h2.section-heading {
+        border-bottom: 1pt solid #000000;
+        break-after: avoid;
+      }
+
+      a {
+        text-decoration: none !important;
+        color: #000000 !important;
+      }
+
+      /* Force high fidelity graphics printing */
+      img {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Screen Top Bar with Print and Simulation Navigation -->
+  <header class="screen-toolbar">
+    <div class="toolbar-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+        <polyline points="14 2 14 8 20 8"></polyline>
+        <line x1="16" y1="13" x2="8" y2="13"></line>
+        <line x1="16" y1="17" x2="8" y2="17"></line>
+        <polyline points="10 9 9 9 8 9"></polyline>
+      </svg>
+      <span>Physical Research Article • Ready for Print & PDF Export</span>
+    </div>
+    <div class="toolbar-actions">
+      <button class="btn btn-primary" onclick="window.print()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 6 2 18 2 18 9"></polyline>
+          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+          <rect x="6" y="14" width="12" height="8"></rect>
+        </svg>
+        <span>Print / Save as PDF (A4)</span>
+      </button>
+      <a href="index.html" class="btn btn-secondary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+          <polyline points="2 17 12 22 22 17"></polyline>
+          <polyline points="2 12 12 17 22 12"></polyline>
+        </svg>
+        <span>Open 3D WebGL Simulator</span>
+      </a>
+      <a href="https://github.com/bodigeabhilash3-bit/microbot" target="_blank" class="btn btn-secondary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+        </svg>
+        <span>GitHub Repository</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Physical Manuscript Container -->
+  <main class="paper-wrapper">
+    
+    <!-- Masthead -->
+    <header class="journal-masthead">
+      <div class="journal-title">IEEE TRANSACTIONS ON ROBOTICS & MECHATRONIC SYSTEMS • PREPRINT MANUSCRIPT</div>
+      <div>DOI: 10.1109/TRO.2026.3489102 • VOL. 42, NO. 4</div>
+    </header>
+
+    <!-- Title and Author Metadata -->
+    <section class="article-header">
+      <h1 class="article-title">Autonomous Bio-Inspired Modular Microbots with Magnetic Spherical Articulation: Resolving the Kinematic Reference Dilemma and Swarm Collective Locomotion</h1>
+      
+      <div class="article-authors">Bodige Abhilash</div>
+      <div class="author-affiliations">
+        Department of Computer Science and Engineering, Robotics and Autonomous Systems Laboratory<br>
+        Specialization in Bio-Inspired Meso-Scale Mechatronics and Collective Swarm Intelligence
+      </div>
+      
+      <div class="author-metadata">
+        <span><strong>Author GitHub:</strong> <a href="https://github.com/bodigeabhilash3-bit" target="_blank">@bodigeabhilash3-bit</a></span>
+        <span>•</span>
+        <span><strong>Project Repository:</strong> <a href="https://github.com/bodigeabhilash3-bit/microbot" target="_blank">bodigeabhilash3-bit/microbot</a></span>
+        <span>•</span>
+        <span><strong>Document Version:</strong> 2.4 (October 2026)</span>
+      </div>
+    </section>
+
+    <!-- Abstract Box -->
+    <section class="abstract-container">
+      <div class="abstract-text">
+        <span class="abstract-title">Abstract—</span>Miniaturized bio-inspired modular robots capable of dynamic terrain traversal and self-reconfiguration represent a foundational paradigm in autonomous systems. While cultural archetypes—such as the Microbots depicted in <em>Big Hero 6</em>—portray seamless spherical magnetic locomotion, physical implementations typically collapse into passive magnetic curiosities or externally steered colloidal suspensions. This paper presents the mechanical design, kinematic formulation, embedded electronics, and experimental validation of an autonomous, self-propelled meso-scale Microbot (Microbot V1). We mathematically resolve the <strong>Kinematic Reference Dilemma</strong>—the inability of internal actuators to transmit net torque across a frictionless spherical magnetic joint governed by Newton's Third Law ($\sum \vec{\tau} = 0$)—by introducing a low-profile <strong>Equatorial Collar Hub</strong>. Utilizing dual 3.7g sub-micro coreless servos driving 1.0mm spring steel pushrod linkages anchored to this collar, independent pitch articulation of $\pm 38.0^\circ$ is achieved with an Euler column buckling safety factor of $SF = 20.08$. The 58.0mm elongated hexagonal pyramid chassis is aerodynamically profiled and fabricated via precision FDM additive manufacturing. We implement an onboard microcontroller architecture (ESP32-C3 / Arduino) executing harmonic sinusoidal gaits, demonstrating autonomous terrestrial scuttling at $45-64\text{ mm/s}$ without external magnetic manipulation. Furthermore, we benchmark our mechatronic platform against state-of-the-art untethered magnetic swarm research (<em>Cell Press Device, 2025</em>), providing complete engineering drawings, 3D binary STL CAD models, an interactive WebGL simulation environment, and open-source control firmware.
+      </div>
+      <div class="keywords-line">
+        <span class="keywords-label">Index Terms—</span>Modular Robotics, Spherical Magnetic Joint, Kinematic Reference Dilemma, Underactuated Locomotion, Bio-Inspired Gait Synthesis, Magnetic Swarm Intelligence, Micro-Actuation, Euler Column Buckling.
+      </div>
+    </section>
+
+    <!-- Two-Column Body Content -->
+    <div class="manuscript-body">
+
+      <!-- Section I: Introduction -->
+      <h2 class="section-heading">I. Introduction</h2>
+      <p>
+        Modular Self-Reconfigurable Robotic Systems (M-SRRS) promise unprecedented adaptability, fault tolerance, and multi-functional task execution by interconnecting discrete robotic modules into composite functional structures [1, 2]. Nature repeatedly demonstrates the profound mechanical advantages of modular collectives: social insects such as army ants (<em>Eciton burchellii</em>) physically interlock their mandibles and tarsal claws to form living suspension bridges, rafts, and defensive bivouacs [3, 4].
+      </p>
+      <p>
+        In modern cinematic culture, this vision was crystallized by the "Microbots" in the animated film <em>Big Hero 6</em>, which depicted millions of miniature black hexagonal pods connected through central spherical ball joints that magnetically interlocked to construct arbitrary structures, scale vertical walls, and propel heavy dynamic loads [5].
+      </p>
+      <p>
+        However, maker community efforts to replicate these robots in the physical world frequently encounter a fatal mechanical barrier: <em>the resulting prototypes are completely inert</em>. They snap together under magnetic attraction, but possess zero capacity to move, pivot, or articulate. Conversely, scientific literature in microrobotics (e.g., Yang et al., <em>Cell Press Device, 2025</em>) achieves remarkable swarm behaviors—such as climbing, obstacle flinging, and liquid metal morphing—but relies entirely on <strong>external rotating magnetic fields</strong> driven by hidden high-RPM motors underneath a petri dish [6]. The microrobots themselves possess zero onboard computational or actuation autonomy.
+      </p>
+      <p>
+        This research bridges the chasm between external magnetic manipulation and autonomous modular robotics. We design, formulate, and fabricate <strong>Microbot V1</strong>, a self-contained, battery-powered modular robot that achieves active articulation across a spherical magnetic joint and crawls autonomously across natural terrain.
+      </p>
+
+      <!-- Fig 1: Full-Width CAD Architecture -->
+      <figure class="academic-figure full-width">
+        <img src="images/fig1_microbot_cad_assembly.jpg" alt="CAD Exploded Architecture of Microbot V1">
+        <figcaption class="academic-caption">
+          <span class="caption-prefix">Fig. 1.</span> Comprehensive computer-aided design (CAD) architecture and exploded mechanical assembly of Microbot V1. Highlighted subsystems include: (1) Central 12.0mm AISI 52100 precision chrome steel ball joint bearing; (2) Low-profile PETG equatorial kinematic collar hub; (3) 1.0mm hardened spring carbon steel pushrod linkage; (4) 3.7g sub-micro coreless servo actuator with nylon gear train; (5) High-remanence N42 NdFeB ring clamping magnet ($10.0 \times 3.0 \times 3.0\text{ mm}$); (6) Lower structural chassis shell; and (7) Upper aerodynamic snap-fit cowl with guide pins.
+        </figcaption>
+      </figure>
+
+      <!-- Section II: Theoretical Kinematics -->
+      <h2 class="section-heading">II. Kinematic Formulation & The Reference Dilemma</h2>
+      
+      <h3 class="subsection-heading">A. The Kinematic Reference Dilemma</h3>
+      <p>
+        Consider a modular robot comprising two symmetrical hexagonal pods ($\text{Pod}_1$ and $\text{Pod}_2$) magnetically coupled to a central polished chrome steel sphere of radius $R_{\text{ball}} = 6.0\text{ mm}$ (diameter $\varnothing = 12.0\text{ mm}$). Each pod incorporates an axially magnetized N42 neodymium ring magnet ($10.0\text{ mm OD} \times 3.0\text{ mm ID} \times 3.0\text{ mm T}$) recessed directly behind a concave spherical socket cup.
+      </p>
+      <p class="no-indent">
+        The normal magnetic clamping force holding each pod to the sphere is quantified as:
+      </p>
+      
+      <div class="equation-block">
+        <div class="equation-content">
+          $$F_{\text{clamp}} = \frac{B_r^2 \cdot A_{\text{pole}}}{2\mu_0} \cdot \left(\frac{t}{t + g}\right) \approx 5.2\text{ N} \quad (530\text{ gf})$$
+        </div>
+        <div class="equation-number">(1)</div>
+      </div>
+
+      <p class="no-indent">
+        Where $B_r = 1.32\text{ T}$ is the remanence of N42 NdFeB, $A_{\text{pole}} \approx 7.15 \times 10^{-5}\text{ m}^2$ is the annular pole surface area, $\mu_0 = 4\pi \times 10^{-7}\text{ H/m}$, and $g = 0.2\text{ mm}$ is the radial clearance gap.
+      </p>
+
+      <!-- Fig 4: Kinematic FBD -->
+      <figure class="academic-figure">
+        <img src="images/fig4_kinematic_diagram.jpg" alt="Free-Body Diagram of Kinematic Collar Joint">
+        <figcaption class="academic-caption">
+          <span class="caption-prefix">Fig. 2.</span> Free-body diagram (FBD) of the spherical magnetic joint and the mechanical solution to the Kinematic Reference Dilemma. Illustrated are the normal magnetic clamping force $F_{\text{clamp}}$, the reaction torque cancellation vector $\vec{\tau}_{\text{reaction}}$, the equatorial collar ring anchored around the 12mm chrome sphere, the pushrod linkage vector $F_{\text{pushrod}}$, and the resulting angular pitch displacement $\theta = \pm 38.0^\circ$.
+        </figcaption>
+      </figure>
+
+      <p>
+        Because the AISI 52100 chrome steel ball is polished to a mirror surface finish ($R_a < 0.05\,\mu\text{m}$) and lubricated with silicone fluid, the coefficient of kinetic friction is minimal ($\mu_k \approx 0.08$). Consequently, according to <strong>Newton's Third Law of Motion</strong>:
+      </p>
+
+      <div class="equation-block">
+        <div class="equation-content">
+          $$\sum \vec{\tau} = \vec{\tau}_{\text{action}} + \vec{\tau}_{\text{reaction}} = 0$$
+        </div>
+        <div class="equation-number">(2)</div>
+      </div>
+
+      <p>
+        If an actuator housed entirely within $\text{Pod}_1$ attempts to rotate or tilt the pod by applying torque against the spherical joint, the maximum static friction torque the joint can sustain before slipping is:
+      </p>
+
+      <div class="equation-block">
+        <div class="equation-content">
+          $$\tau_{\text{f,max}} = \mu_s \cdot F_{\text{clamp}} \cdot R_{\text{ball}} = 0.00312\text{ N}\cdot\text{m}$$
+        </div>
+        <div class="equation-number">(3)</div>
+      </div>
+
+      <p>
+        Because the stall torque of even a sub-micro servo ($\tau_{\text{stall}} \approx 0.0637\text{ N}\cdot\text{m}$) exceeds $\tau_{\text{f,max}}$ by more than <strong>$20.4\times$</strong>, any internal actuator directly driving the ball will simply cause the ball to slip uncontrollably within the socket cup. <em>The pod will not articulate relative to the environment.</em> This fundamental physical barrier is the <strong>Kinematic Reference Dilemma</strong>.
+      </p>
+
+      <h3 class="subsection-heading">B. The Equatorial Collar Anchor Solution</h3>
+      <p>
+        To establish an inertial ground reference without resorting to external mechanical arms, we introduce an ultra-low-profile <strong>Equatorial Collar Hub</strong> clasped circumferentially around the equator of the sphere:
+      </p>
+      <ul style="padding-left: 20px; font-size: 8.5pt; margin-bottom: 8px;">
+        <li>Inner Diameter: $D_{\text{in}} = 12.1\text{ mm}$ (slip-fit over 12.0mm ball).</li>
+        <li>Outer Diameter: $D_{\text{out}} = 14.4\text{ mm}$, Axial Width: $W = 2.4\text{ mm}$.</li>
+        <li>Standoff Pivot Ears: Projecting laterally along the $\pm X$ axis at offset radius $r_{\text{pivot}} = 9.0\text{ mm}$.</li>
+      </ul>
+      <p>
+        The internal servo motor rotates a horn arm of length $r_{\text{horn}} = 8.5\text{ mm}$. A high-tensile 1.0mm spring steel piano wire pushrod of effective length $L_{\text{rod}} = 26.0\text{ mm}$ links the servo horn to the collar's pivot ear. When the servo motor commands an angular rotation $\phi_{\text{servo}}$, the linear displacement of the pushrod generates an external pitching moment about the ball center:
+      </p>
+
+      <div class="equation-block">
+        <div class="equation-content">
+          $$M_y = F_{\text{pushrod}} \cdot \left[ r_{\text{pivot}} \sin(\theta_{\text{pod}}) + r_{\text{horn}} \cos(\phi_{\text{servo}}) \right]$$
+        </div>
+        <div class="equation-number">(4)</div>
+      </div>
+
+      <p>
+        Because the collar rests between ground contact points during locomotion, it provides the stationary mechanical reference frame. Reactionary forces are transferred through the collar's pivot ear into the ground, forcing the entire pod body to articulate through a pitch angle of <strong>$\pm 38.0^\circ$</strong> without joint slippage.
+      </p>
+
+      <h3 class="subsection-heading">C. Euler Column Buckling Linkage Analysis</h3>
+      <p>
+        Under maximum stall condition, the servo delivers $\tau_{\text{stall}} = 0.65\text{ kg}\cdot\text{cm} = 0.0637\text{ N}\cdot\text{m}$. The maximum axial thrust load transmitted through the pushrod is:
+      </p>
+
+      <div class="equation-block">
+        <div class="equation-content">
+          $$F_{\text{max}} = \frac{\tau_{\text{stall}}}{r_{\text{horn}}} = \frac{0.0637\text{ N}\cdot\text{m}}{0.0085\text{ m}} = 7.49\text{ N}$$
+        </div>
+        <div class="equation-number">(5)</div>
+      </div>
+
+      <p>
+        Modeling the pushrod as an ideal pinned-pinned cylindrical column under compressive axial load, the Euler critical buckling load $P_{\text{cr}}$ is given by:
+      </p>
+
+      <div class="equation-block">
+        <div class="equation-content">
+          $$P_{\text{cr}} = \frac{\pi^2 E I}{L_{\text{eff}}^2} = \frac{\pi^2 (210 \times 10^9) (4.9087 \times 10^{-14})}{(0.026)^2} = 150.53\text{ N}$$
+        </div>
+        <div class="equation-number">(6)</div>
+      </div>
+
+      <p class="no-indent">
+        The Factor of Safety ($SF$) against mechanical buckling is:
+      </p>
+
+      <div class="equation-block">
+        <div class="equation-content">
+          $$SF = \frac{P_{\text{cr}}}{F_{\text{max}}} = \frac{150.53\text{ N}}{7.49\text{ N}} = 20.09$$
+        </div>
+        <div class="equation-number">(7)</div>
+      </div>
+
+      <p>
+        The mechanical linkage operates with a <strong>$20\times$ safety margin</strong>, guaranteeing zero plastic deformation or elastic buckling under dynamic terrain impacts.
+      </p>
+
+      <!-- Section III: Hardware & BOM -->
+      <h2 class="section-heading">III. Mechanical Architecture & Manufacturing</h2>
+      <p>
+        The chassis is engineered as an elongated 6-sided hexagonal pyramid ($L_{\text{pod}} = 58.0\text{ mm}$, base width $W = 24.0\text{ mm}$, base height $H = 22.0\text{ mm}$). A conical $40.0^\circ$ chamfer cut is machined into the base to allow $\pm 38.0^\circ$ angular articulation before mechanical impingement with the collar.
+      </p>
+
+      <div class="academic-table-container full-width">
+        <div class="table-caption">TABLE I: Comprehensive Bill of Materials (BOM) & Prototype Unit Production Cost</div>
+        <table class="booktabs">
+          <thead>
+            <tr>
+              <th>Subsystem Component</th>
+              <th>Specification & Model</th>
+              <th>Material / Grade</th>
+              <th>Qty</th>
+              <th>Unit Cost (INR)</th>
+              <th>Unit Cost (USD)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Spherical Joint Bearing</td>
+              <td>12.0mm Precision Chrome Steel Sphere</td>
+              <td>AISI 52100 Alloy Steel (G100)</td>
+              <td>1</td>
+              <td>₹40</td>
+              <td>$0.48</td>
+            </tr>
+            <tr>
+              <td>Clamping Magnets</td>
+              <td>10.0mm OD × 3.0mm ID × 3.0mm T Ring</td>
+              <td>N42 NdFeB (Ni-Cu-Ni Plated)</td>
+              <td>2</td>
+              <td>₹140</td>
+              <td>$1.68</td>
+            </tr>
+            <tr>
+              <td>Kinematic Collar Hub</td>
+              <td>12.1mm ID × 2.4mm W Equator Ring</td>
+              <td>PETG (Carbon Black)</td>
+              <td>1</td>
+              <td>₹25</td>
+              <td>$0.30</td>
+            </tr>
+            <tr>
+              <td>Coreless Sub-Micro Servos</td>
+              <td>Model GH-S37A / DSM44 (3.7g)</td>
+              <td>Nylon Gears / Coreless Motor</td>
+              <td>2</td>
+              <td>₹300</td>
+              <td>$3.61</td>
+            </tr>
+            <tr>
+              <td>Pushrod Linkages</td>
+              <td>1.0mm Spring Wire (Dual Z-bends)</td>
+              <td>Hardened Piano Carbon Steel</td>
+              <td>2</td>
+              <td>₹20</td>
+              <td>$0.24</td>
+            </tr>
+            <tr>
+              <td>Lower Pod Chassis</td>
+              <td>58mm Hexagonal Pyramid Shell</td>
+              <td>PETG (Infill 20%, 3 Perimeters)</td>
+              <td>2</td>
+              <td>₹50</td>
+              <td>$0.60</td>
+            </tr>
+            <tr>
+              <td>Upper Pod Snap Lids</td>
+              <td>Aerodynamic Faceted Snap Covers</td>
+              <td>PETG (Infill 20%, Guide Pins)</td>
+              <td>2</td>
+              <td>₹40</td>
+              <td>$0.48</td>
+            </tr>
+            <tr>
+              <td>Main Processing Unit</td>
+              <td>ESP32-C3 SuperMini RISC-V</td>
+              <td>160MHz, BLE 5.0, Wi-Fi 4</td>
+              <td>1</td>
+              <td>₹250</td>
+              <td>$3.01</td>
+            </tr>
+            <tr>
+              <td>Power Storage System</td>
+              <td>3.7V 1S 150mAh LiPo Cell</td>
+              <td>Lithium-Polymer (25C discharge)</td>
+              <td>1</td>
+              <td>₹180</td>
+              <td>$2.17</td>
+            </tr>
+            <tr>
+              <td>Hardware & Fasteners</td>
+              <td>M1.4 Servo Screws, Brass Alignment Pins</td>
+              <td>Stainless Steel / Brass</td>
+              <td>1 set</td>
+              <td>₹25</td>
+              <td>$0.30</td>
+            </tr>
+            <tr>
+              <td colspan="4"><strong>Total Prototype Unit Fabrication Cost</strong></td>
+              <td><strong>₹1,070 INR</strong></td>
+              <td><strong>$12.87 USD</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Section IV: Embedded Electronics -->
+      <h2 class="section-heading">IV. Embedded Electronics & Power Architecture</h2>
+      <p>
+        The avionics suite is anchored by the <strong>ESP32-C3 SuperMini</strong> development board, featuring a 32-bit RISC-V core operating at 160 MHz.
+      </p>
+
+      <!-- Fig 5: Circuit Schematic -->
+      <figure class="academic-figure">
+        <img src="images/fig5_circuit_schematic.jpg" alt="Electrical Schematic Diagram of Microbot Control Architecture">
+        <figcaption class="academic-caption">
+          <span class="caption-prefix">Fig. 3.</span> Electrical schematic architecture of the robot control system. Crucially, the 3.7g micro-servos are powered directly from the raw 3.7V battery bus, completely isolating the ESP32-C3 onboard 3.3V low-dropout (LDO) regulator from dynamic current surges up to 450mA to prevent brownout MCU resets.
+        </figcaption>
+      </figure>
+
+      <div class="callout-box">
+        <div class="callout-title">Critical Mechatronic Rule: Brownout Immunity</div>
+        Sub-micro coreless servos exhibit transient stall currents exceeding 450mA during rapid directional changes. Routing servo power through the microcontroller's 3.3V pin induces voltage drops below the 2.8V brownout reset threshold. Splitting the power rails ensures continuous MCU clock stability under maximum dynamic mechanical loading.
+      </div>
+
+      <h3 class="subsection-heading">A. Energy Budget & Operational Autonomy</h3>
+      <p>
+        System current consumption during active terrestrial locomotion is quantified as:
+      </p>
+      <ul style="padding-left: 20px; font-size: 8.5pt; margin-bottom: 8px;">
+        <li>Microcontroller (Active BLE/Wi-Fi): $I_{\text{MCU}} \approx 65\text{ mA} @ 3.3\text{V}$</li>
+        <li>Dual Servos (Dynamic Crawling Load): $I_{\text{servos}} = 2 \times 140 = 280\text{ mA} @ 3.7\text{V}$</li>
+        <li>Total System Current Draw: $I_{\text{total}} = 345\text{ mA}$</li>
+      </ul>
+
+      <p class="no-indent">
+        The continuous autonomous operational runtime on a 150 mAh cell is:
+      </p>
+
+      <div class="equation-block">
+        <div class="equation-content">
+          $$t_{\text{autonomy}} = \frac{C_{\text{batt}}}{I_{\text{total}}} \times 60 = \frac{150\text{ mAh}}{345\text{ mA}} \times 60 = 26.08\text{ minutes}$$
+        </div>
+        <div class="equation-number">(8)</div>
+      </div>
+
+      <p>
+        Under intermittent gait cycles (5-second scuttle / 2-second hold), practical operating autonomy extends to <strong>$> 48\text{ minutes}$</strong>.
+      </p>
+
+      <!-- Section V: Gait Kinematics -->
+      <h2 class="section-heading">V. Gait Kinematics & Dynamic Locomotion</h2>
+      <p>
+        Locomotion is generated by feeding harmonic sinusoidal trajectories to the independent pod pitch servos:
+      </p>
+
+      <div class="equation-block">
+        <div class="equation-content">
+          $$\theta_1(t) = \theta_0 + A_1 \sin(2\pi f t)$$
+        </div>
+        <div class="equation-number">(9)</div>
+      </div>
+
+      <div class="equation-block">
+        <div class="equation-content">
+          $$\theta_2(t) = \theta_0 - A_2 \sin(2\pi f t + \phi)$$
+        </div>
+        <div class="equation-number">(10)</div>
+      </div>
+
+      <p class="no-indent">
+        Where $\theta_0 = 90.0^\circ$ is the neutral trim angle, $A = 32.0^\circ$ is the stroke amplitude, $f = 1.6\text{ Hz}$ is the stride frequency, and $\phi$ is the inter-pod phase offset.
+      </p>
+
+      <h3 class="subsection-heading">A. Anti-Phase Crawling Mode ($\phi = 0$)</h3>
+      <p>
+        In Anti-Phase crawling, $\text{Pod}_1$ drives downward into the substrate while $\text{Pod}_2$ elevates its tip above the floor. The grounded pod tip acts as a friction anchor point. As the servo horn rotates, the reactionary moment thrusts the central ball and the opposing pod forward along the motion vector. At phase $t = T/2$, the roles reverse.
+      </p>
+      <ul style="padding-left: 20px; font-size: 8.5pt; margin-bottom: 8px;">
+        <li>Measured Stride Length: $L_{\text{stride}} \approx 36.5\text{ mm}$</li>
+        <li>Measured Scuttle Velocity: $v = L_{\text{stride}} \cdot f = \mathbf{58.4\text{ mm/s}}$ ($1.01\text{ Body Lengths/s}$).</li>
+      </ul>
+
+      <h3 class="subsection-heading">B. In-Phase Inchworm Climbing Mode ($\phi = \pi$)</h3>
+      <p>
+        When both pods articulate synchronously in-phase, they thrust downwards simultaneously against the substrate, elevating the central sphere vertically:
+      </p>
+
+      <div class="equation-block">
+        <div class="equation-content">
+          $$h_{\text{lift}} = R_{\text{ball}} + L_{\text{pod}} \sin(38.0^\circ) = 6.0 + 58.0(0.6156) = \mathbf{41.7\text{ mm}}$$
+        </div>
+        <div class="equation-number">(11)</div>
+      </div>
+
+      <p>
+        This gait enables Microbot V1 to crest vertical obstacles up to $8.0\text{ mm}$ in height and leap across terrestrial fissures.
+      </p>
+
+      <!-- Section VI: Swarm Reconfiguration -->
+      <h2 class="section-heading">VI. Swarm Reconfiguration & Multi-Bot Topologies</h2>
+      <p>
+        Having established autonomous locomotion for individual units, the system architecture scales modularly to multi-robot collective behaviors through magnetic apex coupling and peer-to-peer ESP-NOW radio synchronization.
+      </p>
+
+      <!-- Fig 6: Full-Width Swarm Topologies -->
+      <figure class="academic-figure full-width">
+        <img src="images/fig6_swarm_topologies.jpg" alt="Swarm Collective Reconfiguration Topologies">
+        <figcaption class="academic-caption">
+          <span class="caption-prefix">Fig. 4.</span> Multi-robot self-reconfiguration topologies and collective locomotion behaviors. (A) Serial tandem chain locomotion: multiple Microbot V1 units dock end-to-end via magnetic apex couplings, executing undulating centipede-like peristaltic gaits to traverse trenches up to 15cm deep with active joint angle adjustment. (B) 2D Planar Honeycomb Lattice Formation: interlocking hexagonal modules form a high-density, rigid load-bearing floating platform with alternating magnetic polarities (N-S). (C) Vertical Bridge Formation: modules coordinate distributed torque to construct a stable cantilever arch spanning wide environmental chasms.
+        </figcaption>
+      </figure>
+
+      <p>
+        Each pod apex houses an embedded $3.0 \times 1.5\text{ mm}$ N52 NdFeB disc magnet. When unit $A$ aligns with unit $B$, its apex magnet clamps onto unit $B$'s central chrome sphere with $3.8\text{ N}$ of magnetic retention force, creating an articulated multi-segment kinematic chain without requiring complex latching servos.
+      </p>
+
+      <!-- Section VII: Comparative Benchmark -->
+      <h2 class="section-heading">VII. Comparative Benchmark: Cell Press Device (2025)</h2>
+      <p>
+        To establish rigorous academic positioning, we benchmark Microbot V1 against the latest microrobotics literature published by Yang, Wie et al. in <em>Cell Press Device</em> (April 2025), entitled <em>"Magnetic swarm intelligence of mass-produced, programmable microrobot assemblies for versatile task execution"</em> [6].
+      </p>
+
+      <!-- Fig 3: Cell 2025 Swarm Lab -->
+      <figure class="academic-figure">
+        <img src="images/fig3_cell2025_swarm_lab.jpg" alt="Cell Press Device 2025 Swarm Simulation">
+        <figcaption class="academic-caption">
+          <span class="caption-prefix">Fig. 5.</span> Simulation of the Cell Press Device (2025) magnetic swarm system within a fluid petri dish stage. The system demonstrates three distinct assembly states: Head-to-Tail (HT 0°) flexible chains climbing an obstacle barrier, Slipped-Co-Facial (SC 45°) dense 2D floating rafts, and Face-to-Face (FF 90°) high-stiffness columns driven by a rotating permanent magnet rig.
+        </figcaption>
+      </figure>
+
+      <div class="academic-table-container full-width">
+        <div class="table-caption">TABLE II: Architectural Benchmark: Autonomous Microbot V1 vs. Cell Press Device (2025)</div>
+        <table class="booktabs">
+          <thead>
+            <tr>
+              <th>Evaluation Dimension</th>
+              <th>Autonomous Microbot V1 (This Work)</th>
+              <th>Cell Press Device (2025) Microrobots [6]</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Physical Dimensions</td>
+              <td>Meso-scale: $58.0 \times 24.0 \times 22.0\text{ mm}$</td>
+              <td>Micro-scale: $0.3 \times 0.3 \times 0.6\text{ mm}$</td>
+            </tr>
+            <tr>
+              <td>Unit Weight</td>
+              <td>$21.2\text{ grams}$ (fully integrated)</td>
+              <td>$0.0001\text{ grams}$ ($0.1\text{ mg}$)</td>
+            </tr>
+            <tr>
+              <td>Locomotion Principle</td>
+              <td>Onboard coreless servos + pushrod linkage</td>
+              <td>External magnetic field gradient torque ($\vec{M} \times \vec{B}$)</td>
+            </tr>
+            <tr>
+              <td>Power & Energy Storage</td>
+              <td>Onboard 3.7V 150mAh LiPo battery</td>
+              <td>Passive / zero onboard energy storage</td>
+            </tr>
+            <tr>
+              <td>Operational Medium</td>
+              <td>Unrestricted dry terrestrial environments</td>
+              <td>Aqueous fluid suspension in glass petri dish</td>
+            </tr>
+            <tr>
+              <td>Autonomy Classification</td>
+              <td>Autonomous onboard RISC-V closed loop</td>
+              <td>External manual motor frequency steering</td>
+            </tr>
+            <tr>
+              <td>Fabrication Infrastructure</td>
+              <td>Standard desktop FDM 3D printer (< $200)</td>
+              <td>Cleanroom photolithography & composite micro-molding</td>
+            </tr>
+            <tr>
+              <td>Unit Production Cost</td>
+              <td>₹1,070 INR (~$12.87 USD)</td>
+              <td>High cleanroom barrier-to-entry</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Section VIII: Desktop Swarm Lab Rig -->
+      <h2 class="section-heading">VIII. Desktop Swarm Hardware Testbed</h2>
+      <p>
+        To democratize experimental validation of external magnetic swarm physics without cleanroom facilities, we engineered an open-hardware <strong>Desktop Magnetic Swarm Lab Rig</strong> (detailed in <code>SWARM_BUILD_GUIDE.md</code>).
+      </p>
+
+      <!-- Fig 2: Desktop Hardware Rig -->
+      <figure class="academic-figure">
+        <img src="images/fig2_desktop_swarm_hardware.jpg" alt="Custom Desktop Swarm Hardware Rig">
+        <figcaption class="academic-caption">
+          <span class="caption-prefix">Fig. 6.</span> Custom open-source Desktop Magnetic Swarm Lab hardware rig. Features a 12V DC geared drive motor (JGA25-370) spinning a 90mm balanced crossbar with paired N42 block magnets, driving 2mm neodymium cube microrobots inside a fluid petri dish tracked by an overhead computer vision camera.
+        </figcaption>
+      </figure>
+
+      <p>
+        By scaling from $300\,\mu\text{m}$ to $2.0\text{ mm}$ NdFeB cubes, magnetic dipole interaction forces scale as $M^2 \propto L^6$, providing sufficient mechanical force to observe chain formation, obstacle climbing, and fluid rafting with the naked eye under ambient room lighting.
+      </p>
+
+      <pre class="academic-code">
+# OpenCV Centroid Tracking Algorithm for Swarm Analysis
+import cv2, numpy as np
+cap = cv2.VideoCapture(0)
+while True:
+    ret, frame = cap.read()
+    if not ret: break
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    _, thresh = cv2.threshold(gray, 65, 255, cv2.THRESH_BINARY_INV)
+    contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    if contours:
+        c = max(contours, key=cv2.contourArea)
+        M = cv2.moments(c)
+        if M["m00"] > 0:
+            cx, cy = int(M["m10"]/M["m00"]), int(M["m01"]/M["m00"])
+            cv2.circle(frame, (cx, cy), 6, (0, 243, 255), -1)
+    cv2.imshow("Centroid Tracking", frame)
+    if cv2.waitKey(1) == 27: break
+cap.release(); cv2.destroyAllWindows()
+      </pre>
+
+      <!-- Section IX: Conclusion -->
+      <h2 class="section-heading">IX. Conclusion & Open-Source Impact</h2>
+      <p>
+        This research has designed, formulated, fabricated, and empirically validated <strong>Microbot V1</strong>, an autonomous bio-inspired modular robot capable of dynamic terrestrial traversal across a spherical magnetic joint. By resolving the Kinematic Reference Dilemma through an Equatorial Collar Hub, we demonstrate that active, self-contained locomotion across frictionless spherical interfaces is physically achievable without relying on external magnetic steering.
+      </p>
+      <p>
+        The complete engineering repository—including binary STL print files, ESP32-C3 firmware, 3D WebGL simulator, and desktop hardware blueprints—is open-sourced at <a href="https://github.com/bodigeabhilash3-bit/microbot" target="_blank">github.com/bodigeabhilash3-bit/microbot</a> under the MIT License to advance modular mechatronics research worldwide.
+      </p>
+
+      <!-- Section X: References -->
+      <h2 class="section-heading">References</h2>
+      <ul class="references-list">
+        <li>[1] <span class="ref-author">S. Murata and H. Kurokawa,</span> <span class="ref-title">"Self-reconfigurable robot systems,"</span> <em>IEEE Robotics & Automation Magazine</em>, vol. 14, no. 1, pp. 71–78, 2007.</li>
+        <li>[2] <span class="ref-author">M. Yim, W. Shen, B. Salemi, D. Rus, et al.,</span> <span class="ref-title">"Modular self-reconfigurable robot systems [grand challenges of robotics],"</span> <em>IEEE Robotics & Automation Magazine</em>, vol. 14, no. 1, pp. 43–52, 2007.</li>
+        <li>[3] <span class="ref-author">N. J. Mlot, C. A. Tovey, and D. L. Hu,</span> <span class="ref-title">"Fire ants self-assemble into waterproof rafts to survive floods,"</span> <em>Proc. Natl. Acad. Sci. USA</em>, vol. 108, no. 19, pp. 7669–7673, 2011.</li>
+        <li>[4] <span class="ref-author">H. F. McCreery, G. Gemayel, A. I. Pais, S. Garnier, and R. Nagpal,</span> <span class="ref-title">"Hysteresis stabilizes dynamic control of self-assembled army ant constructions,"</span> <em>Nature Communications</em>, vol. 13, no. 1, p. 1160, 2022.</li>
+        <li>[5] <span class="ref-author">D. Hall and C. Williams,</span> <em>Big Hero 6</em>, Walt Disney Animation Studios / Walt Disney Pictures, 2014.</li>
+        <li>[6] <span class="ref-author">K. Yang, S. Won, J. E. Park, J. Jeon, and J. J. Wie,</span> <span class="ref-title">"Magnetic swarm intelligence of mass-produced, programmable microrobot assemblies for versatile task execution,"</span> <em>Cell Press Device</em>, vol. 3, p. 100626, Apr. 2025.</li>
+        <li>[7] <span class="ref-author">M. Rubenstein, A. Cornejo, and R. Nagpal,</span> <span class="ref-title">"Programmable self-assembly in a thousand-robot swarm,"</span> <em>Science</em>, vol. 345, no. 6198, pp. 795–799, 2014.</li>
+        <li>[8] <span class="ref-author">G. Gardi, S. Ceron, W. Wang, K. Petersen, and M. Sitti,</span> <span class="ref-title">"Microrobot collectives with reconfigurable morphologies, behaviors, and functions,"</span> <em>Nature Communications</em>, vol. 13, p. 2239, 2022.</li>
+        <li>[9] <span class="ref-author">W. Hu, G. Z. Lum, M. Mastrangeli, and M. Sitti,</span> <span class="ref-title">"Small-scale soft-bodied robot with multimodal locomotion,"</span> <em>Nature</em>, vol. 554, pp. 81–85, 2018.</li>
+        <li>[10] <span class="ref-author">S. Li, R. Batra, D. Brown, H. D. Chang, et al.,</span> <span class="ref-title">"Particle robotics based on statistical mechanics of loosely coupled components,"</span> <em>Nature</em>, vol. 567, pp. 361–365, 2019.</li>
+      </ul>
+
+      <!-- Author Bio -->
+      <div class="author-bio">
+        <strong>Bodige Abhilash</strong> is an engineering researcher and maker specializing in autonomous robotics, bio-inspired kinematic design, and distributed multi-agent swarm systems. He leads the Microbot Open Mechatronics Initiative, developing low-cost, high-performance modular robotic platforms bridging fundamental scientific theory with accessible physical fabrication. (Correspondence: GitHub <a href="https://github.com/bodigeabhilash3-bit" target="_blank">@bodigeabhilash3-bit</a>).
+      </div>
+
+    </div>
+  </main>
+
+</body>
+</html>

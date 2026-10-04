@@ -1,9 +1,12 @@
 # Microbot V1 — Autonomous Kinematic Prototype & Magnetic Swarm Lab
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Paper: Camera-Ready PDF](https://img.shields.io/badge/Paper-IEEE%20Camera--Ready%20PDF-red.svg)](paper.html)
 [![3D Print: STL Ready](https://img.shields.io/badge/3D%20Print-STL%20Ready-brightgreen.svg)](file:///c:/Users/HP/Desktop/cse/microbot/equator_collar.stl)
 [![Firmware: Arduino / ESP32](https://img.shields.io/badge/Firmware-Arduino%20%7C%20ESP32-orange.svg)](file:///c:/Users/HP/Desktop/cse/microbot/microbot_firmware.ino)
 [![Simulation: Three.js WebGL](https://img.shields.io/badge/Simulator-Three.js%20WebGL-cyan.svg)](file:///c:/Users/HP/Desktop/cse/microbot/index.html)
+
+> 📄 **Camera-Ready Academic Paper:** For physical printing, evaluation, or conference submission, view [`paper.html`](file:///c:/Users/HP/Desktop/cse/microbot/paper.html) and press **Ctrl+P** (Save as PDF). It formats as a two-column IEEE/Nature-style research paper with vector equations and high-resolution figures.
 
 > An open-source robotics research project inspired by *Big Hero 6* Microbots, bridging **mechatronic autonomous modular robotics** and **external magnetic swarm intelligence** (*Cell Press Device, 2025*).
 
@@ -14,6 +17,8 @@
 Most DIY replicas of the *Big Hero 6* Microbot are **passive magnetic props**—magnets inside plastic shells that snap into a static pose but cannot move independently.
 
 This project solves the **"Kinematic Reference Dilemma"** (Newton's 3rd Law on a frictionless spherical joint) to produce a **genuinely autonomous, self-powered crawling Microbot** without needing external magnets beneath the table. It also provides a digital replica of the cutting-edge **Cell Press Device (2025) Magnetic Swarm Lab** for untethered swarm research.
+
+![Microbot V1 3D Mechanical Assembly](images/fig1_microbot_cad_assembly.jpg)
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
@@ -101,6 +106,9 @@ python -m http.server 8080
 * **The Problem:** A motor inside a pod trying to rotate against a free, polished chrome steel sphere will simply slip inside the socket cup due to low friction ($\mu < 0.1$).
 * **The Solution:** A low-profile **Equatorial Collar Ring** clasps the ball equator. The servo horn connects to this collar via a **1.0mm piano wire pushrod** with precision Z-bends. When the servo actuates, it pushes against the collar, tilting the entire pod by up to **$\pm 38^\circ$**.
 
+![Fig 2: Kinematic Free Body Diagram & Collar Torque Resolution](images/fig4_kinematic_diagram.jpg)
+*Figure 2: Free-body diagram (FBD) of the spherical magnetic joint and the mechanical resolution to the Kinematic Reference Dilemma.*
+
 ---
 
 ## 🛠️ Bill of Materials (BOM)
@@ -139,6 +147,9 @@ python -m http.server 8080
 
 > ⚠️ **CRITICAL WIRING RULE:** Never power servos through the 3.3V pin of your microcontroller. Servos draw up to 500mA stall spikes that cause board brownouts. Wire the battery (+) directly to the servo red wires.
 
+![Fig 3: System Circuit Schematic and Dual Power Rail Architecture](images/fig5_circuit_schematic.jpg)
+*Figure 3: System circuit schematic showing raw battery power rail separation for servos to prevent microcontroller brownout resets.*
+
 ---
 
 ## 🏃 Gait Kinematics & Firmware (`microbot_firmware.ino`)
@@ -164,6 +175,15 @@ $$\theta_2(t) = \theta_{\text{neutral}} - A \cdot \sin(\omega t)$$
 ## 🔬 Scientific Foundations: Cell Press *Device* (2025)
 
 The project incorporates research from **Yang, Wie et al. (Cell Press *Device*, April 2025)**: *"Magnetic swarm intelligence of mass-produced, programmable microrobot assemblies for versatile task execution."*
+
+![Figure 4: Multi-Robot Swarm Collective Reconfiguration Topologies](images/fig6_swarm_topologies.jpg)
+*Figure 4: Multi-robot self-reconfiguration topologies: (A) Serial tandem chain crawling, (B) 2D Planar Honeycomb Lattice platform, and (C) Cantilever vertical arch bridge.*
+
+![Cell Press Device 2025 Magnetic Swarm Simulation](images/fig3_cell2025_swarm_lab.jpg)
+*Figure 5: Simulation of the Cell Press Device (2025) magnetic swarm system within a fluid petri dish stage.*
+
+![DIY Desktop Magnetic Swarm Lab Hardware](images/fig2_desktop_swarm_hardware.jpg)
+*Figure 6: Custom open-source Desktop Magnetic Swarm Lab testbed.*
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
