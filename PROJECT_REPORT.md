@@ -4,6 +4,8 @@
 # Design, Fabrication, and Kinematic Control of an Autonomous Bio-Inspired Microbot with Spherical Magnetic Articulation
 
 **DOCUMENT TYPE:** Technical Engineering Project Report & Lab Documentation  
+**AUTHOR / LEAD RESEARCHER:** Bodige Abhilash ([@bodigeabhilash3-bit](https://github.com/bodigeabhilash3-bit))  
+**REPOSITORY:** [https://github.com/bodigeabhilash3-bit/microbot](https://github.com/bodigeabhilash3-bit/microbot)  
 **DOMAIN:** Modular Robotics / Mechatronics / Computer Science & Engineering  
 **VERSION:** 1.0.0 (Prototype Stage)  
 **DATE:** October 2026  

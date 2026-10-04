@@ -193,9 +193,12 @@ The project incorporates research from **Yang, Wie et al. (Cell Press *Device*, 
 
 ---
 
-## 📜 License & Citation
+## 📜 Author, License & Citation
 
-Distributed under the **MIT License**.
+**Author / Creator:** Bodige Abhilash ([@bodigeabhilash3-bit](https://github.com/bodigeabhilash3-bit))  
+**Repository:** [https://github.com/bodigeabhilash3-bit/microbot](https://github.com/bodigeabhilash3-bit/microbot)  
+**License:** Distributed under the **MIT License**.
 
 If you use this architecture or research summary in your academic projects, please cite:
 * Yang, K., Won, S., Park, J. E., Jeon, J., & Wie, J. J. (2025). *Magnetic swarm intelligence of mass-produced, programmable microrobot assemblies for versatile task execution.* **Cell Press Device**, 3, 100626.
+
