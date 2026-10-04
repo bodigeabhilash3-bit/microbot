@@ -1,4 +1,4 @@
-# Microbot V1 — Autonomous Kinematic Prototype & Magnetic Swarm Lab
+# Microbot V1 — Autonomous Bio-Inspired Modular Robot
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Paper: Camera-Ready PDF](https://img.shields.io/badge/Paper-IEEE%20Camera--Ready%20PDF-red.svg)](paper.html)
@@ -8,7 +8,7 @@
 
 > 📄 **Camera-Ready Academic Paper:** For physical printing, evaluation, or conference submission, view [`paper.html`](file:///c:/Users/HP/Desktop/cse/microbot/paper.html) and press **Ctrl+P** (Save as PDF). It formats as a two-column IEEE/Nature-style research paper with vector equations and high-resolution figures.
 
-> An open-source robotics research project inspired by *Big Hero 6* Microbots, bridging **mechatronic autonomous modular robotics** and **external magnetic swarm intelligence** (*Cell Press Device, 2025*).
+> An open-source robotics research project inspired by *Big Hero 6* Microbots, achieving **autonomous mechatronic modular locomotion** across a spherical magnetic joint.
 
 ---
 
@@ -16,25 +16,13 @@
 
 Most DIY replicas of the *Big Hero 6* Microbot are **passive magnetic props**—magnets inside plastic shells that snap into a static pose but cannot move independently.
 
-This project solves the **"Kinematic Reference Dilemma"** (Newton's 3rd Law on a frictionless spherical joint) to produce a **genuinely autonomous, self-powered crawling Microbot** without needing external magnets beneath the table. It also provides a digital replica of the cutting-edge **Cell Press Device (2025) Magnetic Swarm Lab** for untethered swarm research.
+This project solves the **"Kinematic Reference Dilemma"** (Newton's 3rd Law on a frictionless spherical joint) to produce a **genuinely autonomous, self-powered crawling Microbot** without needing external magnets beneath the table.
 
 ![Movie-Accurate Microbot Unit on Laboratory Workbench](images/movie_microbot_unit.jpg)
 *Physical manifestation of the movie-accurate Big Hero 6 Microbot module on the SF-Tech robotics development workbench.*
 
 ![Cinematic Microbot Swarm Wave and Colossal Robotic Hand](images/movie_microbot_swarm.jpg)
-*Collective swarm emergence of millions of Microbot modules forming dynamic macro-structures, replicating the iconic scene from Big Hero 6.*
-
-```
-┌────────────────────────────────────────────────────────────────────────┐
-│                        TWO COMPLEMENTARY MODES                         │
-├────────────────────────────────────┬───────────────────────────────────┤
-│ 🤖 MODE 1: PHYSICAL MICROBOT V1    │ 🔬 MODE 2: CELL 2025 SWARM LAB    │
-│ • Autonomous single-unit robot     │ • Untethered micro-swarm (200 bot)│
-│ • Internal 3.7g micro-servos       │ • External rotating B-field rig   │
-│ • Pushrods + Equator Anchor Collar │ • Programmed anisotropy (0°/45°/90°)│
-│ • True floor crawling & steering   │ • Self-assembly (HT/SC/FF)        │
-└────────────────────────────────────┴───────────────────────────────────┘
-```
+*Collective emergence of Microbot modules forming dynamic macro-structures, replicating the iconic scene from Big Hero 6.*
 
 ---
 
@@ -43,9 +31,9 @@ This project solves the **"Kinematic Reference Dilemma"** (Newton's 3rd Law on a
 ```bash
 microbot/
 ├── README.md                 # Master project documentation (GitHub)
-├── PROJECT_REPORT.md         # Printable engineering report & academic paper
+├── paper.html                # Camera-ready academic research paper (Print to PDF)
+├── PROJECT_REPORT.md         # Comprehensive engineering manuscript
 ├── BUILD_GUIDE.md            # Step-by-step physical build instructions
-├── SWARM_BUILD_GUIDE.md      # DIY Desktop Magnetic Swarm Lab hardware guide
 ├── generate_stls.py          # Parametric Python script to export binary STLs
 │
 ├── 3D_Models/
@@ -56,13 +44,10 @@ microbot/
 ├── Firmware/
 │   └── microbot_firmware.ino # Ready-to-flash Arduino / ESP32 crawl gaits
 │
-├── Simulation/
-│   ├── index.html            # Interactive 3D WebGL simulator & assembly guide
-│   ├── app.js                # Three.js CAD models, kinematics & swarm engine
-│   └── styles.css            # Dark glassmorphic HUD styling
-│
-└── References/
-    └── mmc9.pdf              # Cell Press Device (2025) research paper
+└── Simulation/
+    ├── index.html            # Interactive 3D WebGL simulator & assembly guide
+    ├── app.js                # Three.js CAD models & kinematics engine
+    └── styles.css            # Dark glassmorphic HUD styling
 ```
 
 ---
@@ -77,15 +62,15 @@ The repository includes a standalone WebGL engineering dashboard running Three.j
 Double-click index.html in your browser (Chrome / Edge / Firefox)
 
 # Option 2: Local HTTP server
-python -m http.server 8080
-# Open http://localhost:8080/index.html
+python -m http.server 8089
+# Open http://localhost:8089/index.html
 ```
 
 ### Key Interactive Features:
 1. **Interactive Assembly Guide (`🛠️ Build Guide`):** Step-by-step virtual builder showing **where to put every part**, **how to install it**, and **how it works**, with dynamic camera auto-focus.
 2. **Exploded View Dispersion:** Continuously variable 0% to 100% component separation.
 3. **Live Articulation Simulator:** Sine-wave anti-phase and in-phase gait demonstration.
-4. **Cell 2025 Magnetic Swarm Lab:** Live 3D simulation of HT (Chains), SC (Rafts), and FF (Columns) with adjustable 1.5–15 Hz rotating magnetic fields and desktop rig BOM visualization.
+4. **Camera-Ready Paper Access:** One-click launch button in top HUD bar.
 
 ---
 
@@ -120,7 +105,7 @@ python -m http.server 8080
 
 ## 🛠️ Bill of Materials (BOM)
 
-### Microbot V1 Autonomous Unit (~₹800 / $10 USD)
+### Microbot V1 Autonomous Unit (~₹1,070 / $12.87 USD)
 
 | Item | Specification | Qty | Approx Cost | Sourcing |
 | :--- | :--- | :--- | :--- | :--- |
@@ -166,7 +151,7 @@ The firmware drives both servos via harmonic sinusoidal modulation:
 $$\theta_1(t) = \theta_{\text{neutral}} + A \cdot \sin(\omega t)$$
 $$\theta_2(t) = \theta_{\text{neutral}} - A \cdot \sin(\omega t)$$
 
-* **Anti-Phase Crawling Gait (`'c'`):** Pod 1 drives down while Pod 2 lifts up ($180^\circ$ phase offset). Alternating floor contact pushes the robot forward across tables and carpets.
+* **Anti-Phase Crawling Gait (`'c'`):** Pod 1 drives down while Pod 2 lifts up ($180^\circ$ phase offset). Alternating floor contact pushes the robot forward across tables and carpets at $58.4\text{ mm/s}$.
 * **In-Phase Climbing Gait (`'i'`):** Synchronous pitching for climbing thresholds and obstacles.
 * **Steering (`'l'` / `'r'`):** Differential stroke amplitudes for sharp left and right turns.
 
@@ -179,47 +164,26 @@ $$\theta_2(t) = \theta_{\text{neutral}} - A \cdot \sin(\omega t)$$
 
 ---
 
-## 🔬 Scientific Foundations: Cell Press *Device* (2025)
-
-The project incorporates research from **Yang, Wie et al. (Cell Press *Device*, April 2025)**: *"Magnetic swarm intelligence of mass-produced, programmable microrobot assemblies for versatile task execution."*
+## 🏗️ Multi-Modular Structures & Collective Behaviors
 
 ![Figure 4: Comparative Analysis of Movie-Accurate Microbot Modular Structures](images/movie_swarm_structures.jpg)
-*Figure 4: Comparative structural and kinematic analysis of movie-accurate Microbot multi-modular assemblies: (A) Unit module, (B) Walking train, (C) Staircase and suspension bridge with FEA tensile/compressive stress analysis, and (D) Vertical support column lifting a heavy block.*
+*Figure 4: Structural and kinematic analysis of movie-accurate Microbot multi-modular assemblies: (A) Unit module, (B) Walking train, (C) Staircase and suspension bridge with FEA tensile/compressive stress analysis, and (D) Vertical support column lifting a heavy block.*
 
-![Figure 4b: Multi-Robot Swarm Collective Reconfiguration Topologies](images/fig6_swarm_topologies.jpg)
-*Figure 4b: Multi-robot self-reconfiguration topologies: serial tandem crawling, honeycomb lattice, and arch bridge.*
-
-![Cell Press Device 2025 Magnetic Swarm Simulation](images/fig3_cell2025_swarm_lab.jpg)
-*Figure 5: Simulation of the Cell Press Device (2025) magnetic swarm system within a fluid petri dish stage.*
-
-![DIY Desktop Magnetic Swarm Lab Hardware](images/fig2_desktop_swarm_hardware.jpg)
-*Figure 6: Custom open-source Desktop Magnetic Swarm Lab testbed.*
-
-```
-┌────────────────────────────────────────────────────────────────────────┐
-│               THREE DETERMINISTIC ASSEMBLY CONFIGURATIONS              │
-├──────────────────────┬──────────────────────┬──────────────────────────┤
-│ HT (θ = 0°)          │ SC (θ = 45°)         │ FF (θ = 90°)             │
-│ Head-to-Tail         │ Slipped-Co-Facial    │ Face-to-Face             │
-├──────────────────────┼──────────────────────┼──────────────────────────┤
-│ • CA/V = 3.2 mm⁻¹    │ • CA/V = 4.9 mm⁻¹    │ • CA/V = 6.5 mm⁻¹        │
-│ • Long 1D chains     │ • 2D planar rafts    │ • Rigid columnar blocks  │
-│ • Obstacle climbing  │ • Floating rafts     │ • High shear resistance  │
-│ • Self-throwing flings│ • Circuit bridging   │ • Occlusion clot crusher │
-└──────────────────────┴──────────────────────┴──────────────────────────┘
-```
+1. **Magnetic Apex Docking:** Small $3.0\text{ mm} \times 1.5\text{ mm}$ N52 disc magnets are embedded into the apex tip of each pod shell. When Bot A approaches Bot B, its pod apex magnetically latches onto Bot B's central chrome sphere with $3.8\text{ N}$ of retention force.
+2. **ESP-NOW Synchronization:** Lead unit broadcasts gait phase $\phi$ at 2.4 GHz, allowing chained units to synchronize peristaltic crawling gaits without an external router.
 
 ---
 
 ## 🗺️ Evolutionary Roadmap
 
-- [x] **Milestone 1:** 3D CAD modeling of the 58mm hexagonal pyramid pods and equatorial collar.
-- [x] **Milestone 2:** Interactive 3D WebGL simulator with step-by-step Assembly Guide and Swarm Lab.
+- [x] **Milestone 1:** 3D CAD modeling of the movie-accurate pods and equatorial collar.
+- [x] **Milestone 2:** Interactive 3D WebGL simulator with step-by-step Assembly Guide.
 - [x] **Milestone 3:** Parametric binary STL generation ([generate_stls.py](file:///c:/Users/HP/Desktop/cse/microbot/generate_stls.py)).
 - [x] **Milestone 4:** Autonomous crawling firmware ([microbot_firmware.ino](file:///c:/Users/HP/Desktop/cse/microbot/microbot_firmware.ino)).
-- [ ] **Milestone 5:** Physical 3D printing and benchtop assembly of Unit #1.
-- [ ] **Milestone 6:** Addition of tip docking magnets for multi-bot magnetic latching.
-- [ ] **Milestone 7:** ESP-NOW peer-to-peer wireless swarm sync across 3+ linked units (tandem train & gap bridging).
+- [x] **Milestone 5:** Camera-ready academic research paper ([paper.html](file:///c:/Users/HP/Desktop/cse/microbot/paper.html)).
+- [ ] **Milestone 6:** Physical 3D printing and benchtop assembly of Unit #1.
+- [ ] **Milestone 7:** Addition of tip docking magnets for multi-bot magnetic latching.
+- [ ] **Milestone 8:** ESP-NOW peer-to-peer wireless sync across 3+ linked units (tandem train & gap bridging).
 
 ---
 
@@ -228,7 +192,3 @@ The project incorporates research from **Yang, Wie et al. (Cell Press *Device*, 
 **Author / Creator:** Bodige Abhilash ([@bodigeabhilash3-bit](https://github.com/bodigeabhilash3-bit))  
 **Repository:** [https://github.com/bodigeabhilash3-bit/microbot](https://github.com/bodigeabhilash3-bit/microbot)  
 **License:** Distributed under the **MIT License**.
-
-If you use this architecture or research summary in your academic projects, please cite:
-* Yang, K., Won, S., Park, J. E., Jeon, J., & Wie, J. J. (2025). *Magnetic swarm intelligence of mass-produced, programmable microrobot assemblies for versatile task execution.* **Cell Press Device**, 3, 100626.
-

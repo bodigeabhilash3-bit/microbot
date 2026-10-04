@@ -25,8 +25,8 @@
       <div class="brand">
         <div class="pulse-indicator"></div>
         <div class="brand-text">
-          <h1 id="header-main-title">MICROBOT ARCHITECTURE LAB</h1>
-          <span id="header-sub-title" class="subtext">PHYSICAL PROTOTYPE ASSEMBLY & CELL 2025 SWARM SIMULATION</span>
+          <h1 id="header-main-title">MICROBOT V1 CAD & ASSEMBLY LAB</h1>
+          <span id="header-sub-title" class="subtext">AUTONOMOUS BIO-INSPIRED KINEMATIC PROTOTYPE</span>
         </div>
       </div>
 
@@ -36,27 +36,17 @@
           <span class="tab-icon">🤖</span>
           <span>Physical Microbot V1</span>
         </button>
-        <button id="tab-swarm" class="tab-btn" title="Cell Device 2025 Untethered Magnetic Swarm Intelligence">
-          <span class="tab-icon">🔬</span>
-          <span>Cell 2025 Swarm Lab</span>
-        </button>
         <a href="paper.html" target="_blank" class="tab-btn doc-btn" title="Open Camera-Ready Research Paper for Physical Printing">
           <span class="tab-icon">📄</span>
-          <span>Research Paper (Print / PDF)</span>
+          <span>Academic Paper (Print / PDF)</span>
         </a>
       </div>
 
       <!-- Dynamic System Status Badges -->
       <div id="status-container-v1" class="system-status">
-        <span class="badge">GEOMETRY: HEXAGONAL PYRAMID</span>
+        <span class="badge">GEOMETRY: HEXAGONAL CYLINDER</span>
         <span class="badge highlight">BALL: 12mm CHROME STEEL</span>
         <span class="badge success">MAGNETIC JOINT: PASSIVE NORMAL 5.2N</span>
-      </div>
-
-      <div id="status-container-swarm" class="system-status hidden">
-        <span class="badge">UNIT: 300×300×600 µm³</span>
-        <span class="badge highlight" id="badge-swarm-config">CONFIG: HT ASSEMBLY (0°)</span>
-        <span class="badge success" id="badge-swarm-freq">FIELD: 5.0 Hz ROTATING</span>
       </div>
     </header>
 
@@ -192,88 +182,6 @@
       </div>
     </aside>
 
-    <!-- Floating HUD Left: Mode Controls for Cell 2025 Magnetic Swarm Lab -->
-    <aside id="swarm-controls-panel" class="glass-panel hidden">
-      <div class="panel-section">
-        <h2>SWARM LAB VIEW MODE</h2>
-        <div class="button-group">
-          <button id="btn-swarm-view-micro" class="btn active" title="Micro-Scale Swarm Simulation from the Cell 2025 Paper">🔬 Micro Swarm</button>
-          <button id="btn-swarm-view-hardware" class="btn" title="Physical DIY Desktop Hardware Rig Setup">🛠️ Desktop Rig (BOM)</button>
-        </div>
-      </div>
-
-      <div class="panel-section" id="section-swarm-configs">
-        <h2>SWARM CONFIGURATIONS (CELL 2025)</h2>
-        <div class="swarm-config-list">
-          <button id="btn-swarm-ht" class="swarm-config-btn active">
-            <div class="sc-title">
-              <span class="sc-badge ht">HT (θ = 0°)</span>
-              <strong>Head-to-Tail Assembly</strong>
-            </div>
-            <p class="sc-desc">Longitudinal dipoles form flexible chains. Highest aspect ratio for obstacle climbing & flinging.</p>
-            <div class="sc-stats"><span>CA/V: 3.2 mm⁻¹</span> <span>Stiffness: Low</span> <span>Speed: 64 mm/s</span></div>
-          </button>
-
-          <button id="btn-swarm-sc" class="swarm-config-btn">
-            <div class="sc-title">
-              <span class="sc-badge sc">SC (θ = 45°)</span>
-              <strong>Slipped-Co-Facial Assembly</strong>
-            </div>
-            <p class="sc-desc">Diagonal dipoles form dense 2D rafts. Maximum packing density for cargo transport & circuit bridging.</p>
-            <div class="sc-stats"><span>CA/V: 4.9 mm⁻¹</span> <span>Stiffness: Medium</span> <span>Neighbor: 4.1</span></div>
-          </button>
-
-          <button id="btn-swarm-ff" class="swarm-config-btn">
-            <div class="sc-title">
-              <span class="sc-badge ff">FF (θ = 90°)</span>
-              <strong>Face-to-Face Assembly</strong>
-            </div>
-            <p class="sc-desc">Transverse dipoles form thick rigid columns. Maximum shear stiffness for crushing clots & cutting liquid metal.</p>
-            <div class="sc-stats"><span>CA/V: 6.5 mm⁻¹</span> <span>Stiffness: Ultra High</span> <span>Impact: Max</span></div>
-          </button>
-        </div>
-      </div>
-
-      <div class="panel-section">
-        <h2>MAGNETIC FIELD ACTUATION</h2>
-        <div class="control-row">
-          <div class="section-header">
-            <label>ROTATION FREQUENCY</label>
-            <span id="label-swarm-freq" class="mono-tag">5.0 Hz</span>
-          </div>
-          <div class="freq-btn-group">
-            <button class="freq-btn" data-freq="1.5">1.5 Hz</button>
-            <button class="freq-btn" data-freq="2.5">2.5 Hz</button>
-            <button class="freq-btn active" data-freq="5">5.0 Hz</button>
-            <button class="freq-btn" data-freq="10">10 Hz</button>
-            <button class="freq-btn" data-freq="15">15 Hz</button>
-          </div>
-        </div>
-
-        <div class="control-row">
-          <div class="section-header">
-            <label>MOTION ACTUATION MODE</label>
-          </div>
-          <div class="button-group">
-            <button id="btn-motion-spin" class="btn active" title="Low gradient 0.15 T/m: Rotating & Pivoting walking">Spinning & Pivoting</button>
-            <button id="btn-motion-orbital" class="btn" title="High gradient 7.0 T/m: Agile 880 mm/s orbital flight">Orbital Dragging</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="panel-section">
-        <h2>TASK MISSIONS (FROM PAPER)</h2>
-        <div class="mission-grid">
-          <button id="btn-mission-climb" class="mission-btn active">🧗 Obstacle Climbing (HT)</button>
-          <button id="btn-mission-throw" class="mission-btn">🚀 Self-Throwing Fling (HT)</button>
-          <button id="btn-mission-raft" class="mission-btn">🚢 Water Cargo Raft (SC)</button>
-          <button id="btn-mission-bridge" class="mission-btn">💡 LED Circuit Bridge (SC)</button>
-          <button id="btn-mission-unclog" class="mission-btn">💉 Tube Clot Unclogging (FF)</button>
-          <button id="btn-mission-morph" class="mission-btn">💧 Liquid Metal Morph (FF)</button>
-        </div>
-      </div>
-    </aside>
-
     <!-- Floating HUD Right: Component Inspector Details -->
     <aside id="inspector-panel" class="glass-panel">
       <div class="inspector-header">
@@ -319,28 +227,6 @@
         </ol>
       </div>
 
-      <!-- Research Paper Swarm Equations Card (Visible when Swarm Lab is Active) -->
-      <div class="assembly-tracker hidden" id="tracker-swarm">
-        <h3>CELL 2025 RESEARCH FORMULAS</h3>
-        <div class="formula-box">
-          <div class="f-row">
-            <span class="f-label">CA/V Ratio:</span>
-            <code class="f-code" id="formula-cav">CA/V = (n - 1) / (a * n)</code>
-          </div>
-          <div class="f-row">
-            <span class="f-label">Magnetic Torque:</span>
-            <code class="f-code">τ = M × B (Aligns with field)</code>
-          </div>
-          <div class="f-row">
-            <span class="f-label">Centrifugal Force:</span>
-            <code class="f-code">F_c = m * r * ω² (Flinging)</code>
-          </div>
-          <div class="f-row">
-            <span class="f-label">Max Field B_max:</span>
-            <code class="f-code">0.35 Tesla (N35 Rig)</code>
-          </div>
-        </div>
-      </div>
     </aside>
 
     <!-- Bottom HUD Bar: Telemetry & Dimensions Legend -->
@@ -366,30 +252,6 @@
         <div class="telemetry-item">
           <span class="t-label">ACTUATOR TORQUE</span>
           <span class="t-value">0.65 kg·cm (5.0x Margin)</span>
-        </div>
-      </div>
-
-      <!-- Swarm Telemetry -->
-      <div id="telemetry-swarm" class="telemetry-row hidden">
-        <div class="telemetry-item">
-          <span class="t-label">SWARM POPULATION</span>
-          <span class="t-value" id="swarm-tele-count">200 Micro-Units</span>
-        </div>
-        <div class="telemetry-item">
-          <span class="t-label">UNIT DIMENSIONS</span>
-          <span class="t-value">300 × 300 × 600 µm³</span>
-        </div>
-        <div class="telemetry-item">
-          <span class="t-label">ASSEMBLY CA/V</span>
-          <span class="t-value" id="swarm-tele-cav">3.2 mm⁻¹ (HT)</span>
-        </div>
-        <div class="telemetry-item">
-          <span class="t-label">FIELD GRADIENT</span>
-          <span class="t-value" id="swarm-tele-grad">0.15 T/m (Spinning)</span>
-        </div>
-        <div class="telemetry-item">
-          <span class="t-label">PEAK SPEED</span>
-          <span class="t-value" id="swarm-tele-speed">64.0 mm/s (108 BL/s)</span>
         </div>
       </div>
 

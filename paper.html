@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Autonomous Bio-Inspired Modular Microbots — Research Paper | Bodige Abhilash</title>
+  <title>Autonomous Bio-Inspired Modular Microbot — Research Paper | Bodige Abhilash</title>
   <meta name="description" content="Publication-grade academic research paper on Autonomous Bio-Inspired Modular Microbots with Magnetic Spherical Articulation by Bodige Abhilash. Replicating Big Hero 6 movie aesthetics and physics.">
   <meta name="author" content="Bodige Abhilash">
   
@@ -407,20 +407,6 @@
       letter-spacing: 0.05em;
     }
 
-    /* Code & Algorithms */
-    pre.academic-code {
-      font-family: var(--font-mono);
-      font-size: 7.5pt;
-      line-height: 1.35;
-      background: #f8fafc;
-      border: 1px solid #cbd5e1;
-      padding: 10px;
-      border-radius: 4px;
-      overflow-x: auto;
-      margin: 10px 0;
-      break-inside: avoid;
-    }
-
     /* Highlight Callouts */
     .callout-box {
       border-left: 3px solid #f59e0b;
@@ -532,7 +518,6 @@
         color: #000000 !important;
       }
 
-      /* Force high fidelity graphics printing */
       img {
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
@@ -552,7 +537,7 @@
         <line x1="16" y1="17" x2="8" y2="17"></line>
         <polyline points="10 9 9 9 8 9"></polyline>
       </svg>
-      <span>Big Hero 6 Microbot Research Paper • Camera-Ready Physical Print</span>
+      <span>Big Hero 6 Autonomous Microbot Research Paper • Camera-Ready Physical Print</span>
     </div>
     <div class="toolbar-actions">
       <button class="btn btn-primary" onclick="window.print()">
@@ -591,12 +576,12 @@
 
     <!-- Title and Author Metadata -->
     <section class="article-header">
-      <h1 class="article-title">Autonomous Bio-Inspired Modular Microbots with Magnetic Spherical Articulation: Resolving the Kinematic Reference Dilemma and Swarm Collective Locomotion</h1>
+      <h1 class="article-title">Autonomous Bio-Inspired Modular Microbot with Magnetic Spherical Articulation: Resolving the Kinematic Reference Dilemma and Terrestrial Locomotion</h1>
       
       <div class="article-authors">Bodige Abhilash</div>
       <div class="author-affiliations">
         Department of Computer Science and Engineering, Robotics and Autonomous Systems Laboratory<br>
-        Specialization in Bio-Inspired Meso-Scale Mechatronics and Collective Swarm Intelligence
+        Specialization in Bio-Inspired Meso-Scale Mechatronics and Modular Robotic Systems
       </div>
       
       <div class="author-metadata">
@@ -604,17 +589,17 @@
         <span>•</span>
         <span><strong>Project Repository:</strong> <a href="https://github.com/bodigeabhilash3-bit/microbot" target="_blank">bodigeabhilash3-bit/microbot</a></span>
         <span>•</span>
-        <span><strong>Document Version:</strong> 3.0 (October 2026)</span>
+        <span><strong>Document Version:</strong> 4.0 (October 2026)</span>
       </div>
     </section>
 
     <!-- Abstract Box -->
     <section class="abstract-container">
       <div class="abstract-text">
-        <span class="abstract-title">Abstract—</span>Miniaturized bio-inspired modular robots capable of dynamic terrain traversal and self-reconfiguration represent a foundational paradigm in autonomous systems. While cultural archetypes—such as the Microbots depicted in <em>Big Hero 6</em>—portray seamless spherical magnetic locomotion, physical implementations typically collapse into passive magnetic curiosities or externally steered colloidal suspensions. This paper presents the mechanical design, kinematic formulation, embedded electronics, and experimental validation of an autonomous, self-propelled meso-scale Microbot (Microbot V1) replicating the exact cinematic form factor and swarm physics. We mathematically resolve the <strong>Kinematic Reference Dilemma</strong>—the inability of internal actuators to transmit net torque across a frictionless spherical magnetic joint governed by Newton's Third Law ($\sum \vec{\tau} = 0$)—by introducing a low-profile <strong>Equatorial Collar Hub</strong>. Utilizing dual 3.7g sub-micro coreless servos driving 1.0mm spring steel pushrod linkages anchored to this collar, independent pitch articulation of $\pm 38.0^\circ$ is achieved with an Euler column buckling safety factor of $SF = 20.08$. The 58.0mm elongated hexagonal-faceted cylindrical chassis is aerodynamically profiled and fabricated via precision FDM additive manufacturing. We implement an onboard microcontroller architecture (ESP32-C3 / Arduino) executing harmonic sinusoidal gaits, demonstrating autonomous terrestrial scuttling at $45-64\text{ mm/s}$ without external magnetic manipulation. Furthermore, we benchmark our mechatronic platform against state-of-the-art untethered magnetic swarm research (<em>Cell Press Device, 2025</em>), providing complete engineering drawings, 3D binary STL CAD models, an interactive WebGL simulation environment, and open-source control firmware.
+        <span class="abstract-title">Abstract—</span>Miniaturized bio-inspired modular robots capable of dynamic terrain traversal and self-reconfiguration represent a foundational paradigm in autonomous systems. While cultural archetypes—such as the Microbots depicted in <em>Big Hero 6</em>—portray seamless spherical magnetic locomotion, physical implementations typically collapse into passive magnetic curiosities. This paper presents the mechanical design, kinematic formulation, embedded electronics, and experimental validation of an autonomous, self-propelled meso-scale Microbot (Microbot V1) replicating the exact cinematic form factor. We mathematically resolve the <strong>Kinematic Reference Dilemma</strong>—the inability of internal actuators to transmit net torque across a frictionless spherical magnetic joint governed by Newton's Third Law ($\sum \vec{\tau} = 0$)—by introducing a low-profile <strong>Equatorial Collar Hub</strong>. Utilizing dual 3.7g sub-micro coreless servos driving 1.0mm spring steel pushrod linkages anchored to this collar, independent pitch articulation of $\pm 38.0^\circ$ is achieved with an Euler column buckling safety factor of $SF = 20.08$. The 58.0mm elongated hexagonal-faceted cylindrical chassis is aerodynamically profiled and fabricated via precision FDM additive manufacturing. We implement an onboard microcontroller architecture (ESP32-C3 / Arduino) executing harmonic sinusoidal gaits, demonstrating autonomous terrestrial scuttling at $45-64\text{ mm/s}$ with zero reliance on external magnetic manipulation. We provide complete engineering drawings, 3D binary STL CAD models, an interactive WebGL simulation environment, and open-source control firmware.
       </div>
       <div class="keywords-line">
-        <span class="keywords-label">Index Terms—</span>Modular Robotics, Spherical Magnetic Joint, Kinematic Reference Dilemma, Underactuated Locomotion, Bio-Inspired Gait Synthesis, Magnetic Swarm Intelligence, Micro-Actuation, Euler Column Buckling.
+        <span class="keywords-label">Index Terms—</span>Modular Robotics, Spherical Magnetic Joint, Kinematic Reference Dilemma, Underactuated Locomotion, Bio-Inspired Gait Synthesis, Micro-Actuation, Euler Column Buckling, Multi-Module Docking.
       </div>
     </section>
 
@@ -639,23 +624,23 @@
       </figure>
 
       <p>
-        However, maker community efforts to replicate these robots in the physical world frequently encounter a fatal mechanical barrier: <em>the resulting prototypes are completely inert</em>. They snap together under magnetic attraction, but possess zero capacity to move, pivot, or articulate. Conversely, scientific literature in microrobotics (e.g., Yang et al., <em>Cell Press Device, 2025</em>) achieves remarkable swarm behaviors—such as climbing, obstacle flinging, and liquid metal morphing—but relies entirely on <strong>external rotating magnetic fields</strong> driven by hidden high-RPM motors underneath a petri dish [6]. The microrobots themselves possess zero onboard computational or actuation autonomy.
+        However, maker community efforts to replicate these robots in the physical world frequently encounter a fatal mechanical barrier: <em>the resulting prototypes are completely inert</em>. They snap together under magnetic attraction, but possess zero capacity to move, pivot, or articulate. 
       </p>
       <p>
-        This research bridges the chasm between external magnetic manipulation and autonomous modular robotics. We design, formulate, and fabricate <strong>Microbot V1</strong>, a self-contained, battery-powered modular robot that achieves active articulation across a spherical magnetic joint and crawls autonomously across natural terrain.
+        This research bridges the chasm between static props and autonomous modular robotics. We design, formulate, and fabricate <strong>Microbot V1</strong>, a self-contained, battery-powered modular robot that achieves active articulation across a spherical magnetic joint and crawls autonomously across natural terrain.
       </p>
 
-      <!-- Section II: Movie Swarm Dynamics -->
-      <h2 class="section-heading">II. Cinematic Swarm Emergence & Physics</h2>
+      <!-- Section II: Movie Collective Dynamics -->
+      <h2 class="section-heading">II. Modular Macro-Scale Reconfiguration</h2>
       <p>
-        In the canonical demonstration depicted in <em>Big Hero 6</em>, Hiro Hamada commands millions of microbots through a neural transmitter headband, generating fluid-like macro-structures including towering waves, colossal grasping hands, and cantilever bridges.
+        In the canonical demonstration depicted in <em>Big Hero 6</em>, Hiro Hamada commands microbots to interlock magnetically into fluid-like macro-structures including towering waves, colossal grasping hands, and cantilever bridges.
       </p>
 
       <!-- Fig 2: Full-Width Movie Swarm Emergence -->
       <figure class="academic-figure full-width">
-        <img src="images/movie_microbot_swarm.jpg" alt="Massive Swarm Wave and Colossal Robotic Hand">
+        <img src="images/movie_microbot_swarm.jpg" alt="Massive Modular Wave and Colossal Robotic Hand">
         <figcaption class="academic-caption">
-          <span class="caption-prefix">Fig. 2.</span> Collective swarm emergence of millions of Microbot modules forming dynamic macro-structures within an exhibition arena, replicating the iconic scene from <em>Big Hero 6</em>. Individual modules interlock ball-to-socket, transmitting magnetic shear forces and coordinated actuation to rise into a cohesive towering wave and a giant grasping hand under distributed control.
+          <span class="caption-prefix">Fig. 2.</span> Collective emergence of Microbot modules forming dynamic macro-structures within an exhibition arena, replicating the iconic scene from <em>Big Hero 6</em>. Individual modules interlock ball-to-socket, transmitting magnetic shear forces and coordinated actuation to rise into a cohesive towering wave and a giant grasping hand under distributed control.
         </figcaption>
       </figure>
 
@@ -989,17 +974,17 @@
         <div class="equation-number">(11)</div>
       </div>
 
-      <!-- Section VIII: Swarm Metamaterials & Structures -->
+      <!-- Section VIII: Modular Structures & Metamaterials -->
       <h2 class="section-heading">VIII. Multi-Modular Structures & Metamaterials</h2>
       <p>
         Having established autonomous locomotion for individual units, the system architecture scales modularly to multi-robot collective behaviors through magnetic apex coupling and peer-to-peer ESP-NOW radio synchronization.
       </p>
 
-      <!-- Fig 6: Full-Width Movie Swarm Structures -->
+      <!-- Fig 6: Full-Width Movie Modular Structures -->
       <figure class="academic-figure full-width">
         <img src="images/movie_swarm_structures.jpg" alt="Comparative Analysis of Movie-Accurate Microbot Modular Structures">
         <figcaption class="academic-caption">
-          <span class="caption-prefix">Fig. 6.</span> Comparative structural and kinematic analysis of movie-accurate Microbot multi-modular assemblies. (A) Individual Microbot module composition with sleek magnetic pods, interconnecting chrome sphere, and integrated circuitry. (B) Locomotion of an articulated robotic train or spine structure traversing irregular terrain with ground contact force vectors $F_C$ and stress distribution. (C) Microbot self-assembly into complex load-bearing structures: (i) self-assembled staircase, and (ii) suspension bridge carrying dynamic vehicular load, illustrating finite element analysis (FEA) tensile stress (red) and compressive stress (green). (D) Towering support column under vertical heavy-object manipulation.
+          <span class="caption-prefix">Fig. 6.</span> Structural and kinematic analysis of movie-accurate Microbot multi-modular assemblies. (A) Individual Microbot module composition with sleek magnetic pods, interconnecting chrome sphere, and integrated circuitry. (B) Locomotion of an articulated robotic train or spine structure traversing irregular terrain with ground contact force vectors $F_C$ and stress distribution. (C) Microbot self-assembly into complex load-bearing structures: (i) self-assembled staircase, and (ii) suspension bridge carrying dynamic vehicular load, illustrating finite element analysis (FEA) tensile stress (red) and compressive stress (green). (D) Towering support column under vertical heavy-object manipulation.
         </figcaption>
       </figure>
 
@@ -1007,121 +992,13 @@
         Each pod apex houses an embedded $3.0 \times 1.5\text{ mm}$ N52 NdFeB disc magnet. When unit $A$ aligns with unit $B$, its apex magnet clamps onto unit $B$'s central chrome sphere with $3.8\text{ N}$ of magnetic retention force, creating an articulated multi-segment kinematic chain without requiring complex latching servos.
       </p>
 
-      <!-- Section IX: Comparative Benchmark -->
-      <h2 class="section-heading">IX. Comparative Benchmark: Cell Press Device (2025)</h2>
-      <p>
-        To establish rigorous academic positioning, we benchmark Microbot V1 against the latest microrobotics literature published by Yang, Wie et al. in <em>Cell Press Device</em> (April 2025), entitled <em>"Magnetic swarm intelligence of mass-produced, programmable microrobot assemblies for versatile task execution"</em> [6].
-      </p>
-
-      <!-- Fig 7: Cell 2025 Swarm Lab -->
-      <figure class="academic-figure">
-        <img src="images/fig3_cell2025_swarm_lab.jpg" alt="Cell Press Device 2025 Swarm Simulation">
-        <figcaption class="academic-caption">
-          <span class="caption-prefix">Fig. 7.</span> Simulation of the Cell Press Device (2025) magnetic swarm system within a fluid petri dish stage. The system demonstrates three distinct assembly states: Head-to-Tail (HT 0°) flexible chains climbing an obstacle barrier, Slipped-Co-Facial (SC 45°) dense 2D floating rafts, and Face-to-Face (FF 90°) high-stiffness columns driven by a rotating permanent magnet rig.
-        </figcaption>
-      </figure>
-
-      <div class="academic-table-container full-width">
-        <div class="table-caption">TABLE II: Architectural Benchmark: Autonomous Microbot V1 vs. Cell Press Device (2025)</div>
-        <table class="booktabs">
-          <thead>
-            <tr>
-              <th>Evaluation Dimension</th>
-              <th>Autonomous Microbot V1 (This Work)</th>
-              <th>Cell Press Device (2025) Microrobots [6]</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Physical Dimensions</td>
-              <td>Meso-scale: $58.0 \times 24.0 \times 22.0\text{ mm}$</td>
-              <td>Micro-scale: $0.3 \times 0.3 \times 0.6\text{ mm}$</td>
-            </tr>
-            <tr>
-              <td>Unit Weight</td>
-              <td>$21.2\text{ grams}$ (fully integrated)</td>
-              <td>$0.0001\text{ grams}$ ($0.1\text{ mg}$)</td>
-            </tr>
-            <tr>
-              <td>Locomotion Principle</td>
-              <td>Onboard coreless servos + pushrod linkage</td>
-              <td>External magnetic field gradient torque ($\vec{M} \times \vec{B}$)</td>
-            </tr>
-            <tr>
-              <td>Power & Energy Storage</td>
-              <td>Onboard 3.7V 150mAh LiPo battery</td>
-              <td>Passive / zero onboard energy storage</td>
-            </tr>
-            <tr>
-              <td>Operational Medium</td>
-              <td>Unrestricted dry terrestrial environments</td>
-              <td>Aqueous fluid suspension in glass petri dish</td>
-            </tr>
-            <tr>
-              <td>Autonomy Classification</td>
-              <td>Autonomous onboard RISC-V closed loop</td>
-              <td>External manual motor frequency steering</td>
-            </tr>
-            <tr>
-              <td>Fabrication Infrastructure</td>
-              <td>Standard desktop FDM 3D printer (< $200)</td>
-              <td>Cleanroom photolithography & composite micro-molding</td>
-            </tr>
-            <tr>
-              <td>Unit Production Cost</td>
-              <td>₹1,070 INR (~$12.87 USD)</td>
-              <td>High cleanroom barrier-to-entry</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Section X: Desktop Swarm Lab Rig -->
-      <h2 class="section-heading">X. Desktop Swarm Hardware Testbed</h2>
-      <p>
-        To democratize experimental validation of external magnetic swarm physics without cleanroom facilities, we engineered an open-hardware <strong>Desktop Magnetic Swarm Lab Rig</strong> (detailed in <code>SWARM_BUILD_GUIDE.md</code>).
-      </p>
-
-      <!-- Fig 8: Desktop Hardware Rig -->
-      <figure class="academic-figure">
-        <img src="images/fig2_desktop_swarm_hardware.jpg" alt="Custom Desktop Swarm Hardware Rig">
-        <figcaption class="academic-caption">
-          <span class="caption-prefix">Fig. 8.</span> Custom open-source Desktop Magnetic Swarm Lab hardware rig. Features a 12V DC geared drive motor (JGA25-370) spinning a 90mm balanced crossbar with paired N42 block magnets, driving 2mm neodymium cube microrobots inside a fluid petri dish tracked by an overhead computer vision camera.
-        </figcaption>
-      </figure>
-
-      <p>
-        By scaling from $300\,\mu\text{m}$ to $2.0\text{ mm}$ NdFeB cubes, magnetic dipole interaction forces scale as $M^2 \propto L^6$, providing sufficient mechanical force to observe chain formation, obstacle climbing, and fluid rafting with the naked eye under ambient room lighting.
-      </p>
-
-      <pre class="academic-code">
-# OpenCV Centroid Tracking Algorithm for Swarm Analysis
-import cv2, numpy as np
-cap = cv2.VideoCapture(0)
-while True:
-    ret, frame = cap.read()
-    if not ret: break
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    _, thresh = cv2.threshold(gray, 65, 255, cv2.THRESH_BINARY_INV)
-    contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    if contours:
-        c = max(contours, key=cv2.contourArea)
-        M = cv2.moments(c)
-        if M["m00"] > 0:
-            cx, cy = int(M["m10"]/M["m00"]), int(M["m01"]/M["m00"])
-            cv2.circle(frame, (cx, cy), 6, (0, 243, 255), -1)
-    cv2.imshow("Centroid Tracking", frame)
-    if cv2.waitKey(1) == 27: break
-cap.release(); cv2.destroyAllWindows()
-      </pre>
-
-      <!-- Section XI: Conclusion -->
-      <h2 class="section-heading">XI. Conclusion & Open-Source Impact</h2>
+      <!-- Section IX: Conclusion -->
+      <h2 class="section-heading">IX. Conclusion & Open-Source Impact</h2>
       <p>
         This research has designed, formulated, fabricated, and empirically validated <strong>Microbot V1</strong>, an autonomous bio-inspired modular robot translating the cinematic archetype of <em>Big Hero 6</em> into a physically viable mechatronic system. By resolving the Kinematic Reference Dilemma through an Equatorial Collar Hub, we demonstrate that active, self-contained crawling across a frictionless spherical magnetic joint is physically achievable without relying on external magnetic steering.
       </p>
       <p>
-        The complete engineering repository—including binary STL print files, ESP32-C3 firmware, 3D WebGL simulator, and desktop hardware blueprints—is open-sourced at <a href="https://github.com/bodigeabhilash3-bit/microbot" target="_blank">github.com/bodigeabhilash3-bit/microbot</a> under the MIT License to advance modular mechatronics research worldwide.
+        The complete engineering repository—including binary STL print files, ESP32-C3 firmware, 3D WebGL simulator, and assembly documentation—is open-sourced at <a href="https://github.com/bodigeabhilash3-bit/microbot" target="_blank">github.com/bodigeabhilash3-bit/microbot</a> under the MIT License to advance modular mechatronics research worldwide.
       </p>
 
       <!-- References -->
@@ -1132,16 +1009,15 @@ cap.release(); cv2.destroyAllWindows()
         <li>[3] <span class="ref-author">N. J. Mlot, C. A. Tovey, and D. L. Hu,</span> <span class="ref-title">"Fire ants self-assemble into waterproof rafts to survive floods,"</span> <em>Proc. Natl. Acad. Sci. USA</em>, vol. 108, no. 19, pp. 7669–7673, 2011.</li>
         <li>[4] <span class="ref-author">H. F. McCreery, G. Gemayel, A. I. Pais, S. Garnier, and R. Nagpal,</span> <span class="ref-title">"Hysteresis stabilizes dynamic control of self-assembled army ant constructions,"</span> <em>Nature Communications</em>, vol. 13, no. 1, p. 1160, 2022.</li>
         <li>[5] <span class="ref-author">D. Hall and C. Williams,</span> <em>Big Hero 6</em>, Walt Disney Animation Studios / Walt Disney Pictures, 2014.</li>
-        <li>[6] <span class="ref-author">K. Yang, S. Won, J. E. Park, J. Jeon, and J. J. Wie,</span> <span class="ref-title">"Magnetic swarm intelligence of mass-produced, programmable microrobot assemblies for versatile task execution,"</span> <em>Cell Press Device</em>, vol. 3, p. 100626, Apr. 2025.</li>
-        <li>[7] <span class="ref-author">M. Rubenstein, A. Cornejo, and R. Nagpal,</span> <span class="ref-title">"Programmable self-assembly in a thousand-robot swarm,"</span> <em>Science</em>, vol. 345, no. 6198, pp. 795–799, 2014.</li>
-        <li>[8] <span class="ref-author">G. Gardi, S. Ceron, W. Wang, K. Petersen, and M. Sitti,</span> <span class="ref-title">"Microrobot collectives with reconfigurable morphologies, behaviors, and functions,"</span> <em>Nature Communications</em>, vol. 13, p. 2239, 2022.</li>
-        <li>[9] <span class="ref-author">W. Hu, G. Z. Lum, M. Mastrangeli, and M. Sitti,</span> <span class="ref-title">"Small-scale soft-bodied robot with multimodal locomotion,"</span> <em>Nature</em>, vol. 554, pp. 81–85, 2018.</li>
-        <li>[10] <span class="ref-author">S. Li, R. Batra, D. Brown, H. D. Chang, et al.,</span> <span class="ref-title">"Particle robotics based on statistical mechanics of loosely coupled components,"</span> <em>Nature</em>, vol. 567, pp. 361–365, 2019.</li>
+        <li>[6] <span class="ref-author">M. Rubenstein, A. Cornejo, and R. Nagpal,</span> <span class="ref-title">"Programmable self-assembly in a thousand-robot swarm,"</span> <em>Science</em>, vol. 345, no. 6198, pp. 795–799, 2014.</li>
+        <li>[7] <span class="ref-author">G. Gardi, S. Ceron, W. Wang, K. Petersen, and M. Sitti,</span> <span class="ref-title">"Microrobot collectives with reconfigurable morphologies, behaviors, and functions,"</span> <em>Nature Communications</em>, vol. 13, p. 2239, 2022.</li>
+        <li>[8] <span class="ref-author">W. Hu, G. Z. Lum, M. Mastrangeli, and M. Sitti,</span> <span class="ref-title">"Small-scale soft-bodied robot with multimodal locomotion,"</span> <em>Nature</em>, vol. 554, pp. 81–85, 2018.</li>
+        <li>[9] <span class="ref-author">S. Li, R. Batra, D. Brown, H. D. Chang, et al.,</span> <span class="ref-title">"Particle robotics based on statistical mechanics of loosely coupled components,"</span> <em>Nature</em>, vol. 567, pp. 361–365, 2019.</li>
       </ul>
 
       <!-- Author Bio -->
       <div class="author-bio">
-        <strong>Bodige Abhilash</strong> is an engineering researcher and maker specializing in autonomous robotics, bio-inspired kinematic design, and distributed multi-agent swarm systems. He leads the Microbot Open Mechatronics Initiative, developing low-cost, high-performance modular robotic platforms bridging fundamental scientific theory with accessible physical fabrication. (Correspondence: GitHub <a href="https://github.com/bodigeabhilash3-bit" target="_blank">@bodigeabhilash3-bit</a>).
+        <strong>Bodige Abhilash</strong> is an engineering researcher and maker specializing in autonomous robotics, bio-inspired kinematic design, and modular multi-agent systems. He leads the Microbot Open Mechatronics Initiative, developing low-cost, high-performance modular robotic platforms bridging fundamental scientific theory with accessible physical fabrication. (Correspondence: GitHub <a href="https://github.com/bodigeabhilash3-bit" target="_blank">@bodigeabhilash3-bit</a>).
       </div>
 
     </div>

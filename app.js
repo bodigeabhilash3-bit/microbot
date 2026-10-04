@@ -1365,70 +1365,21 @@ function pulseObjectById(id) {
 
 // --- UI Event Listeners ---
 function setupUIEventListeners() {
-  // Domain Switcher: Physical V1 vs Cell 2025 Swarm
+  // Domain: Physical V1
   const tabV1 = document.getElementById('tab-v1');
-  const tabSwarm = document.getElementById('tab-swarm');
-
   const panelV1 = document.getElementById('controls-panel');
-  const panelSwarm = document.getElementById('swarm-controls-panel');
-
   const statusV1 = document.getElementById('status-container-v1');
-  const statusSwarm = document.getElementById('status-container-swarm');
-
   const trackerV1 = document.getElementById('tracker-v1');
-  const trackerSwarm = document.getElementById('tracker-swarm');
-
   const teleV1 = document.getElementById('telemetry-v1');
-  const teleSwarm = document.getElementById('telemetry-swarm');
 
-  tabV1.addEventListener('click', () => {
-    state.systemTab = 'v1';
-    tabV1.classList.add('active');
-    tabSwarm.classList.remove('active');
-
-    panelV1.classList.remove('hidden');
-    panelSwarm.classList.add('hidden');
-
-    statusV1.classList.remove('hidden');
-    statusSwarm.classList.add('hidden');
-
-    trackerV1.classList.remove('hidden');
-    trackerSwarm.classList.add('hidden');
-
-    teleV1.classList.remove('hidden');
-    teleSwarm.classList.add('hidden');
-
-    worldGroup.visible = true;
-    swarmGroup.visible = false;
-
-    // Reset camera to V1 viewpoint
-    setCameraPreset('iso');
-  });
-
-  tabSwarm.addEventListener('click', () => {
-    state.systemTab = 'swarm';
-    tabSwarm.classList.add('active');
-    tabV1.classList.remove('active');
-
-    panelSwarm.classList.remove('hidden');
-    panelV1.classList.add('hidden');
-
-    statusSwarm.classList.remove('hidden');
-    statusV1.classList.add('hidden');
-
-    trackerSwarm.classList.remove('hidden');
-    trackerV1.classList.add('hidden');
-
-    teleSwarm.classList.remove('hidden');
-    teleV1.classList.add('hidden');
-
-    worldGroup.visible = false;
-    swarmGroup.visible = true;
-
-    // Pan camera to swarm Petri stage
-    gsap.to(camera.position, { x: 55, y: 48, z: 65, duration: 1.0, ease: "power2.inOut" });
-    gsap.to(controls.target, { x: 0, y: 0, z: 0, duration: 1.0, ease: "power2.inOut" });
-  });
+  if (tabV1) {
+    tabV1.addEventListener('click', () => {
+      state.systemTab = 'v1';
+      worldGroup.visible = true;
+      if (swarmGroup) swarmGroup.visible = false;
+      setCameraPreset('iso');
+    });
+  }
 
   // Mechanism Mode Buttons for V1
   const btnAssembly = document.getElementById('btn-mode-assembly');
@@ -1629,93 +1580,15 @@ function setupUIEventListeners() {
     });
   });
 
-  // Swarm View Mode Toggle: Micro Scale vs Desktop Hardware Rig
-  const btnViewMicro = document.getElementById('btn-swarm-view-micro');
-  const btnViewHardware = document.getElementById('btn-swarm-view-hardware');
-
-  btnViewMicro.addEventListener('click', () => {
-    state.swarm.view = 'micro';
-    btnViewMicro.classList.add('active');
-    btnViewHardware.classList.remove('active');
-
-    if (hardwareRigGroup) hardwareRigGroup.visible = false;
-    swarmMicrorobots.forEach(b => b.visible = true);
-    if (swarmObstacleMesh) swarmObstacleMesh.visible = (state.swarm.mission === 'climb' || state.swarm.mission === 'throw');
-    if (swarmTubeMesh) swarmTubeMesh.visible = (state.swarm.mission === 'unclog');
-    if (swarmLiquidMetalMesh) swarmLiquidMetalMesh.visible = (state.swarm.mission === 'morph');
-    if (swarmRaftPill) swarmRaftPill.visible = (state.swarm.mission === 'raft');
-    if (swarmLedMesh) swarmLedMesh.visible = (state.swarm.mission === 'bridge');
-
-    gsap.to(camera.position, { x: 55, y: 48, z: 65, duration: 1.0, ease: "power2.inOut" });
-    gsap.to(controls.target, { x: 0, y: 0, z: 0, duration: 1.0, ease: "power2.inOut" });
-  });
-
-  btnViewHardware.addEventListener('click', () => {
-    state.swarm.view = 'hardware';
-    btnViewHardware.classList.add('active');
-    btnViewMicro.classList.remove('active');
-
-    if (hardwareRigGroup) hardwareRigGroup.visible = true;
-    swarmMicrorobots.forEach(b => b.visible = false);
-    if (swarmObstacleMesh) swarmObstacleMesh.visible = false;
-    if (swarmTubeMesh) swarmTubeMesh.visible = false;
-    if (swarmLiquidMetalMesh) swarmLiquidMetalMesh.visible = false;
-    if (swarmRaftPill) swarmRaftPill.visible = false;
-    if (swarmLedMesh) swarmLedMesh.visible = false;
-
-    gsap.to(camera.position, { x: 105, y: 95, z: 125, duration: 1.2, ease: "power2.inOut" });
-    gsap.to(controls.target, { x: 0, y: 15, z: 0, duration: 1.2, ease: "power2.inOut" });
-  });
-
-  // Swarm Configurations (Cell 2025)
-  document.getElementById('btn-swarm-ht').addEventListener('click', () => applySwarmConfiguration('ht'));
-  document.getElementById('btn-swarm-sc').addEventListener('click', () => applySwarmConfiguration('sc'));
-  document.getElementById('btn-swarm-ff').addEventListener('click', () => applySwarmConfiguration('ff'));
-
-  // Swarm Frequencies
-  document.querySelectorAll('.freq-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.freq-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      const freq = parseFloat(btn.getAttribute('data-freq'));
-      state.swarm.frequency = freq;
-      document.getElementById('label-swarm-freq').innerText = `${freq.toFixed(1)} Hz`;
-      document.getElementById('badge-swarm-freq').innerText = `FIELD: ${freq.toFixed(1)} Hz ROTATING`;
-    });
-  });
-
-  // Swarm Motion Mode (Spinning vs Orbital Drag)
-  const btnSpin = document.getElementById('btn-motion-spin');
-  const btnOrbital = document.getElementById('btn-motion-orbital');
-
-  btnSpin.addEventListener('click', () => {
-    state.swarm.motionMode = 'spin';
-    btnSpin.classList.add('active');
-    btnOrbital.classList.remove('active');
-    document.getElementById('swarm-tele-grad').innerText = '0.15 T/m (Spinning/Pivoting)';
-  });
-
-  btnOrbital.addEventListener('click', () => {
-    state.swarm.motionMode = 'orbital';
-    btnOrbital.classList.add('active');
-    btnSpin.classList.remove('active');
-    document.getElementById('swarm-tele-grad').innerText = '7.0 T/m (High Gradient Orbital)';
-  });
-
-  // Swarm Mission Tasks
-  document.getElementById('btn-mission-climb').addEventListener('click', () => setSwarmMission('climb'));
-  document.getElementById('btn-mission-throw').addEventListener('click', () => setSwarmMission('throw'));
-  document.getElementById('btn-mission-raft').addEventListener('click', () => setSwarmMission('raft'));
-  document.getElementById('btn-mission-bridge').addEventListener('click', () => setSwarmMission('bridge'));
-  document.getElementById('btn-mission-unclog').addEventListener('click', () => setSwarmMission('unclog'));
-  document.getElementById('btn-mission-morph').addEventListener('click', () => setSwarmMission('morph'));
-
   // Inspector Close
-  document.getElementById('btn-close-inspector').addEventListener('click', () => {
-    document.querySelector('.empty-state').classList.remove('hidden');
-    document.getElementById('inspector-details').classList.add('hidden');
-    document.querySelectorAll('.layer-list li').forEach(li => li.classList.remove('active'));
-  });
+  const btnCloseInspector = document.getElementById('btn-close-inspector');
+  if (btnCloseInspector) {
+    btnCloseInspector.addEventListener('click', () => {
+      document.querySelector('.empty-state').classList.remove('hidden');
+      document.getElementById('inspector-details').classList.add('hidden');
+      document.querySelectorAll('.layer-list li').forEach(li => li.classList.remove('active'));
+    });
+  }
 
   // Layer list items
   document.querySelectorAll('.layer-list li').forEach(li => {
@@ -1938,19 +1811,14 @@ function animate() {
   const elapsedTime = clock.getElapsedTime();
   const delta = clock.getDelta();
 
-  if (state.systemTab === 'v1') {
-    // Run V1 robotic walking gaits if active
-    updateGaits(elapsedTime);
+  // Run V1 robotic walking gaits if active
+  updateGaits(elapsedTime);
 
-    // Animate V1 magnetic flux line dashes
-    if (fluxGroup && state.showFlux) {
-      fluxGroup.children.forEach((line, idx) => {
-        line.material.dashSize = 1.5 + Math.sin(elapsedTime * 4 + idx) * 0.4;
-      });
-    }
-  } else {
-    // Run Cell 2025 Magnetic Swarm simulation loop
-    updateSwarmSimulation(elapsedTime, delta);
+  // Animate V1 magnetic flux line dashes
+  if (fluxGroup && state.showFlux) {
+    fluxGroup.children.forEach((line, idx) => {
+      line.material.dashSize = 1.5 + Math.sin(elapsedTime * 4 + idx) * 0.4;
+    });
   }
 
   controls.update();
