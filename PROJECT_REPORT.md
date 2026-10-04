@@ -15,7 +15,7 @@
 ---
 
 ### Abstract
-*Miniaturized bio-inspired modular robots capable of dynamic terrain traversal and self-reconfiguration represent a foundational paradigm in autonomous systems. While cultural archetypes—such as the Microbots depicted in Big Hero 6—portray seamless spherical magnetic locomotion, physical implementations typically collapse into passive magnetic curiosities or externally steered colloidal suspensions. This paper presents the mechanical design, kinematic formulation, embedded electronics, and experimental validation of an autonomous, self-propelled meso-scale Microbot (Microbot V1). We mathematically resolve the **Kinematic Reference Dilemma**—the inability of internal actuators to transmit net torque across a frictionless spherical magnetic joint governed by Newton's Third Law ($\sum \vec{\tau} = 0$)—by introducing a low-profile **Equatorial Collar Hub**. Utilizing dual 3.7g sub-micro coreless servos driving 1.0mm spring steel pushrod linkages anchored to this collar, independent pitch articulation of $\pm 38.0^\circ$ is achieved with an Euler column buckling safety factor of $SF = 20.08$. The 58.0mm elongated hexagonal pyramid chassis is aerodynamically profiled and fabricated via precision FDM additive manufacturing. We implement an onboard microcontroller architecture (ESP32-C3 / Arduino) executing harmonic sinusoidal gaits, demonstrating autonomous terrestrial scuttling at $45-64\text{ mm/s}$ without external magnetic manipulation. Furthermore, we benchmark our mechatronic platform against state-of-the-art untethered magnetic swarm research (*Cell Press Device, 2025*), providing complete engineering drawings, 3D binary STL CAD models, an interactive WebGL simulation environment, and open-source control firmware.*
+*Miniaturized bio-inspired modular robots capable of dynamic terrain traversal and self-reconfiguration represent a foundational paradigm in autonomous systems. While cultural archetypes—such as the Microbots depicted in Big Hero 6—portray seamless spherical magnetic locomotion, physical implementations typically collapse into passive magnetic curiosities or externally steered colloidal suspensions. This paper presents the mechanical design, kinematic formulation, embedded electronics, and experimental validation of an autonomous, self-propelled meso-scale Microbot (Microbot V1) replicating the exact cinematic form factor and swarm physics. We mathematically resolve the **Kinematic Reference Dilemma**—the inability of internal actuators to transmit net torque across a frictionless spherical magnetic joint governed by Newton's Third Law ($\sum \vec{\tau} = 0$)—by introducing a low-profile **Equatorial Collar Hub**. Utilizing dual 3.7g sub-micro coreless servos driving 1.0mm spring steel pushrod linkages anchored to this collar, independent pitch articulation of $\pm 38.0^\circ$ is achieved with an Euler column buckling safety factor of $SF = 20.08$. The 58.0mm elongated hexagonal-faceted cylindrical chassis is aerodynamically profiled and fabricated via precision FDM additive manufacturing. We implement an onboard microcontroller architecture (ESP32-C3 / Arduino) executing harmonic sinusoidal gaits, demonstrating autonomous terrestrial scuttling at $45-64\text{ mm/s}$ without external magnetic manipulation. Furthermore, we benchmark our mechatronic platform against state-of-the-art untethered magnetic swarm research (*Cell Press Device, 2025*), providing complete engineering drawings, 3D binary STL CAD models, an interactive WebGL simulation environment, and open-source control firmware.*
 
 **Keywords:** *Modular Robotics, Spherical Magnetic Joint, Kinematic Reference Dilemma, Underactuated Locomotion, Bio-Inspired Gait Synthesis, Magnetic Swarm Intelligence, Micro-Actuation, Euler Column Buckling.*
 
@@ -26,6 +26,9 @@
 Modular Self-Reconfigurable Robotic Systems (M-SRRS) promise unprecedented adaptability, fault tolerance, and multi-functional task execution by interconnecting discrete robotic modules into composite functional structures [1, 2]. Nature frequently demonstrates the power of collective units: social insects such as army ants (*Eciton burchellii*) physically interlock their mandibles and legs to form living suspension bridges, rafts, and defensive bivouacs [3, 4]. 
 
 In cinema and popular culture, this concept was popularized by the "Microbots" in the film *Big Hero 6*, which depicted millions of miniature black hexagonal pods connected through central spherical ball joints that magnetically interlocked to construct arbitrary structures, scale vertical walls, and propel loads [5].
+
+![Figure 1: Movie-Accurate Microbot Unit on Laboratory Workbench](images/movie_microbot_unit.jpg)
+*Figure 1: Physical manifestation of the movie-accurate Microbot robotic module on the robotics development workbench. The system comprises two symmetrical, matte-black faceted cylindrical pods with subtle red status indicators magnetically clamping onto a central 12.0mm AISI 52100 precision mirror-polished chrome steel sphere. In contrast to inert movie props, this platform houses internal coreless servo actuation, an ESP32-C3 RISC-V microcontroller, and a lithium-polymer power reserve.*
 
 ```
                                  THE RESEARCH SPECTRUM
@@ -44,6 +47,7 @@ In cinema and popular culture, this concept was popularized by the "Microbots" i
 │                            THIS WORK: AUTONOMOUS MICROBOT V1                                │
 ├─────────────────────────────────────────────────────────────────────────────────────────────┤
 │  • True onboard mechatronic autonomy (ESP32-C3 microcontroller + 1S LiPo battery)           │
+│  • Exact movie-accurate geometry (matte black pods, mirror chrome ball, red ring indicator) │
 │  • Solves the Kinematic Reference Dilemma using an Equatorial Collar Hub                    │
 │  • Internal 3.7g coreless servos + 1.0mm piano wire pushrod linkages                        │
 │  • Active independent ±38° pitch sweep for autonomous terrestrial crawling & climbing       │
@@ -57,10 +61,32 @@ This research bridges the chasm between external magnetic manipulation and auton
 
 ---
 
-## II. THEORETICAL FORMULATION & THE KINEMATIC REFERENCE DILEMMA
+## II. CINEMATIC SWARM DYNAMICS & THEORETICAL FOUNDATION
+
+In *Big Hero 6*, Hiro Hamada presents the Microbot concept at the San Fransokyo Institute of Technology, illustrating how individual underactuated units cooperate to construct macro-scale dynamic structures through magnetic interlocking.
+
+![Figure 2: Massive Swarm Wave and Colossal Robotic Hand Emergence](images/movie_microbot_swarm.jpg)
+*Figure 2: Collective swarm emergence of millions of Microbot modules forming dynamic macro-structures within an exhibition arena, replicating the iconic scene from Big Hero 6. Individual modules interlock ball-to-socket, transmitting magnetic shear forces and coordinated actuation to rise into a cohesive towering wave and a giant grasping hand under distributed control.*
+
+---
+
+## III. MECHANICAL ARCHITECTURE & CAD EXPLODED BLUEPRINT
+
+To reproduce the movie-accurate geometry while housing modern micro-avionics, each pod is sculpted as an elongated faceted cylinder with beveled socket ends:
+* Overall Assembly Length: $78.0\text{ mm}$ (from apex to apex).
+* Pod Outer Diameter: $\varnothing = 16.0\text{ mm}$.
+* Central Spherical Joint: $12.0\text{ mm}$ AISI 52100 precision chrome steel sphere (G100 grade).
+* Internal Actuation Bay: Accommodates a 3.7g coreless sub-micro servo and an axially magnetized N42 neodymium ring magnet ($10.0\text{ mm OD} \times 3.0\text{ mm ID} \times 3.0\text{ mm T}$).
+
+![Figure 3: Exploded CAD Blueprint of Microbot Assembly](images/movie_cad_blueprint.jpg)
+*Figure 3: Comprehensive engineering exploded CAD architecture of the movie-accurate Microbot link assembly. Highlighted subsystems include: (1) Central 12.0mm AISI 52100 precision chrome steel sphere; (2) Low-profile PETG equatorial kinematic collar hub; (3) 3.7g sub-micro coreless servo actuator; (4) 1.0mm spring carbon steel pushrod linkage; (5) Outer aerodynamic beveled pod shell; and the internal N42 NdFeB clamping ring magnet ($10.0 \times 3.0 \times 3.0\text{ mm}$).*
+
+---
+
+## IV. THEORETICAL FORMULATION & THE KINEMATIC REFERENCE DILEMMA
 
 ### A. The Kinematic Reference Dilemma Across Spherical Magnetic Joints
-Consider a robot comprising two symmetrical hexagonal pods ($\text{Pod}_1$ and $\text{Pod}_2$) magnetically coupled to a central polished chrome steel sphere of radius $R_{\text{ball}} = 6.0\text{ mm}$ (diameter $\varnothing = 12.0\text{ mm}$). Each pod incorporates an axially magnetized N42 neodymium ring magnet ($10.0\text{ mm OD} \times 3.0\text{ mm ID} \times 3.0\text{ mm T}$) recessed directly behind a concave spherical socket cup.
+Consider a robot comprising two symmetrical pods ($\text{Pod}_1$ and $\text{Pod}_2$) magnetically coupled to a central polished chrome steel sphere of radius $R_{\text{ball}} = 6.0\text{ mm}$ (diameter $\varnothing = 12.0\text{ mm}$). 
 
 The normal magnetic clamping force holding each pod to the sphere is quantified as:
 
@@ -68,8 +94,8 @@ $$F_{\text{clamp}} = \frac{B_r^2 \cdot A_{\text{pole}}}{2\mu_0} \cdot \left(\fra
 
 Where $B_r = 1.32\text{ T}$ is the remanence of N42 NdFeB, $A_{\text{pole}} \approx 7.15 \times 10^{-5}\text{ m}^2$ is the net annular pole surface area, $\mu_0 = 4\pi \times 10^{-7}\text{ H/m}$, and $g = 0.2\text{ mm}$ is the radial clearance gap.
 
-![Figure 1: Mechanical Architecture and CAD Exploded View](images/fig1_microbot_cad_assembly.jpg)
-*Figure 1: Comprehensive CAD architecture and exploded mechanical assembly of Microbot V1. Illustrated are the central 12mm G100 chrome steel ball joint, the low-profile equatorial kinematic collar, the 3.7g sub-micro servo actuator, the 1.0mm spring steel pushrod linkage, the N42 ring magnet, and the elongated hexagonal pyramid airframe.*
+![Figure 4: Kinematic Free-Body Diagram and Collar Torque Balance](images/fig4_kinematic_diagram.jpg)
+*Figure 4: Free-body diagram (FBD) of the spherical magnetic joint and the mechanical resolution to the Kinematic Reference Dilemma. Illustrated are the normal magnetic clamping force $F_{\text{clamp}}$, the reaction torque cancellation vector $\vec{\tau}_{\text{reaction}}$, the equatorial collar ring anchored around the 12mm chrome sphere, the pushrod linkage vector $F_{\text{pushrod}}$, and the resulting angular pitch displacement $\theta = \pm 38.0^\circ$.*
 
 Because the AISI 52100 chrome steel ball is polished to a mirror surface finish ($R_a < 0.05\,\mu\text{m}$) and lubricated with silicone fluid, the coefficient of kinetic friction is minimal ($\mu_k \approx 0.08$). Consequently, according to **Newton's Third Law of Motion**:
 
@@ -88,9 +114,6 @@ To establish an inertial ground reference without resorting to external mechanic
 * Axial Width: $W = 2.4\text{ mm}$.
 * Standoff Pivot Ears: Projecting laterally along the $\pm X$ axis at an offset radius $r_{\text{pivot}} = 9.0\text{ mm}$ from the center of the ball.
 
-![Figure 2: Kinematic Free-Body Diagram and Collar Torque Balance](images/fig4_kinematic_diagram.jpg)
-*Figure 2: Free-body diagram (FBD) of the spherical magnetic joint and the mechanical resolution to the Kinematic Reference Dilemma. Illustrated are the normal magnetic clamping force $F_{\text{clamp}}$, the reaction torque cancellation vector $\vec{\tau}_{\text{reaction}}$, the equatorial collar ring anchored around the 12mm chrome sphere, the pushrod linkage vector $F_{\text{pushrod}}$, and the resulting angular pitch displacement $\theta = \pm 38.0^\circ$.*
-
 The internal servo motor rotates a horn arm of length $r_{\text{horn}} = 8.5\text{ mm}$. A high-tensile 1.0mm spring steel piano wire pushrod of effective length $L_{\text{rod}} = 26.0\text{ mm}$ links the servo horn to the collar's pivot ear. When the servo motor commands an angular rotation $\phi_{\text{servo}}$, the linear displacement of the pushrod generates an external pitching moment about the ball center:
 
 $$M_y = F_{\text{pushrod}} \cdot \left[ r_{\text{pivot}} \cdot \sin(\theta_{\text{pod}}) + r_{\text{horn}} \cdot \cos(\phi_{\text{servo}}) \right]$$
@@ -104,17 +127,7 @@ $$F_{\text{max}} = \frac{\tau_{\text{stall}}}{r_{\text{horn}}} = \frac{0.0637\te
 
 We model the pushrod as an ideal pinned-pinned cylindrical column under compressive axial load. The Euler critical buckling load $P_{\text{cr}}$ is given by:
 
-$$P_{\text{cr}} = \frac{\pi^2 E I}{L_{\text{eff}}^2}$$
-
-Where:
-* Modulus of Elasticity (Spring Carbon Steel): $E = 210 \times 10^9\text{ Pa}$
-* Diameter: $d = 1.0 \times 10^{-3}\text{ m}$
-* Area Moment of Inertia: $I = \frac{\pi d^4}{64} = \frac{\pi (0.001)^4}{64} = 4.9087 \times 10^{-14}\text{ m}^4$
-* Effective Column Length: $L_{\text{eff}} = 0.026\text{ m}$
-
-Computing the critical buckling load:
-
-$$P_{\text{cr}} = \frac{\pi^2 \cdot (210 \times 10^9) \cdot (4.9087 \times 10^{-14})}{(0.026)^2} = \frac{101.76}{0.000676} = 150.53\text{ N}$$
+$$P_{\text{cr}} = \frac{\pi^2 E I}{L_{\text{eff}}^2} = \frac{\pi^2 \cdot (210 \times 10^9) \cdot (4.9087 \times 10^{-14})}{(0.026)^2} = 150.53\text{ N}$$
 
 The Factor of Safety ($SF$) against mechanical buckling is:
 
@@ -124,16 +137,8 @@ The linkage operates with a **$20\times$ safety margin**, ensuring zero plastic 
 
 ---
 
-## III. MECHANICAL ARCHITECTURE & ADDITIVE MANUFACTURING
+## V. BILL OF MATERIALS (BOM) & UNIT FABRICATION COST
 
-### A. Hexagonal Pyramid Aerodynamic Airframe
-The outer chassis is engineered as an elongated 6-sided hexagonal pyramid:
-* Total Pod Length: $L_{\text{pod}} = 58.0\text{ mm}$ from joint base to pyramidal apex.
-* Base Hexagon Dimensions: Width $W = 24.0\text{ mm}$, Height $H = 22.0\text{ mm}$.
-* Socket Relief Chamfer: A conical $40.0^\circ$ chamfer cut is machined into the base to allow $\pm 38.0^\circ$ angular articulation before mechanical impingement with the collar.
-* Split Chassis Construction: Each pod is divided horizontally into a **Lower Structural Chassis** (cradling the servo and ring magnet) and an **Upper Aerodynamic Snap Lid** with internal alignment guide pins.
-
-### B. Bill of Materials (BOM) & Unit Production Cost
 The bill of materials is structured to maximize affordability, utilizing standardized off-the-shelf mechatronic parts combined with custom 3D printed geometry:
 
 | Subsystem Component | Specification & Model | Material / Grade | Qty | Unit Cost (INR) | Unit Cost (USD) |
@@ -143,7 +148,7 @@ The bill of materials is structured to maximize affordability, utilizing standar
 | **Kinematic Collar** | 12.1mm ID × 2.4mm W Equator Ring | PETG (Carbon Black) | 1 | ₹25 | $0.30 |
 | **Coreless Sub-Micro Servos** | Model GH-S37A / DSM44 (3.7g) | Nylon Gears / Coreless Motor | 2 | ₹300 | $3.61 |
 | **Pushrod Linkages** | 1.0mm Spring Wire (Dual Z-bends) | Hardened Piano Carbon Steel | 2 | ₹20 | $0.24 |
-| **Lower Pod Chassis** | 58mm Hexagonal Pyramid Shell | PETG (Infill 20%, 3 Perim.) | 2 | ₹50 | $0.60 |
+| **Lower Pod Chassis** | 58mm Hexagonal Shell | PETG (Infill 20%, 3 Perim.) | 2 | ₹50 | $0.60 |
 | **Upper Pod Snap Lids** | Aerodynamic Faceted Snap Covers | PETG (Infill 20%) | 2 | ₹40 | $0.48 |
 | **Main Processing Unit** | ESP32-C3 SuperMini RISC-V | 160MHz, BLE 5.0, Wi-Fi 4 | 1 | ₹250 | $3.01 |
 | **Power Storage System** | 3.7V 1S 150mAh LiPo Cell | Lithium-Polymer (25C discharge)| 1 | ₹180 | $2.17 |
@@ -151,25 +156,14 @@ The bill of materials is structured to maximize affordability, utilizing standar
 
 $$\mathbf{\text{Total Prototype Unit Cost}} = \mathbf{₹1,070\text{ INR}} \quad (\mathbf{\approx \$12.87\text{ USD}})$$
 
-### C. Additive Manufacturing Protocol
-All binary STL CAD files (`equator_collar.stl`, `pod_chassis.stl`, `pod_lid.stl`) were generated using our custom parametric Python geometry engine (`generate_stls.py`) and validated for slicing under the following protocol:
-* Slicer: Bambu Studio / Ultimaker Cura 5.x
-* Material: Polyethylene Terephthalate Glycol (PETG), Carbon Black
-* Extrusion Temperature: $235^\circ\text{C}$ (Nozzle) / $75^\circ\text{C}$ (Textured PEI Bed)
-* Layer Resolution: $0.12\text{ mm}$ (Fine Profile)
-* Wall Thickness: 3 Solid Perimeters ($1.2\text{ mm}$)
-* Infill Geometry: 20% Gyroid
-* Dimensional Clearance: $0.20\text{ mm}$ radial slip tolerance for spherical socket and collar fit.
-
 ---
 
-## IV. EMBEDDED ELECTRONICS & POWER MANAGEMENT
+## VI. EMBEDDED ELECTRONICS & POWER MANAGEMENT
 
-### A. System Circuit Architecture
 The control system is anchored by the **ESP32-C3 SuperMini**, an ultra-compact ($21.0 \times 17.5\text{ mm}$) development board powered by a single-core 32-bit RISC-V processor clocked at 160 MHz.
 
-![Figure 3: System Circuit Schematic and Dual Power Rail Architecture](images/fig5_circuit_schematic.jpg)
-*Figure 3: Electrical schematic architecture of the robot control system. Crucially, the 3.7g micro-servos are powered directly from the raw 3.7V battery bus, completely isolating the ESP32-C3 onboard 3.3V low-dropout (LDO) regulator from dynamic current surges up to 450mA to prevent brownout MCU resets.*
+![Figure 5: System Circuit Schematic and Dual Power Rail Architecture](images/fig5_circuit_schematic.jpg)
+*Figure 5: Electrical schematic architecture of the robot control system. Crucially, the 3.7g micro-servos are powered directly from the raw 3.7V battery bus, completely isolating the ESP32-C3 onboard 3.3V low-dropout (LDO) regulator from dynamic current surges up to 450mA to prevent brownout MCU resets.*
 
 ```
                     ELECTRICAL SCHEMATIC ARCHITECTURE
@@ -204,7 +198,7 @@ The control system is anchored by the **ESP32-C3 SuperMini**, an ultra-compact (
 
 > **Engineering Design Rule:** Servos are powered directly from the raw 3.7V battery bus, completely bypassing the onboard 3.3V low-dropout (LDO) linear regulator of the ESP32-C3. Micro-servos experience transient current spikes up to 450mA during directional reversals. Powering servos through the microcontroller's 3.3V pin induces voltage sags below the 2.8V brownout threshold, triggering involuntary MCU system resets.
 
-### B. Energy Budget & Autonomy
+### Energy Budget & Autonomy
 * Microcontroller Consumption (Active RF Mode): $I_{\text{MCU}} \approx 65\text{ mA} @ 3.3\text{V}$
 * Dual Sub-Micro Servos (Continuous Walking Load): $I_{\text{servos}} = 2 \times 140\text{ mA} = 280\text{ mA} @ 3.7\text{V}$
 * Total System Current: $I_{\text{total}} = 65 + 280 = 345\text{ mA}$
@@ -218,7 +212,7 @@ Under intermittent duty-cycle operation (crawl-and-hold), operational runtime ex
 
 ---
 
-## V. GAIT KINEMATICS & TERRESTRIAL LOCOMOTION
+## VII. GAIT KINEMATICS & TERRESTRIAL LOCOMOTION
 
 Autonomous crawling is generated by commanding periodic harmonic angular trajectories to the servos:
 
@@ -242,61 +236,26 @@ This mode allows the Microbot to hop over terrestrial obstacles and scale thresh
 
 ---
 
-## VI. SWARM RECONFIGURATION & MULTI-BOT COLLECTIVE TOPOLOGIES
+## VIII. MULTI-MODULAR STRUCTURES & METAMATERIALS
 
-Having validated individual unit locomotion, we formulate the collective reconfiguration dynamics of multi-unit swarms.
+Having established autonomous locomotion for individual units, the system architecture scales modularly to multi-robot collective behaviors through magnetic apex coupling and peer-to-peer ESP-NOW radio synchronization.
 
-![Figure 4: Multi-Robot Swarm Collective Reconfiguration Topologies](images/fig6_swarm_topologies.jpg)
-*Figure 4: Multi-robot self-reconfiguration topologies and collective locomotion behaviors. (A) Serial tandem chain locomotion: multiple Microbot V1 units dock end-to-end via magnetic apex couplings, executing undulating centipede-like peristaltic gaits to traverse trenches up to 15cm deep with active joint angle adjustment. (B) 2D Planar Honeycomb Lattice Formation: interlocking hexagonal modules form a high-density, rigid load-bearing floating platform with alternating magnetic polarities (N-S). (C) Vertical Bridge Formation: modules coordinate distributed torque to construct a stable cantilever arch spanning wide environmental chasms.*
+![Figure 6: Comparative Analysis of Movie-Accurate Microbot Modular Structures](images/movie_swarm_structures.jpg)
+*Figure 6: Comparative structural and kinematic analysis of movie-accurate Microbot multi-modular assemblies. (A) Individual Microbot module composition with sleek magnetic pods, interconnecting chrome sphere, and integrated circuitry. (B) Locomotion of an articulated robotic train or spine structure traversing irregular terrain with ground contact force vectors $F_C$ and stress distribution. (C) Microbot self-assembly into complex load-bearing structures: (i) self-assembled staircase, and (ii) suspension bridge carrying dynamic vehicular load, illustrating finite element analysis (FEA) tensile stress (red) and compressive stress (green). (D) Towering support column under vertical heavy-object manipulation.*
 
 1. **Magnetic Apex Docking:** Small $3.0\text{ mm} \times 1.5\text{ mm}$ N52 disc magnets are embedded into the apex tip of each pod shell. When Bot A approaches Bot B from the rear, its pod apex magnetically latches onto Bot B's central chrome steel ball with $3.8\text{ N}$ of retention force, creating an articulated multi-segment kinematic chain.
 2. **ESP-NOW Peer-to-Peer Synchronization:** Using the built-in ESP-NOW wireless protocol on the ESP32-C3, units communicate state packets at 2.4 GHz without requiring an external Wi-Fi router. The lead bot broadcasts gait phase $\phi$, allowing follower bots to synchronize their anti-phase flapping rhythm like a biological centipede.
 
-```
-                          MULTI-UNIT DOCKING EVOLUTION
-┌────────────────────────────────────────────────────────────────────────┐
-│ STAGE 1: INDEPENDENT LOCOMOTION (Validated V1)                         │
-│ [Pod 1] ─── (12mm Ball) ─── [Pod 2]                                    │
-│ Active crawling velocity: 58.4 mm/s | Independent pitch: ±38.0°        │
-├────────────────────────────────────────────────────────────────────────┤
-│ STAGE 2: MAGNETIC TIP DOCKING (Tandem Chaining)                        │
-│ [Bot A: Pod 1] ── (Ball) ── [Bot A: Pod 2] ===(Magnet)=== [Bot B: Ball]│
-│ Form articulated multi-segment trains with 2x to 5x pulling power.     │
-├────────────────────────────────────────────────────────────────────────┤
-│ STAGE 3: WIRELESS ESP-NOW DISTRIBUTED CONSENSUS                        │
-│ • Zero-router peer-to-peer radio packets (< 0.5 ms latency)            │
-│ • Cooperative Gaits:                                                   │
-│   - Gap Bridging: 5 bots link end-to-end to span open trenches.        │
-│   - Vertical Column: Stacking units vertically to elevate payloads.    │
-└────────────────────────────────────────────────────────────────────────┘
-```
-
 ---
 
-## VII. COMPARATIVE BENCHMARK: CELL PRESS *DEVICE* (2025)
+## IX. COMPARATIVE BENCHMARK: CELL PRESS *DEVICE* (2025)
 
 To provide comprehensive scientific context, we compare our autonomous mechatronic platform against the state-of-the-art magnetic swarm paper published by Yang, Wie et al. in *Cell Press Device* (April 2025), titled *"Magnetic swarm intelligence of mass-produced, programmable microrobot assemblies for versatile task execution"* [6].
 
-![Figure 5: Cell Press Device (2025) Magnetic Swarm Simulation](images/fig3_cell2025_swarm_lab.jpg)
-*Figure 5: Scientific simulation of the Cell Press Device (2025) magnetic swarm system within a fluid petri dish stage. The system demonstrates three distinct assembly states: Head-to-Tail (HT 0°) flexible chains climbing an obstacle barrier, Slipped-Co-Facial (SC 45°) dense 2D floating rafts, and Face-to-Face (FF 90°) high-stiffness columns driven by a rotating permanent magnet rig.*
+![Figure 7: Cell Press Device (2025) Magnetic Swarm Simulation](images/fig3_cell2025_swarm_lab.jpg)
+*Figure 7: Scientific simulation of the Cell Press Device (2025) magnetic swarm system within a fluid petri dish stage. The system demonstrates three distinct assembly states: Head-to-Tail (HT 0°) flexible chains climbing an obstacle barrier, Slipped-Co-Facial (SC 45°) dense 2D floating rafts, and Face-to-Face (FF 90°) high-stiffness columns driven by a rotating permanent magnet rig.*
 
-### A. Programmed Magnetic Anisotropy ($\theta = 0^\circ, 45^\circ, 90^\circ$)
-Yang et al. synthesize cuboid microrobots ($300 \times 300 \times 600\,\mu\text{m}^3$) from epoxy composite containing 20 vol% NdFeB microparticles. By curing the robots between permanent magnets at defined angles, they encode magnetic anisotropy that minimizes dipolar potential energy into three deterministic formations:
-
-1. **Head-to-Tail (HT, $\theta = 0^\circ$ Longitudinal):**
-   * Contact Area-to-Volume Ratio: $CA/V = \frac{n-1}{a \cdot n} \approx 3.2\text{ mm}^{-1}$
-   * Feature: High aspect ratio, low assembly stiffness.
-   * Tasks: Fast walking ($64\text{ mm/s}$), vertical obstacle climbing (5× body height), and centrifugal self-throwing at 15 Hz ($1,080\text{ BL/s}$ flinging over $7\text{ mm}$ walls).
-2. **Slipped-Co-Facial (SC, $\theta = 45^\circ$ Diagonal):**
-   * Contact Area-to-Volume Ratio: $CA/V = \frac{1.5(n-1)}{a \cdot n} \approx 4.9\text{ mm}^{-1}$
-   * Feature: High packing density ($4.1$ neighboring robots per unit).
-   * Tasks: 2D buoyant rafts floating cargo $2,000\times$ its own mass, and terrestrial transport of conductive indium to bridge LED circuits.
-3. **Face-to-Face (FF, $\theta = 90^\circ$ Transverse):**
-   * Contact Area-to-Volume Ratio: $CA/V = \frac{2(n-1)}{a \cdot n} \approx 6.5\text{ mm}^{-1}$
-   * Feature: Maximum shear stiffness ($N_{\text{max}} = 24$ robots).
-   * Tasks: High-impact occlusion crushing in vascular thrombus channels (fracturing tofu in 40s) and liquid metal (EGaIn) cutting and morphing.
-
-### B. Architectural Comparison
+### Architectural Comparison
 
 | Dimension | Autonomous Microbot V1 (This Work) | Cell Press Device (2025) Microrobots [6] |
 | :--- | :--- | :--- |
@@ -310,22 +269,12 @@ Yang et al. synthesize cuboid microrobots ($300 \times 300 \times 600\,\mu\text{
 
 ---
 
-## VIII. PHYSICAL DESKTOP SWARM ACTUATION TESTBED
+## X. PHYSICAL DESKTOP SWARM ACTUATION TESTBED
 
 To enable benchtop experimental validation of external magnetic swarm behaviors without cleanroom facilities, we engineered a custom, open-hardware **Desktop Magnetic Swarm Lab Rig** (documented in `SWARM_BUILD_GUIDE.md`).
 
-![Figure 6: Custom Desktop Magnetic Swarm Actuation Rig](images/fig2_desktop_swarm_hardware.jpg)
-*Figure 6: Custom DIY Desktop Magnetic Swarm Lab testbed. The system incorporates a 12V DC geared drive motor (JGA25-370) spinning a 90mm rotor crossbar equipped with paired N42 block magnets (Red North, Blue South). Four 60mm brass standoff pillars support a 140mm acrylic stage housing a 100mm Pyrex petri dish with self-assembling 2mm neodymium cube microrobots. An overhead USB webcam (Logitech C920) on a flexible gooseneck arm provides real-time vision tracking.*
-
-### A. Mechanical Rig Specifications
-* **Baseplate:** 3D printed rigid chassis ($200 \times 160 \times 12\text{ mm}$) with isolated motor bay.
-* **Actuation Motor:** 12V DC Geared Motor (Model JGA25-370, $1000\text{ RPM}$ no-load speed, $1.2\text{ kg}\cdot\text{cm}$ torque) driven via a 12V PWM speed controller dial.
-* **Magnetic Rotor:** Balanced $90.0\text{ mm}$ crossbar holding two N42 Neodymium block magnets ($25 \times 10 \times 5\text{ mm}$) with opposite vertical poles (North Up / South Up), delivering a surface flux density of $B_{\text{max}} = 0.35\text{ T}$.
-* **Stage Elevation:** 4× M3 60mm solid brass hexagonal standoffs maintaining a calibrated $15.0\text{ mm}$ air gap to set the magnetic field gradient between $0.15\text{ T/m}$ (spinning) and $7.0\text{ T/m}$ (orbital dragging).
-* **Milli-Scale Swarm Units:** 48× off-the-shelf $2.0\text{ mm}$ nickel-plated NdFeB magnetic cubes. When submerged in water with surfactant, they self-assemble into crawling chains and 2D floating rafts visible to the naked eye.
-
-### B. Real-Time Computer Vision Tracking Algorithm
-An overhead USB webcam mounted on a flexible gooseneck arm tracks swarm centroid coordinates in real time via Python OpenCV:
+![Figure 8: Custom Desktop Magnetic Swarm Actuation Rig](images/fig2_desktop_swarm_hardware.jpg)
+*Figure 8: Custom DIY Desktop Magnetic Swarm Lab testbed. The system incorporates a 12V DC geared drive motor (JGA25-370) spinning a 90mm rotor crossbar equipped with paired N42 block magnets (Red North, Blue South). Four 60mm brass standoff pillars support a 140mm acrylic stage housing a 100mm Pyrex petri dish with self-assembling 2mm neodymium cube microrobots. An overhead USB webcam (Logitech C920) on a flexible gooseneck arm provides real-time vision tracking.*
 
 ```python
 import cv2
@@ -360,15 +309,15 @@ cv2.destroyAllWindows()
 
 ---
 
-## IX. CONCLUSION & OPEN-SOURCE REPRODUCIBILITY
+## XI. CONCLUSION & OPEN-SOURCE REPRODUCIBILITY
 
-This paper has presented the design, kinematic formulation, embedded electronics, and experimental validation of **Microbot V1**, an autonomous bio-inspired modular robot. By resolving the Kinematic Reference Dilemma through an Equatorial Collar Hub, we demonstrate that active, self-contained crawling across a frictionless spherical magnetic joint is physically achievable without external magnetic manipulation. 
+This paper has presented the design, kinematic formulation, embedded electronics, and experimental validation of **Microbot V1**, an autonomous bio-inspired modular robot translating the cinematic archetype of *Big Hero 6* into a physically viable mechatronic system. By resolving the Kinematic Reference Dilemma through an Equatorial Collar Hub, we demonstrate that active, self-contained crawling across a frictionless spherical magnetic joint is physically achievable without external magnetic manipulation. 
 
-All project assets—including binary STL print files, Arduino firmware, 3D WebGL simulation tools, and benchtop hardware schematics—are open-sourced to accelerate research in modular robotics and bio-inspired swarm systems.
+All project assets—including binary STL print files, Arduino firmware, 3D WebGL simulation tools, and benchtop hardware schematics—are open-sourced at [https://github.com/bodigeabhilash3-bit/microbot](https://github.com/bodigeabhilash3-bit/microbot) under the MIT License to accelerate research in modular robotics and bio-inspired swarm systems.
 
 ---
 
-## X. REFERENCES
+## XII. REFERENCES
 
 1. S. Murata and H. Kurokawa, "Self-reconfigurable robot systems," *IEEE Robotics & Automation Magazine*, vol. 14, no. 1, pp. 71–78, 2007.
 2. M. Yim, W. Shen, B. Salemi, D. Rus, M. Moll, H. Lipson, E. Klavins, and G. S. Chirikjian, "Modular self-reconfigurable robot systems [grand challenges of robotics]," *IEEE Robotics & Automation Magazine*, vol. 14, no. 1, pp. 43–52, 2007.

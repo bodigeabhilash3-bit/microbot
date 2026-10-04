@@ -18,7 +18,11 @@ Most DIY replicas of the *Big Hero 6* Microbot are **passive magnetic props**—
 
 This project solves the **"Kinematic Reference Dilemma"** (Newton's 3rd Law on a frictionless spherical joint) to produce a **genuinely autonomous, self-powered crawling Microbot** without needing external magnets beneath the table. It also provides a digital replica of the cutting-edge **Cell Press Device (2025) Magnetic Swarm Lab** for untethered swarm research.
 
-![Microbot V1 3D Mechanical Assembly](images/fig1_microbot_cad_assembly.jpg)
+![Movie-Accurate Microbot Unit on Laboratory Workbench](images/movie_microbot_unit.jpg)
+*Physical manifestation of the movie-accurate Big Hero 6 Microbot module on the SF-Tech robotics development workbench.*
+
+![Cinematic Microbot Swarm Wave and Colossal Robotic Hand](images/movie_microbot_swarm.jpg)
+*Collective swarm emergence of millions of Microbot modules forming dynamic macro-structures, replicating the iconic scene from Big Hero 6.*
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
@@ -106,6 +110,9 @@ python -m http.server 8080
 * **The Problem:** A motor inside a pod trying to rotate against a free, polished chrome steel sphere will simply slip inside the socket cup due to low friction ($\mu < 0.1$).
 * **The Solution:** A low-profile **Equatorial Collar Ring** clasps the ball equator. The servo horn connects to this collar via a **1.0mm piano wire pushrod** with precision Z-bends. When the servo actuates, it pushes against the collar, tilting the entire pod by up to **$\pm 38^\circ$**.
 
+![Figure 3: Exploded CAD Blueprint of Microbot Assembly](images/movie_cad_blueprint.jpg)
+*Figure 3: Comprehensive engineering exploded CAD architecture of the movie-accurate Microbot link assembly.*
+
 ![Fig 2: Kinematic Free Body Diagram & Collar Torque Resolution](images/fig4_kinematic_diagram.jpg)
 *Figure 2: Free-body diagram (FBD) of the spherical magnetic joint and the mechanical resolution to the Kinematic Reference Dilemma.*
 
@@ -176,8 +183,11 @@ $$\theta_2(t) = \theta_{\text{neutral}} - A \cdot \sin(\omega t)$$
 
 The project incorporates research from **Yang, Wie et al. (Cell Press *Device*, April 2025)**: *"Magnetic swarm intelligence of mass-produced, programmable microrobot assemblies for versatile task execution."*
 
-![Figure 4: Multi-Robot Swarm Collective Reconfiguration Topologies](images/fig6_swarm_topologies.jpg)
-*Figure 4: Multi-robot self-reconfiguration topologies: (A) Serial tandem chain crawling, (B) 2D Planar Honeycomb Lattice platform, and (C) Cantilever vertical arch bridge.*
+![Figure 4: Comparative Analysis of Movie-Accurate Microbot Modular Structures](images/movie_swarm_structures.jpg)
+*Figure 4: Comparative structural and kinematic analysis of movie-accurate Microbot multi-modular assemblies: (A) Unit module, (B) Walking train, (C) Staircase and suspension bridge with FEA tensile/compressive stress analysis, and (D) Vertical support column lifting a heavy block.*
+
+![Figure 4b: Multi-Robot Swarm Collective Reconfiguration Topologies](images/fig6_swarm_topologies.jpg)
+*Figure 4b: Multi-robot self-reconfiguration topologies: serial tandem crawling, honeycomb lattice, and arch bridge.*
 
 ![Cell Press Device 2025 Magnetic Swarm Simulation](images/fig3_cell2025_swarm_lab.jpg)
 *Figure 5: Simulation of the Cell Press Device (2025) magnetic swarm system within a fluid petri dish stage.*

@@ -413,7 +413,7 @@ function buildMicrobotModel() {
   const collarMat = new THREE.MeshStandardMaterial({ color: 0x1a212d, metalness: 0.7, roughness: 0.35 });
   const pinBrassMat = new THREE.MeshStandardMaterial({ color: 0xdfb15b, metalness: 0.85, roughness: 0.25 });
   const magnetMat = new THREE.MeshStandardMaterial({ color: 0xd6dde6, metalness: 0.92, roughness: 0.12 });
-  const shellMat = new THREE.MeshStandardMaterial({ color: 0x141820, roughness: 0.42, metalness: 0.25, side: THREE.DoubleSide });
+  const shellMat = new THREE.MeshStandardMaterial({ color: 0x0e1116, roughness: 0.32, metalness: 0.48, side: THREE.DoubleSide });
   const servoBodyMat = new THREE.MeshStandardMaterial({ color: 0x0055aa, roughness: 0.3, metalness: 0.1, transparent: true, opacity: 0.85 });
   const servoHornMat = new THREE.MeshStandardMaterial({ color: 0xf5f5f5, roughness: 0.2 });
   const pushrodMat = new THREE.MeshStandardMaterial({ color: 0xc0c8d0, metalness: 0.9, roughness: 0.1 });
@@ -638,6 +638,13 @@ function createHexagonalPodShell(mat, isUpperLid) {
     const socketCup = new THREE.Mesh(socketCupGeo, socketCupMat);
     socketCup.position.set(0, 0, 0);
     shellGroup.add(socketCup);
+
+    // Movie-Accurate Emissive Red Socket Ring
+    const movieRingGeo = new THREE.TorusGeometry(CONFIG.socketRadius * 0.96, 0.4, 16, 32);
+    const movieRingMat = new THREE.MeshStandardMaterial({ color: 0xff3311, emissive: 0xff2200, emissiveIntensity: 1.8, roughness: 0.2 });
+    const movieRing = new THREE.Mesh(movieRingGeo, movieRingMat);
+    movieRing.position.set(0, 0, 1.2);
+    shellGroup.add(movieRing);
   }
 
   return shellGroup;
