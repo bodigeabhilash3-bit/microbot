@@ -402,8 +402,13 @@ function initThree() {
   scene.background = new THREE.Color(0x0a0c10);
   scene.fog = new THREE.FogExp2(0x0a0c10, 0.005);
 
-  camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.5, 1000);
-  camera.position.set(110, 36, 85);
+  const isMobile = window.innerWidth <= 768;
+  camera = new THREE.PerspectiveCamera(isMobile ? 50 : 42, window.innerWidth / window.innerHeight, 0.5, 1000);
+  if (isMobile) {
+    camera.position.set(135, 45, 105);
+  } else {
+    camera.position.set(110, 36, 85);
+  }
 
   renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -1800,16 +1805,82 @@ function setupUIEventListeners() {
   const trackerSwarm = document.getElementById('tracker-swarm');
   const teleSwarm = document.getElementById('telemetry-swarm');
 
+  // Mobile Floating Drawer Controls
+  const mobileToggleBtn = document.getElementById('btn-mobile-toggle');
+  const btnCloseControls = document.getElementById('btn-close-controls');
+  const btnCloseSwarm = document.getElementById('btn-close-swarm');
+
+  function toggleMobileDrawer(forceClose = false) {
+    const isSwarm = (state.systemTab === 'swarm');
+    const activePanel = isSwarm ? panelSwarm : panelV1;
+    const inactivePanel = isSwarm ? panelV1 : panelSwarm;
+
+    if (inactivePanel) inactivePanel.classList.remove('mobile-active');
+    if (!activePanel) return;
+
+    if (forceClose || activePanel.classList.contains('mobile-active')) {
+      activePanel.classList.remove('mobile-active');
+      if (mobileToggleBtn) {
+        mobileToggleBtn.classList.remove('active');
+        const arrow = mobileToggleBtn.querySelector('.pill-arrow');
+        if (arrow) arrow.textContent = '▲';
+      }
+    } else {
+      activePanel.classList.add('mobile-active');
+      if (mobileToggleBtn) {
+        mobileToggleBtn.classList.add('active');
+        const arrow = mobileToggleBtn.querySelector('.pill-arrow');
+        if (arrow) arrow.textContent = '▼';
+      }
+    }
+  }
+
+  if (mobileToggleBtn) {
+    mobileToggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleMobileDrawer();
+    });
+  }
+  if (btnCloseControls) {
+    btnCloseControls.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleMobileDrawer(true);
+    });
+  }
+  if (btnCloseSwarm) {
+    btnCloseSwarm.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleMobileDrawer(true);
+    });
+  }
+
+  // Tapping canvas closes mobile drawer to focus on 3D interaction
+  const canvasContainer = document.getElementById('canvas-container');
+  if (canvasContainer) {
+    canvasContainer.addEventListener('click', () => {
+      if (window.innerWidth <= 768) {
+        toggleMobileDrawer(true);
+      }
+    });
+  }
+
   if (tabV1) {
     tabV1.addEventListener('click', () => {
+      const wasOpen = panelSwarm && panelSwarm.classList.contains('mobile-active');
       state.systemTab = 'v1';
       tabV1.classList.add('active');
       if (tabSwarm) tabSwarm.classList.remove('active');
       worldGroup.visible = true;
       if (swarmGroup) swarmGroup.visible = false;
 
-      if (panelV1) panelV1.classList.remove('hidden');
-      if (panelSwarm) panelSwarm.classList.add('hidden');
+      if (panelV1) {
+        panelV1.classList.remove('hidden');
+        if (wasOpen) panelV1.classList.add('mobile-active');
+      }
+      if (panelSwarm) {
+        panelSwarm.classList.add('hidden');
+        panelSwarm.classList.remove('mobile-active');
+      }
       if (statusV1) statusV1.classList.remove('hidden');
       if (statusSwarm) statusSwarm.classList.add('hidden');
       if (trackerV1) trackerV1.classList.remove('hidden');
@@ -1825,14 +1896,21 @@ function setupUIEventListeners() {
 
   if (tabSwarm) {
     tabSwarm.addEventListener('click', () => {
+      const wasOpen = panelV1 && panelV1.classList.contains('mobile-active');
       state.systemTab = 'swarm';
       tabSwarm.classList.add('active');
       if (tabV1) tabV1.classList.remove('active');
       worldGroup.visible = false;
       if (swarmGroup) swarmGroup.visible = true;
 
-      if (panelV1) panelV1.classList.add('hidden');
-      if (panelSwarm) panelSwarm.classList.remove('hidden');
+      if (panelV1) {
+        panelV1.classList.add('hidden');
+        panelV1.classList.remove('mobile-active');
+      }
+      if (panelSwarm) {
+        panelSwarm.classList.remove('hidden');
+        if (wasOpen) panelSwarm.classList.add('mobile-active');
+      }
       if (statusV1) statusV1.classList.add('hidden');
       if (statusSwarm) statusSwarm.classList.remove('hidden');
       if (trackerV1) trackerV1.classList.add('hidden');
@@ -2215,6 +2293,11 @@ function setCameraPreset(type) {
     case 'desk': targetPos.set(78, 14, 46); break;
   }
 
+  const isMobile = window.innerWidth <= 768;
+  if (isMobile) {
+    targetPos.multiplyScalar(1.22);
+  }
+
   gsap.to(camera.position, {
     x: targetPos.x,
     y: targetPos.y,
@@ -2299,6 +2382,8 @@ function onCanvasClick(event) {
 
 function setupWindowResize() {
   window.addEventListener('resize', () => {
+    const isMobile = window.innerWidth <= 768;
+    camera.fov = isMobile ? 50 : 42;
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
