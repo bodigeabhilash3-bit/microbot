@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Microbot V1 — Visual Mechanical Assembly Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0c10;
+      --card-bg: rgba(16, 22, 34, 0.85);
+      --border: rgba(255, 255, 255, 0.1);
+      --accent: #00f3ff;
+      --accent-glow: rgba(0, 243, 255, 0.25);
+      --text: #f0f4f8;
+      --muted: #8b9bb4;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Outfit', -apple-system, sans-serif;
+      padding: 32px 20px;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      background: rgba(0, 243, 255, 0.15);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      border-radius: 20px;
+      font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+    h1 {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 16px;
+      max-width: 700px;
+      margin: 0 auto 20px;
+    }
+    .nav-links {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    .btn:hover {
+      background: var(--accent);
+      color: #0a0c10;
+      border-color: var(--accent);
+      box-shadow: 0 0 16px var(--accent-glow);
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 36px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+    }
+    .card-img-container {
+      position: relative;
+      width: 100%;
+      background: #05070a;
+      border-bottom: 1px solid var(--border);
+    }
+    .card-img-container img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+    .card-content {
+      padding: 24px 28px;
+    }
+    .card-title {
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card-desc {
+      color: var(--muted);
+      font-size: 15px;
+      margin-bottom: 18px;
+    }
+    .steps-list {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 14px;
+    }
+    .step-item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 14px;
+    }
+    .step-num {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      background: var(--accent);
+      color: #0a0c10;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 24px;
+      font-weight: 700;
+      font-size: 12px;
+      margin-right: 8px;
+    }
+    .highlight-box {
+      background: rgba(0, 243, 255, 0.08);
+      border-left: 4px solid var(--accent);
+      padding: 14px 18px;
+      border-radius: 0 8px 8px 0;
+      margin-top: 16px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <span class="badge">PHYSICAL ASSEMBLY BLUEPRINT</span>
+      <h1>Microbot V1 Visual Architecture</h1>
+      <p class="subtitle">Complete photorealistic engineering cutaway diagrams, exploded stacking order, and kinematics motion blueprint.</p>
+      <div class="nav-links">
+        <a href="index.html" class="btn">🤖 Launch Interactive 3D Simulator</a>
+        <a href="paper.html" target="_blank" class="btn">📄 Open Academic Paper</a>
+      </div>
+    </header>
+
+    <!-- Visual 1: Cutaway -->
+    <div class="card">
+      <div class="card-img-container">
+        <img src="images/microbot_cutaway_assembly.jpg" alt="Microbot Internal Cutaway Assembly">
+      </div>
+      <div class="card-content">
+        <h2 class="card-title"><span>🔍</span> Diagram 1: Internal Cutaway View (Both Pods Assembled)</h2>
+        <p class="card-desc">Notice how the components interact inside the transparent pod shells. There are <strong>no holes drilled in the center steel sphere</strong>.</p>
+        
+        <ul class="steps-list">
+          <li class="step-item"><strong>12mm Chrome Steel Ball:</strong> Solid, mirror-polished sphere in the center. Serves as omnidirectional ball-and-socket core.</li>
+          <li class="step-item"><strong>Equatorial Collar Ring:</strong> Slim black ring with brass pivot ears that slip-fits over the ball equator.</li>
+          <li class="step-item"><strong>N42 Ring Magnets:</strong> Concentric silver rings inside pod cups pulling the steel ball with 5.2N holding force.</li>
+          <li class="step-item"><strong>3.7g Sub-Micro Servos:</strong> Longitudinal blue coreless servos driving the single-arm white horns.</li>
+          <li class="step-item"><strong>Piano Wire Pushrods:</strong> 1.0mm spring steel wires connecting servo horns to collar pivot ears.</li>
+        </ul>
+
+        <div class="highlight-box">
+          💡 <strong>Key Takeaway:</strong> The pod stays stuck to the ball purely by magnetic pull. The servo tilts the pod by pushing against the loose center collar ring.
+        </div>
+      </div>
+    </div>
+
+    <!-- Visual 2: Exploded Assembly -->
+    <div class="card">
+      <div class="card-img-container">
+        <img src="images/microbot_exploded_step_guide.jpg" alt="Microbot Exploded Step-by-Step Alignment">
+      </div>
+      <div class="card-content">
+        <h2 class="card-title"><span>📦</span> Diagram 2: Step-by-Step Exploded Stacking Sequence</h2>
+        <p class="card-desc">Follow this exact physical stacking order when putting the parts together on your workbench:</p>
+        
+        <ul class="steps-list">
+          <li class="step-item"><span class="step-num">1</span> <strong>Pod Chassis:</strong> Seat 3.7g servo into printed mounting ribs.</li>
+          <li class="step-item"><span class="step-num">2</span> <strong>Ring Magnet:</strong> Press-fit 10×3mm magnet into the front socket cavity with a drop of glue.</li>
+          <li class="step-item"><span class="step-num">3</span> <strong>Center Ball:</strong> Polished 12mm steel ball bearing snaps into the magnetic socket.</li>
+          <li class="step-item"><span class="step-num">4</span> <strong>Collar Ring:</strong> Slide the collar ring onto the equator of the ball (brass ears horizontal).</li>
+          <li class="step-item"><span class="step-num">5</span> <strong>Pushrod Linkage:</strong> Hook the 26mm piano wire into the servo horn and collar ear.</li>
+          <li class="step-item"><span class="step-num">6</span> <strong>Snap Pod Lid:</strong> Route servo leads out the rear apex and snap the upper lid flush.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Visual 3: Articulation Motion -->
+    <div class="card">
+      <div class="card-img-container">
+        <img src="images/microbot_articulation_motion.jpg" alt="Microbot Kinematic Articulation & Locomotion Blueprint">
+      </div>
+      <div class="card-content">
+        <h2 class="card-title"><span>⚡</span> Diagram 3: Kinematics & Walking Movement Blueprint</h2>
+        <p class="card-desc">Understanding the &plusmn;38&deg; pitch motion and terrestrial crawling gait:</p>
+        
+        <ul class="steps-list">
+          <li class="step-item"><strong>Compression Stroke:</strong> When the servo pushes the pushrod, the pod tilts downwards (-38&deg;) and plants its apex against the desk.</li>
+          <li class="step-item"><strong>Tension Stroke:</strong> When the servo pulls the pushrod, the pod tilts upwards (+38&deg;) into the air.</li>
+          <li class="step-item"><strong>Anti-Phase Crawling Gait:</strong> Pod 1 plants down while Pod 2 lifts up and swings forward. Alternating this cycle walks the Microbot forward across your table!</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Visual 4: SG90 External Mount Hack -->
+    <div class="card" id="sg90-guide" style="border: 1px solid #00f3ff; box-shadow: 0 0 24px rgba(0, 243, 255, 0.2);">
+      <div class="card-img-container">
+        <img src="images/microbot_reality_assembly_guide.jpg" alt="SG90 9g Servo External Mounting Reality Tutorial Diagram">
+      </div>
+      <div class="card-content">
+        <div class="badge" style="background: rgba(0, 243, 255, 0.2); margin-bottom: 8px;">NO 3D PRINTER REQUIRED</div>
+        <h2 class="card-title"><span>🛠️</span> Diagram 4: SG90 (9g) External Mount & Linkage Guide</h2>
+        <p class="card-desc">If you have larger 9g blue SG90 servos and cannot reprint larger pods right now, use this direct external-mount configuration. The mechanics work 100% identically!</p>
+        
+        <ul class="steps-list">
+          <li class="step-item"><span class="step-num">1</span> <strong>Surface Prep:</strong> Clean the flat upper facet of the pod shell with rubbing alcohol. Apply a 20×15mm strip of high-bond double-sided foam mounting tape.</li>
+          <li class="step-item"><span class="step-num">2</span> <strong>Mount SG90:</strong> Press the SG90 servo body firmly onto the foam tape with its white drive gear pointing forward toward the center ball. Wrap one 2.5mm nylon zip-tie tightly around the pod and servo body.</li>
+          <li class="step-item"><span class="step-num">3</span> <strong>Pushrod Linkage:</strong> Fit the single-arm white servo horn onto the servo spline. Use a 1.0mm paperclip or steel wire with Z-bends connecting the horn hole to the locked collar pivot ear.</li>
+          <li class="step-item"><span class="step-num">4</span> <strong>Wiring & Power:</strong> Connect Orange signal wire to Arduino/ESP32, Red to 5V (4×AA battery pack), and Brown to Common Ground.</li>
+        </ul>
+
+        <div class="highlight-box">
+          ⚡ <strong>Kinematic Note:</strong> Because the SG90 is mounted externally, it actually delivers <strong>higher torque</strong> (~1.6 kg·cm) than the 3.7g micro servo, giving your robot even stronger crawling thrust!
+        </div>
+      </div>
+    </div>
+
+    <!-- Visual 5: Pushrod & Servo Macro Alignment -->
+    <div class="card" id="pushrod-macro-guide" style="border: 1px solid rgba(0, 243, 255, 0.4);">
+      <div class="card-img-container">
+        <img src="images/sg90_servo_pushrod_macro_guide.jpg" alt="SG90 Servo and Pushrod Macro Placement Blueprint">
+      </div>
+      <div class="card-content">
+        <div class="badge" style="background: rgba(0, 243, 255, 0.2); margin-bottom: 8px;">PRECISION KINEMATICS</div>
+        <h2 class="card-title"><span>📐</span> Diagram 5: Exact Servo Position, Horn Angle & Pushrod Bending</h2>
+        <p class="card-desc">Follow these exact millimeter measurements to ensure the pushrod transmits maximum mechanical leverage without binding or jamming:</p>
+        
+        <ul class="steps-list">
+          <li class="step-item"><strong>Distance from Rim (8mm):</strong> Place the SG90 front face 8mm behind the pod's front circular rim so the horn clears the magnet during full forward swing.</li>
+          <li class="step-item"><strong>Neutral Horn Position (90°):</strong> Power on the servo with your code sending 90°. Then press the single-arm horn on vertically pointing straight up.</li>
+          <li class="step-item"><strong>Pushrod Length (28mm):</strong> The distance between the two Z-bends is exactly 28mm. Use the 3rd hole from the pivot on the white horn.</li>
+          <li class="step-item"><strong>Double Z-Bends:</strong> Each end of the paperclip has a stepped "Z-bend" so the wire cannot pop out of the horn hole or collar ear during vigorous crawling.</li>
+        </ul>
+
+        <div class="highlight-box">
+          🎯 <strong>Testing Pushrod Freedom:</strong> Gently turn the servo horn by hand while unpowered. The pod should smoothly pitch up (+35°) and down (-35°) without any binding or clicking against the pod shell!
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

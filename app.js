@@ -7,18 +7,18 @@
 const CONFIG = {
   ballRadius: 6.0,          // 12mm Chrome Steel Ball
   socketRadius: 6.2,        // 0.2mm radial clearance
-  podLength: 58.0,          // Total pod length to apex
-  podBaseWidth: 24.0,       // Hexagonal pyramid base width
-  podHeight: 22.0,          // Hexagonal pyramid base height
+  podLength: 49.5,          // Total pod length to flat tip (movie accurate)
+  podBaseWidth: 14.5,       // Hexagonal shoulder max width across flats
+  podHeight: 13.0,          // Hexagonal shoulder max height
   magnetOD: 10.0,
-  magnetID: 3.0,
-  magnetThick: 3.0,
-  servoLength: 20.0,
-  servoWidth: 8.5,
-  servoHeight: 20.0,
+  magnetID: 4.5,
+  magnetThick: 2.5,
+  servoLength: 19.5,
+  servoWidth: 7.8,
+  servoHeight: 11.2,        // Fits completely inside pod shell!
   pushrodRadius: 0.5,       // 1.0mm diameter wire
-  collarRadius: 7.2,
-  collarWidth: 2.4,
+  collarRadius: 6.8,
+  collarWidth: 2.2,
   maxArticulation: 38.0     // degrees
 };
 
@@ -296,13 +296,14 @@ const state = {
   gait: null,              // null, 'antiphase', 'inphase'
   selectedComponent: null,
 
-  // Swarm Lab State (Cell Device 2025)
+  // Big Hero 6 Movie Swarm & Multi-Bot Coordination State
   swarm: {
-    view: 'micro',         // 'micro' or 'hardware'
-    config: 'ht',          // 'ht', 'sc', 'ff'
-    frequency: 5.0,        // Hz
-    motionMode: 'spin',    // 'spin', 'orbital'
-    mission: 'climb'       // 'climb', 'throw', 'raft', 'bridge', 'unclog', 'morph'
+    formation: 'hand',       // 'hand', 'chain', 'bridge', 'wave', 'tower'
+    count: 140,              // 20 to 140 bots
+    speed: 1.0,              // 0.2 to 2.5x
+    neuralFollow: true,      // Swarm follows cursor
+    mousePos: new THREE.Vector2(0, 0),
+    isScattered: false
   }
 };
 
@@ -312,34 +313,88 @@ let container = document.getElementById('canvas-container');
 
 // Group Hierarchies
 let worldGroup;            // Physical Microbot V1
-let swarmGroup;            // Cell 2025 Magnetic Swarm Lab
+let swarmGroup;            // Big Hero 6 Movie Swarm Lab
 let ballMesh, collarGroup;
 let pod1Pivot, pod1Group, pod1ShellLower, pod1ShellUpper, pod1Magnet, pod1Servo, pod1Horn, pod1Pushrod;
 let pod2Pivot, pod2Group, pod2ShellLower, pod2ShellUpper, pod2Magnet, pod2Servo, pod2Horn, pod2Pushrod;
 let fluxGroup;
 let annotations = [];
 
-// Swarm Simulation Objects
-let swarmMicrorobots = [];
-let swarmMagnetRig, swarmFluxGroup, swarmObstacleMesh, swarmTubeMesh, swarmLiquidMetalMesh, swarmRaftPill, swarmLedMesh;
-let hardwareRigGroup, hardwareRotorRig, hardwareCubes = [];
+// Movie Swarm Simulation Objects
+let movieBots = [];
+let swarmObstacleGroup = null;
+let obsWallMesh = null, obsChasmLeft = null, obsChasmRight = null, obsCargoBox = null;
+
+// Web Serial API Hardware Link
+let hardwareSerialPort = null;
+let hardwareSerialWriter = null;
+let isHardwareConnected = false;
+let swarmCenterOffset = new THREE.Vector3(0, 12, 0);
 
 // Raycasting for interactive click
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
+function setSafeText(id, text) {
+  const el = document.getElementById(id);
+  if (el) el.innerText = text;
+}
+
+function showErrorOverlay(message) {
+  const container = document.getElementById('canvas-container') || document.body;
+  const existing = document.getElementById('error-overlay');
+  if (existing) existing.remove();
+
+  const errDiv = document.createElement('div');
+  errDiv.id = 'error-overlay';
+  errDiv.style.cssText = `
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(20, 24, 34, 0.95);
+    border: 1px solid #ff3366;
+    border-radius: 12px;
+    padding: 24px 32px;
+    color: #f0f4f8;
+    font-family: 'Outfit', sans-serif;
+    text-align: center;
+    max-width: 500px;
+    z-index: 1000;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.8), 0 0 20px rgba(255,51,102,0.3);
+  `;
+  errDiv.innerHTML = `
+    <div style="font-size: 32px; margin-bottom: 12px;">⚠️</div>
+    <h3 style="color: #ff3366; margin-bottom: 8px; font-size: 18px; font-weight: 600;">Simulation Error</h3>
+    <p style="color: #8b9bb4; font-size: 14px; line-height: 1.5; margin-bottom: 16px;">${message}</p>
+    <button onclick="location.reload()" style="background: #00f3ff; color: #0a0c10; border: none; padding: 8px 20px; border-radius: 6px; font-weight: 600; cursor: pointer;">Reload Page</button>
+  `;
+  container.appendChild(errDiv);
+}
+
 // --- Initialization ---
 function init() {
-  initThree();
-  buildEnvironment();
-  buildMicrobotModel();
-  buildMagneticFluxLines();
-  buildSwarmEnvironment();
-  create3DAnnotations();
-  setupUIEventListeners();
-  setupWindowResize();
-  updateAssemblyGuideUI();
-  animate();
+  if (typeof THREE === 'undefined') {
+    console.error("Three.js not loaded. Check internet connection for CDN scripts.");
+    showErrorOverlay("Three.js 3D library failed to load. Please check your internet connection and reload.");
+    return;
+  }
+
+  try {
+    initThree();
+    buildEnvironment();
+    buildMicrobotModel();
+    buildMagneticFluxLines();
+    buildSwarmEnvironment(); // Initialize Big Hero 6 movie swarm units
+    create3DAnnotations();
+    setupUIEventListeners();
+    setupWindowResize();
+    updateAssemblyGuideUI();
+    animate();
+  } catch (err) {
+    console.error("Error during Microbot prototype initialization:", err);
+    showErrorOverlay("Simulation failed to start: " + err.message);
+  }
 }
 
 function initThree() {
@@ -348,7 +403,7 @@ function initThree() {
   scene.fog = new THREE.FogExp2(0x0a0c10, 0.005);
 
   camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.5, 1000);
-  camera.position.set(75, 45, 95);
+  camera.position.set(110, 36, 85);
 
   renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -409,11 +464,11 @@ function buildEnvironment() {
 
 // --- High-Fidelity 3D CAD Geometry Generator for V1 ---
 function buildMicrobotModel() {
-  const chromeMat = new THREE.MeshStandardMaterial({ color: 0xeeeeee, metalness: 0.98, roughness: 0.05 });
-  const collarMat = new THREE.MeshStandardMaterial({ color: 0x1a212d, metalness: 0.7, roughness: 0.35 });
+  const chromeMat = new THREE.MeshStandardMaterial({ color: 0x282e38, metalness: 0.94, roughness: 0.16 });
+  const collarMat = new THREE.MeshStandardMaterial({ color: 0x141820, metalness: 0.7, roughness: 0.35 });
   const pinBrassMat = new THREE.MeshStandardMaterial({ color: 0xdfb15b, metalness: 0.85, roughness: 0.25 });
   const magnetMat = new THREE.MeshStandardMaterial({ color: 0xd6dde6, metalness: 0.92, roughness: 0.12 });
-  const shellMat = new THREE.MeshStandardMaterial({ color: 0x0e1116, roughness: 0.32, metalness: 0.48, side: THREE.DoubleSide });
+  const shellMat = new THREE.MeshStandardMaterial({ color: 0x151922, roughness: 0.28, metalness: 0.62, side: THREE.DoubleSide });
   const servoBodyMat = new THREE.MeshStandardMaterial({ color: 0x0055aa, roughness: 0.3, metalness: 0.1, transparent: true, opacity: 0.85 });
   const servoHornMat = new THREE.MeshStandardMaterial({ color: 0xf5f5f5, roughness: 0.2 });
   const pushrodMat = new THREE.MeshStandardMaterial({ color: 0xc0c8d0, metalness: 0.9, roughness: 0.1 });
@@ -514,9 +569,9 @@ function buildPodComponents(parentGroup, opts) {
   if (isPod1) pod1Magnet = magnetMesh;
   else pod2Magnet = magnetMesh;
 
-  // Servo Assembly
+  // Servo Assembly (Scaled to 3.7g sub-micro specifications)
   const servoGroup = new THREE.Group();
-  servoGroup.position.set(0, 0, 22.0);
+  servoGroup.position.set(0, 0, 23.0);
   servoGroup.userData = { id: 'servo' };
 
   const bodyGeo = new THREE.BoxGeometry(CONFIG.servoWidth, CONFIG.servoHeight, CONFIG.servoLength);
@@ -524,15 +579,15 @@ function buildPodComponents(parentGroup, opts) {
   bodyMesh.castShadow = true;
   servoGroup.add(bodyMesh);
 
-  const gearHubGeo = new THREE.CylinderGeometry(2.5, 2.5, 3.0, 24);
+  const gearHubGeo = new THREE.CylinderGeometry(1.6, 1.6, 1.8, 16);
   const gearHub = new THREE.Mesh(gearHubGeo, opts.servoHornMat);
-  gearHub.position.set(CONFIG.servoWidth / 2 + 1.2, 4.0, -3.0);
+  gearHub.position.set(CONFIG.servoWidth / 2 + 0.6, 1.5, -3.0);
   gearHub.rotation.z = Math.PI / 2;
   servoGroup.add(gearHub);
 
-  const hornArmGeo = new THREE.BoxGeometry(1.6, 2.5, 8.5);
+  const hornArmGeo = new THREE.BoxGeometry(1.1, 1.6, 5.8);
   const hornMesh = new THREE.Mesh(hornArmGeo, opts.servoHornMat);
-  hornMesh.position.set(CONFIG.servoWidth / 2 + 2.5, 4.0, 1.2);
+  hornMesh.position.set(CONFIG.servoWidth / 2 + 1.2, 1.5, 0.2);
   servoGroup.add(hornMesh);
 
   innerGroup.add(servoGroup);
@@ -544,25 +599,25 @@ function buildPodComponents(parentGroup, opts) {
     pod2Horn = hornMesh;
   }
 
-  // Pushrod Linkage
-  const rodGeo = new THREE.CylinderGeometry(CONFIG.pushrodRadius, CONFIG.pushrodRadius, 26.0, 16);
+  // Pushrod Linkage (Encased longitudinally inside pod cavity)
+  const rodGeo = new THREE.CylinderGeometry(CONFIG.pushrodRadius, CONFIG.pushrodRadius, 14.0, 16);
   const rodMesh = new THREE.Mesh(rodGeo, opts.pushrodMat);
   rodMesh.castShadow = true;
-  rodMesh.position.set(CONFIG.servoWidth / 2 + 2.5, 2.0, 13.0);
-  rodMesh.rotation.x = 0.12;
+  rodMesh.position.set(CONFIG.servoWidth / 2 + 0.6, 1.0, 15.0);
+  rodMesh.rotation.x = Math.PI / 2;
   rodMesh.userData = { id: 'pushrod' };
   innerGroup.add(rodMesh);
 
   if (isPod1) pod1Pushrod = rodMesh;
   else pod2Pushrod = rodMesh;
 
-  // Hexagonal Pod Shell
+  // Hexagonal Pod Shell (Movie Accurate, Flat Tip)
   const shellLower = createHexagonalPodShell(opts.shellMat, false);
   shellLower.userData = { id: 'shell' };
   innerGroup.add(shellLower);
 
   const shellUpper = createHexagonalPodShell(opts.shellMat, true);
-  shellUpper.position.y = 1.0;
+  shellUpper.position.y = 0; // Flush seamless mating when assembled!
   shellUpper.userData = { id: 'shell' };
   innerGroup.add(shellUpper);
 
@@ -575,63 +630,158 @@ function buildPodComponents(parentGroup, opts) {
   }
 }
 
+function getHexVerticesAtZ(z, r) {
+  const h = Math.sqrt(3) / 2.0 * r;
+  const wHalf = r / 2.0;
+  return [
+    [wHalf, h, z],    // 0: Top-right
+    [r, 0.0, z],      // 1: Mid-right
+    [wHalf, -h, z],   // 2: Bottom-right
+    [-wHalf, -h, z],  // 3: Bottom-left
+    [-r, 0.0, z],     // 4: Mid-left
+    [-wHalf, h, z]    // 5: Top-left
+  ];
+}
+
 function createHexagonalPodShell(mat, isUpperLid) {
   const shellGroup = new THREE.Group();
-  const length = CONFIG.podLength;
-  const w1 = CONFIG.podBaseWidth;
-  const h1 = CONFIG.podHeight;
-  const z0 = 6.2;
-  const zApex = z0 + length;
-  const apex = [0, 0, zApex];
 
-  const geom = new THREE.BufferGeometry();
-  const p0 = [
-    [0, h1 / 2, z0],
-    [w1 / 2, h1 / 4, z0],
-    [w1 / 2, -h1 / 4, z0],
-    [0, -h1 / 2, z0],
-    [-w1 / 2, -h1 / 4, z0],
-    [-w1 / 2, h1 / 4, z0]
+  // Movie-Accurate Stations from Big Hero 6 screenshot:
+  // Base opens around ball -> Widens to maximum shoulder with latch slots -> Long gentle hexagonal taper -> Silver beveled collar -> Flat hexagonal blunt tip (NO SPIKES!)
+  const stations = [
+    { z: 6.2,  r: 6.0 },   // Level 0: Spherical socket opening
+    { z: 10.5, r: 8.0 },   // Level 1: Shoulder peak (maximum width, 13.9mm across flats)
+    { z: 16.0, r: 7.7 },   // Level 2: Shoulder facet band (latch slot region)
+    { z: 44.0, r: 4.8 },   // Level 3: Main body tapered shaft end
+    { z: 47.0, r: 4.3 },   // Level 4: Metallic collar bevel start
+    { z: 49.5, r: 3.9 }    // Level 5: Flat terminal tip (6.8mm across flats, blunt end!)
   ];
 
-  const mRight = [w1 / 2, 0, z0];
-  const mLeft = [-w1 / 2, 0, z0];
-  const vertices = [];
+  const rings = stations.map(s => getHexVerticesAtZ(s.z, s.r));
 
-  if (isUpperLid) {
-    vertices.push(...p0[5], ...mLeft, ...apex);
-    vertices.push(...p0[0], ...p0[5], ...apex);
-    vertices.push(...p0[1], ...p0[0], ...apex);
-    vertices.push(...mRight, ...p0[1], ...apex);
-  } else {
-    vertices.push(...p0[2], ...mRight, ...apex);
-    vertices.push(...p0[3], ...p0[2], ...apex);
-    vertices.push(...p0[4], ...p0[3], ...apex);
-    vertices.push(...mLeft, ...p0[4], ...apex);
+  // 1. Main Dark Shell Body (stations 0 to 4: z = 6.2 to 47.0)
+  const bodyGeom = new THREE.BufferGeometry();
+  const bodyVerts = [];
+
+  for (let i = 0; i < 4; i++) {
+    const r1 = rings[i];
+    const r2 = rings[i + 1];
+
+    if (isUpperLid) {
+      bodyVerts.push(...r1[4], ...r1[5], ...r2[5]);
+      bodyVerts.push(...r1[4], ...r2[5], ...r2[4]);
+      bodyVerts.push(...r1[5], ...r1[0], ...r2[0]);
+      bodyVerts.push(...r1[5], ...r2[0], ...r2[5]);
+      bodyVerts.push(...r1[0], ...r1[1], ...r2[1]);
+      bodyVerts.push(...r1[0], ...r2[1], ...r2[0]);
+    } else {
+      bodyVerts.push(...r1[1], ...r1[2], ...r2[2]);
+      bodyVerts.push(...r1[1], ...r2[2], ...r2[1]);
+      bodyVerts.push(...r1[2], ...r1[3], ...r2[3]);
+      bodyVerts.push(...r1[2], ...r2[3], ...r2[2]);
+      bodyVerts.push(...r1[3], ...r1[4], ...r2[4]);
+      bodyVerts.push(...r1[3], ...r2[4], ...r2[3]);
+    }
   }
 
-  geom.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-  geom.computeVertexNormals();
+  bodyGeom.setAttribute('position', new THREE.Float32BufferAttribute(bodyVerts, 3));
+  bodyGeom.computeVertexNormals();
+  const bodyMesh = new THREE.Mesh(bodyGeom, mat);
+  bodyMesh.castShadow = true;
+  bodyMesh.receiveShadow = true;
+  shellGroup.add(bodyMesh);
 
-  const shellMesh = new THREE.Mesh(geom, mat);
-  shellMesh.castShadow = true;
-  shellMesh.receiveShadow = true;
-  shellGroup.add(shellMesh);
+  // 2. Movie-Accurate Silver/Titanium Chamfered Collar (stations 4 to 5: z = 47.0 to 49.5)
+  const collarTipMat = new THREE.MeshStandardMaterial({
+    color: 0x95a1b3,
+    metalness: 0.94,
+    roughness: 0.22
+  });
+  const collarGeom = new THREE.BufferGeometry();
+  const collarVerts = [];
+  const r4 = rings[4];
+  const r5 = rings[5];
 
-  const grooveMat = new THREE.MeshStandardMaterial({ color: 0x05070a, roughness: 0.9, metalness: 0.05 });
-  const grooveGeo = new THREE.BoxGeometry(0.7, 0.4, length * 0.55);
-  const groove1 = new THREE.Mesh(grooveGeo, grooveMat);
-  groove1.position.set(w1 * 0.22, (isUpperLid ? 1 : -1) * (h1 * 0.24), z0 + length * 0.35);
-  groove1.rotation.y = (isUpperLid ? -1 : 1) * 0.08;
-  groove1.rotation.x = (isUpperLid ? -1 : 1) * 0.12;
-  shellGroup.add(groove1);
+  if (isUpperLid) {
+    collarVerts.push(...r4[4], ...r4[5], ...r5[5]);
+    collarVerts.push(...r4[4], ...r5[5], ...r5[4]);
+    collarVerts.push(...r4[5], ...r4[0], ...r5[0]);
+    collarVerts.push(...r4[5], ...r5[0], ...r5[5]);
+    collarVerts.push(...r4[0], ...r4[1], ...r5[1]);
+    collarVerts.push(...r4[0], ...r5[1], ...r5[0]);
+  } else {
+    collarVerts.push(...r4[1], ...r4[2], ...r5[2]);
+    collarVerts.push(...r4[1], ...r5[2], ...r5[1]);
+    collarVerts.push(...r4[2], ...r4[3], ...r5[3]);
+    collarVerts.push(...r4[2], ...r5[3], ...r5[2]);
+    collarVerts.push(...r4[3], ...r4[4], ...r5[4]);
+    collarVerts.push(...r4[3], ...r5[4], ...r5[3]);
+  }
 
-  const groove2 = new THREE.Mesh(grooveGeo, grooveMat);
-  groove2.position.set(-w1 * 0.22, (isUpperLid ? 1 : -1) * (h1 * 0.24), z0 + length * 0.35);
-  groove2.rotation.y = (isUpperLid ? 1 : -1) * 0.08;
-  groove2.rotation.x = (isUpperLid ? -1 : 1) * 0.12;
-  shellGroup.add(groove2);
+  collarGeom.setAttribute('position', new THREE.Float32BufferAttribute(collarVerts, 3));
+  collarGeom.computeVertexNormals();
+  const collarMesh = new THREE.Mesh(collarGeom, collarTipMat);
+  collarMesh.castShadow = true;
+  collarMesh.receiveShadow = true;
+  shellGroup.add(collarMesh);
 
+  // 3. Flat Terminal Hexagonal End Cap at z = 49.5 (Blunt tip, NOT A POINT!)
+  const capGeom = new THREE.BufferGeometry();
+  const capVerts = [];
+  const tipZ = stations[5].z;
+  const tipCenter = [0, 0, tipZ];
+
+  if (isUpperLid) {
+    capVerts.push(...tipCenter, ...r5[4], ...r5[5]);
+    capVerts.push(...tipCenter, ...r5[5], ...r5[0]);
+    capVerts.push(...tipCenter, ...r5[0], ...r5[1]);
+  } else {
+    capVerts.push(...tipCenter, ...r5[1], ...r5[2]);
+    capVerts.push(...tipCenter, ...r5[2], ...r5[3]);
+    capVerts.push(...tipCenter, ...r5[3], ...r5[4]);
+  }
+
+  capGeom.setAttribute('position', new THREE.Float32BufferAttribute(capVerts, 3));
+  capGeom.computeVertexNormals();
+  const capMesh = new THREE.Mesh(capGeom, mat);
+  capMesh.castShadow = true;
+  shellGroup.add(capMesh);
+
+  // 4. Movie-Accurate Flat Tip Magnet Docking Port (circular dark recessed core)
+  const tipMagnetGeo = new THREE.CircleGeometry(2.1, 24);
+  const tipMagnetMat = new THREE.MeshStandardMaterial({ color: 0x111317, metalness: 0.95, roughness: 0.1 });
+  const tipMagnet = new THREE.Mesh(tipMagnetGeo, tipMagnetMat);
+  tipMagnet.position.set(0, 0, tipZ + 0.05);
+  shellGroup.add(tipMagnet);
+
+  // Movie-Accurate Rectangular Latch Ports on Shoulder Facets (as seen in screenshot)
+  const slotMat = new THREE.MeshStandardMaterial({ color: 0x05070a, roughness: 0.95, metalness: 0.1 });
+  const slotGeo = new THREE.BoxGeometry(0.5, 1.6, 2.8);
+
+  const slotY = isUpperLid ? (stations[1].r * 0.72) : (-stations[1].r * 0.72);
+  const slotZ1 = 12.2;
+  const slotZ2 = 15.0;
+
+  [-stations[1].r * 0.38, stations[1].r * 0.38].forEach(slotX => {
+    const slotMesh1 = new THREE.Mesh(slotGeo, slotMat);
+    slotMesh1.position.set(slotX, slotY, slotZ1);
+    shellGroup.add(slotMesh1);
+
+    const slotMesh2 = new THREE.Mesh(slotGeo, slotMat);
+    slotMesh2.position.set(slotX, slotY, slotZ2);
+    shellGroup.add(slotMesh2);
+  });
+
+  // Longitudinal Aerodynamic Crease Grooves along the long body
+  const grooveMat = new THREE.MeshStandardMaterial({ color: 0x080b10, roughness: 0.9, metalness: 0.1 });
+  const grooveGeo = new THREE.BoxGeometry(0.5, 0.3, 26.0);
+  [-2.2, 2.2].forEach(gx => {
+    const gMesh = new THREE.Mesh(grooveGeo, grooveMat);
+    gMesh.position.set(gx, isUpperLid ? (stations[2].r * 0.62) : (-stations[2].r * 0.62), 30.5);
+    shellGroup.add(gMesh);
+  });
+
+  // Lower Chassis: Concave socket cup and red magnetic joint accent
   if (!isUpperLid) {
     const socketCupGeo = new THREE.SphereGeometry(CONFIG.socketRadius, 32, 16, 0, Math.PI * 2, 0, Math.PI / 3);
     const socketCupMat = new THREE.MeshStandardMaterial({ color: 0x242d38, roughness: 0.15, metalness: 0.3, side: THREE.BackSide });
@@ -680,447 +830,647 @@ function buildMagneticFluxLines() {
   worldGroup.add(fluxGroup);
 }
 
-// --- Cell 2025 Magnetic Swarm Lab Simulation ---
+// --- Big Hero 6 Movie Swarm & Multi-Bot Collective Coordination Simulation ---
+
 function buildSwarmEnvironment() {
-  // 1. Transparent Acrylic Petri Stage
-  const stageGeo = new THREE.CylinderGeometry(45, 45, 4, 64);
-  const stageMat = new THREE.MeshPhysicalMaterial({
-    color: 0x111c2e,
-    transmission: 0.88,
-    opacity: 1,
-    transparent: true,
-    roughness: 0.1,
-    ior: 1.49,
-    metalness: 0.05
-  });
-  const stage = new THREE.Mesh(stageGeo, stageMat);
-  stage.position.y = -2;
-  stage.receiveShadow = true;
-  swarmGroup.add(stage);
+  swarmGroup.clear();
+  movieBots = [];
 
-  // Outer Petri Rim
-  const rimGeo = new THREE.TorusGeometry(45, 1.2, 16, 64);
-  const rimMat = new THREE.MeshStandardMaterial({ color: 0x00f3ff, roughness: 0.2, metalness: 0.8 });
-  const rim = new THREE.Mesh(rimGeo, rimMat);
-  rim.rotation.x = Math.PI / 2;
-  rim.position.y = 0.5;
-  swarmGroup.add(rim);
-
-  // 2. Rotating Permanent Magnet Rig beneath stage
-  swarmMagnetRig = new THREE.Group();
-  swarmMagnetRig.position.y = -18;
-
-  const spindleGeo = new THREE.CylinderGeometry(2, 2, 12, 16);
-  const spindleMat = new THREE.MeshStandardMaterial({ color: 0x4a5568, metalness: 0.8 });
-  const spindle = new THREE.Mesh(spindleGeo, spindleMat);
-  swarmMagnetRig.add(spindle);
-
-  const crossbarGeo = new THREE.BoxGeometry(40, 3, 6);
-  const crossbar = new THREE.Mesh(crossbarGeo, spindleMat);
-  crossbar.position.y = 4;
-  swarmMagnetRig.add(crossbar);
-
-  // North (Red) and South (Blue) Neodymium Blocks
-  const magBlockGeo = new THREE.BoxGeometry(10, 8, 12);
-  const northMat = new THREE.MeshStandardMaterial({ color: 0xef4444, metalness: 0.6, roughness: 0.2 });
-  const southMat = new THREE.MeshStandardMaterial({ color: 0x3b82f6, metalness: 0.6, roughness: 0.2 });
-
-  const northMag = new THREE.Mesh(magBlockGeo, northMat);
-  northMag.position.set(16, 4, 0);
-  swarmMagnetRig.add(northMag);
-
-  const southMag = new THREE.Mesh(magBlockGeo, southMat);
-  southMag.position.set(-16, 4, 0);
-  swarmMagnetRig.add(southMag);
-
-  swarmGroup.add(swarmMagnetRig);
-
-  // 3. Create 200 Anisotropic Cuboid Microrobots (300×300×600 µm scaled to 1.2×1.2×2.4mm)
-  const botGeo = new THREE.BoxGeometry(1.2, 1.2, 2.4);
-  const botMat = new THREE.MeshStandardMaterial({
-    color: 0x1f2937,
-    roughness: 0.35,
-    metalness: 0.45
-  });
-
-  // Pole markers for visualization
-  const northCapGeo = new THREE.BoxGeometry(1.22, 1.22, 0.4);
-  const southCapGeo = new THREE.BoxGeometry(1.22, 1.22, 0.4);
-
-  for (let i = 0; i < 200; i++) {
-    const singleBotGroup = new THREE.Group();
-
-    const body = new THREE.Mesh(botGeo, botMat);
-    body.castShadow = true;
-    singleBotGroup.add(body);
-
-    const nCap = new THREE.Mesh(northCapGeo, northMat);
-    nCap.position.z = 1.1;
-    singleBotGroup.add(nCap);
-
-    const sCap = new THREE.Mesh(southCapGeo, southMat);
-    sCap.position.z = -1.1;
-    singleBotGroup.add(sCap);
-
-    // Initial random disperse on stage
-    const rad = Math.sqrt(Math.random()) * 28;
-    const ang = Math.random() * Math.PI * 2;
-    singleBotGroup.position.set(Math.cos(ang) * rad, 0.6, Math.sin(ang) * rad);
-    singleBotGroup.rotation.y = Math.random() * Math.PI * 2;
-
-    singleBotGroup.userData = {
-      index: i,
-      baseRadius: rad,
-      baseAngle: ang,
-      targetPos: new THREE.Vector3(),
-      targetRot: new THREE.Euler()
-    };
-
-    swarmGroup.add(singleBotGroup);
-    swarmMicrorobots.push(singleBotGroup);
-  }
-
-  // 4. Mission Props (Climbing Obstacle, Occluded Tube, Liquid Metal Droplet, Circuit)
-  // A. Obstacle Wall (7mm height, 25mm width)
-  const wallGeo = new THREE.BoxGeometry(6, 7, 28);
-  const wallMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.6 });
-  swarmObstacleMesh = new THREE.Mesh(wallGeo, wallMat);
-  swarmObstacleMesh.position.set(18, 3.5, 0);
-  swarmObstacleMesh.castShadow = true;
-  swarmGroup.add(swarmObstacleMesh);
-
-  // B. Vascular Occlusion Tube & Tofu Clot
-  const tubeGeo = new THREE.CylinderGeometry(5, 5, 45, 32, 1, true);
-  const tubeMat = new THREE.MeshPhysicalMaterial({ color: 0xffffff, transmission: 0.9, transparent: true, roughness: 0.1 });
-  swarmTubeMesh = new THREE.Mesh(tubeGeo, tubeMat);
-  swarmTubeMesh.rotation.z = Math.PI / 2;
-  swarmTubeMesh.position.set(0, 5, -24);
-  swarmTubeMesh.visible = false;
-  swarmGroup.add(swarmTubeMesh);
-
-  // C. Liquid Metal Droplet (EGaIn)
-  const lmGeo = new THREE.SphereGeometry(4.5, 32, 32);
-  const lmMat = new THREE.MeshStandardMaterial({ color: 0xdde5ed, metalness: 0.98, roughness: 0.05 });
-  swarmLiquidMetalMesh = new THREE.Mesh(lmGeo, lmMat);
-  swarmLiquidMetalMesh.position.set(-16, 2.5, 12);
-  swarmLiquidMetalMesh.scale.set(1.4, 0.6, 1.4); // flat puddle shape
-  swarmLiquidMetalMesh.castShadow = true;
-  swarmLiquidMetalMesh.visible = false;
-  swarmGroup.add(swarmLiquidMetalMesh);
-
-  // D. Floating Pill Cargo (for SC 2D Raft mission)
-  const pillGeo = new THREE.CylinderGeometry(3.5, 3.5, 10, 32);
-  const pillMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 });
-  swarmRaftPill = new THREE.Mesh(pillGeo, pillMat);
-  swarmRaftPill.rotation.z = Math.PI / 2;
-  swarmRaftPill.position.set(0, 4.5, 0);
-  swarmRaftPill.visible = false;
-  swarmGroup.add(swarmRaftPill);
-
-  // E. Circuit Wires & LED
-  const ledGeo = new THREE.SphereGeometry(2.5, 16, 16);
-  const ledMat = new THREE.MeshStandardMaterial({ color: 0x00f3ff, emissive: 0x00f3ff, emissiveIntensity: 0.8 });
-  swarmLedMesh = new THREE.Mesh(ledGeo, ledMat);
-  swarmLedMesh.position.set(28, 5, 20);
-  swarmLedMesh.visible = false;
-  swarmGroup.add(swarmLedMesh);
-
-  // Configure initial swarm configuration
-  applySwarmConfiguration('ht');
-
-  // Build the complete DIY Desktop Hardware Rig (12V Motor, Standoffs, Rotor, 2mm Cubes, Webcam)
-  buildHardwareRig();
-}
-
-function buildHardwareRig() {
-  hardwareRigGroup = new THREE.Group();
-  hardwareRigGroup.position.set(0, 0, 0);
-
-  // 1. Black FDM 3D-Printed Baseplate (160x160x12mm)
-  const baseMat = new THREE.MeshStandardMaterial({ color: 0x181e26, roughness: 0.65, metalness: 0.2 });
-  const baseGeo = new THREE.BoxGeometry(160, 12, 160);
-  const baseMesh = new THREE.Mesh(baseGeo, baseMat);
-  baseMesh.position.y = -62;
-  baseMesh.castShadow = true;
-  baseMesh.receiveShadow = true;
-  hardwareRigGroup.add(baseMesh);
-
-  // Recessed electronics bay on baseplate
-  const bayGeo = new THREE.BoxGeometry(140, 2, 140);
-  const bayMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.8 });
-  const bayMesh = new THREE.Mesh(bayGeo, bayMat);
-  bayMesh.position.y = -55.5;
-  hardwareRigGroup.add(bayMesh);
-
-  // 2. 12V DC Geared Motor (Model JGA25-370)
-  const motorMat = new THREE.MeshStandardMaterial({ color: 0xa1a1aa, metalness: 0.9, roughness: 0.15 });
-  const motorBody = new THREE.Mesh(new THREE.CylinderGeometry(12.5, 12.5, 45, 32), motorMat);
-  motorBody.position.y = -35;
-  motorBody.castShadow = true;
-  motorBody.userData = { id: 'hw_motor' };
-  hardwareRigGroup.add(motorBody);
-
-  // Motor shaft
-  const shaft = new THREE.Mesh(new THREE.CylinderGeometry(2, 2, 12, 16), motorMat);
-  shaft.position.y = -10;
-  hardwareRigGroup.add(shaft);
-
-  // 3. 4 Brass Hexagonal Standoff Pillars (60mm tall)
-  const brassMat = new THREE.MeshStandardMaterial({ color: 0xdfb15b, metalness: 0.92, roughness: 0.25 });
-  const standoffGeo = new THREE.CylinderGeometry(3, 3, 60, 6);
-  const corners = [
-    [55, -26, 55],
-    [-55, -26, 55],
-    [55, -26, -55],
-    [-55, -26, -55]
-  ];
-  corners.forEach(pos => {
-    const post = new THREE.Mesh(standoffGeo, brassMat);
-    post.position.set(pos[0], pos[1], pos[2]);
-    post.castShadow = true;
-    post.userData = { id: 'hw_standoff' };
-    hardwareRigGroup.add(post);
-  });
-
-  // 4. Rotor Crossbar (90mm span) mounted on motor shaft
-  hardwareRotorRig = new THREE.Group();
-  hardwareRotorRig.position.y = -8;
-
-  const rotorMat = new THREE.MeshStandardMaterial({ color: 0x27272a, roughness: 0.5 });
-  const rotorBar = new THREE.Mesh(new THREE.BoxGeometry(80, 6, 12), rotorMat);
-  rotorBar.castShadow = true;
-  rotorBar.userData = { id: 'hw_rotor' };
-  hardwareRotorRig.add(rotorBar);
-
-  // Red (North) and Blue (South) Neodymium Block Magnets (25x10x5mm)
-  const magMatN = new THREE.MeshStandardMaterial({ color: 0xef4444, metalness: 0.7, roughness: 0.2 });
-  const magMatS = new THREE.MeshStandardMaterial({ color: 0x3b82f6, metalness: 0.7, roughness: 0.2 });
-  const magGeo = new THREE.BoxGeometry(22, 8, 10);
-
-  const blockN = new THREE.Mesh(magGeo, magMatN);
-  blockN.position.set(30, 4, 0);
-  blockN.castShadow = true;
-  blockN.userData = { id: 'hw_magnets' };
-  hardwareRotorRig.add(blockN);
-
-  const blockS = new THREE.Mesh(magGeo, magMatS);
-  blockS.position.set(-30, 4, 0);
-  blockS.castShadow = true;
-  blockS.userData = { id: 'hw_magnets' };
-  hardwareRotorRig.add(blockS);
-
-  hardwareRigGroup.add(hardwareRotorRig);
-
-  // 5. Upper Transparent Acrylic Stage (140mm dia, 4mm thick)
-  const acrylicMat = new THREE.MeshPhysicalMaterial({
+  // Shared Materials for High-Performance Rendering
+  const chromeMat = new THREE.MeshStandardMaterial({
     color: 0xffffff,
-    transmission: 0.94,
-    opacity: 1,
-    transparent: true,
-    roughness: 0.05,
-    ior: 1.49
-  });
-  const acrylicPlate = new THREE.Mesh(new THREE.CylinderGeometry(70, 70, 4, 64), acrylicMat);
-  acrylicPlate.position.y = 4;
-  acrylicPlate.receiveShadow = true;
-  hardwareRigGroup.add(acrylicPlate);
-
-  // 6. Pyrex Glass Petri Dish (100mm dia, 15mm tall)
-  const dishMat = new THREE.MeshPhysicalMaterial({
-    color: 0xffffff,
-    transmission: 0.95,
-    opacity: 1,
-    transparent: true,
-    roughness: 0.08,
-    ior: 1.52
-  });
-  const dishMesh = new THREE.Mesh(new THREE.CylinderGeometry(50, 50, 12, 64, 1, true), dishMat);
-  dishMesh.position.y = 12;
-  dishMesh.userData = { id: 'hw_petri' };
-  hardwareRigGroup.add(dishMesh);
-
-  // Water level inside dish
-  const waterMat = new THREE.MeshPhysicalMaterial({
-    color: 0x00f3ff,
-    transmission: 0.75,
-    opacity: 0.8,
-    transparent: true,
-    roughness: 0.1
-  });
-  const waterMesh = new THREE.Mesh(new THREE.CylinderGeometry(49, 49, 4, 64), waterMat);
-  waterMesh.position.y = 8;
-  hardwareRigGroup.add(waterMesh);
-
-  // 7. 48× 2mm Neodymium Cube Microrobots inside the dish (Shiny silver chrome finish)
-  const cubeGeo = new THREE.BoxGeometry(2.5, 2.5, 2.5);
-  const cubeMat = new THREE.MeshStandardMaterial({
-    color: 0xf1f5f9,
     metalness: 0.98,
     roughness: 0.05
   });
+  const shellMat = new THREE.MeshStandardMaterial({
+    color: 0x141822,
+    metalness: 0.78,
+    roughness: 0.28,
+    flatShading: true
+  });
+  const redRingMat = new THREE.MeshStandardMaterial({
+    color: 0xff2200,
+    emissive: 0xff1100,
+    emissiveIntensity: 1.2,
+    roughness: 0.2
+  });
 
-  hardwareCubes = [];
-  for (let i = 0; i < 48; i++) {
-    const cube = new THREE.Mesh(cubeGeo, cubeMat);
-    cube.castShadow = true;
-    cube.userData = { id: 'hw_cubes', index: i };
-    cube.position.set(0, 11, 0);
-    hardwareRigGroup.add(cube);
-    hardwareCubes.push(cube);
+  // Shared Geometries - Movie-Accurate Blunt Hexagonal Pods (Flat Tip, No Spikes!)
+  const ballGeo = new THREE.SphereGeometry(1.6, 16, 16);
+  // Composite Movie Pod: Shoulder flare (1.4 -> 1.95) + Tapered hexagonal shaft (1.95 -> 1.15) + Silver collar (1.15 -> 0.95 flat tip)
+  const shoulderGeo = new THREE.CylinderGeometry(1.95, 1.4, 1.2, 6);
+  const shaftGeo = new THREE.CylinderGeometry(1.15, 1.95, 5.4, 6);
+  const tipCollarGeo = new THREE.CylinderGeometry(0.95, 1.15, 0.8, 6);
+  const silverCollarMat = new THREE.MeshStandardMaterial({ color: 0x8c96a5, metalness: 0.92, roughness: 0.2 });
+  const ringGeo = new THREE.TorusGeometry(1.7, 0.22, 8, 24);
+
+  // Spawn 140 Movie-Accurate Microbot Units
+  const TOTAL_BOTS = 140;
+  for (let i = 0; i < TOTAL_BOTS; i++) {
+    const bot = new THREE.Group();
+
+    // Central 12mm Chrome Steel Ball
+    const ball = new THREE.Mesh(ballGeo, chromeMat);
+    ball.castShadow = true;
+    bot.add(ball);
+
+    // Helper to build a movie-accurate pod with flat blunt tip and silver collar
+    function createMovieSwarmPod() {
+      const pGroup = new THREE.Group();
+      // 1. Shoulder Flare (widens from ball)
+      const mShoulder = new THREE.Mesh(shoulderGeo, shellMat);
+      mShoulder.position.y = 0.6;
+      pGroup.add(mShoulder);
+
+      // 2. Main Hexagonal Shaft (gently tapers to 1.15, NOT a spike!)
+      const mShaft = new THREE.Mesh(shaftGeo, shellMat);
+      mShaft.position.y = 3.9;
+      pGroup.add(mShaft);
+
+      // 3. Silver Chamfered Collar & Flat End Cap (terminates at flat 0.95mm hexagon!)
+      const mCollar = new THREE.Mesh(tipCollarGeo, silverCollarMat);
+      mCollar.position.y = 7.0;
+      pGroup.add(mCollar);
+
+      return pGroup;
+    }
+
+    // Upper Hexagonal Pod (+Z)
+    const pod1 = createMovieSwarmPod();
+    pod1.position.z = 1.0;
+    pod1.rotation.x = Math.PI / 2;
+    bot.add(pod1);
+
+    // Lower Hexagonal Pod (-Z)
+    const pod2 = createMovieSwarmPod();
+    pod2.position.z = -1.0;
+    pod2.rotation.x = -Math.PI / 2;
+    bot.add(pod2);
+
+    // Movie-Accurate Emissive Red Magnetic Joint Accents
+    const r1 = new THREE.Mesh(ringGeo, redRingMat);
+    r1.position.z = 1.3;
+    bot.add(r1);
+
+    const r2 = new THREE.Mesh(ringGeo, redRingMat);
+    r2.position.z = -1.3;
+    bot.add(r2);
+
+    // Disperse initially
+    const r = Math.sqrt(Math.random()) * 45;
+    const theta = Math.random() * Math.PI * 2;
+    bot.position.set(Math.cos(theta) * r, 10 + (Math.random() - 0.5) * 20, Math.sin(theta) * r);
+    bot.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+
+    bot.userData = {
+      index: i,
+      active: true,
+      targetPos: new THREE.Vector3(),
+      targetRot: new THREE.Euler(),
+      basePos: new THREE.Vector3(),
+      role: 'palm',
+      fingerParam: { finger: 'middle', joint: 0, t: 0 },
+      chainParam: { chainIdx: 0, posInChain: 0 },
+      waveParam: { gridX: 0, gridZ: 0 }
+    };
+
+    swarmGroup.add(bot);
+    movieBots.push(bot);
   }
 
-  // 8. Overhead USB Webcam on flexible gooseneck arm
-  const armMat = new THREE.MeshStandardMaterial({ color: 0x090d16, roughness: 0.4 });
-  const curve = new THREE.CubicBezierCurve3(
-    new THREE.Vector3(0, -60, -75),
-    new THREE.Vector3(0, 40, -85),
-    new THREE.Vector3(0, 95, -45),
-    new THREE.Vector3(0, 85, 0)
-  );
-  const neckMesh = new THREE.Mesh(new THREE.TubeGeometry(curve, 32, 3.5, 12, false), armMat);
-  hardwareRigGroup.add(neckMesh);
+  // Ground plane in Swarm mode
+  const swarmGrid = new THREE.GridHelper(260, 52, 0x00f3ff, 0x182433);
+  swarmGrid.position.y = -25;
+  swarmGroup.add(swarmGrid);
 
-  const camHeadGeo = new THREE.BoxGeometry(26, 14, 18);
-  const camHead = new THREE.Mesh(camHeadGeo, armMat);
-  camHead.position.set(0, 85, 0);
-  camHead.rotation.x = Math.PI / 2;
-  camHead.userData = { id: 'hw_webcam' };
-  hardwareRigGroup.add(camHead);
+  // Obstacle Sandbox Props (Wall, Chasm, Cargo Box)
+  swarmObstacleGroup = new THREE.Group();
+  swarmObstacleGroup.visible = false;
 
-  const camLens = new THREE.Mesh(new THREE.CylinderGeometry(4.5, 4.5, 4, 24), new THREE.MeshStandardMaterial({ color: 0x00f3ff, roughness: 0.1, metalness: 0.8 }));
-  camLens.position.set(0, 76, 0);
-  hardwareRigGroup.add(camLens);
+  // 1. Concrete Wall (28mm elevation)
+  const wallGeo = new THREE.BoxGeometry(60, 34, 12);
+  const wallMat = new THREE.MeshStandardMaterial({ color: 0x222a36, roughness: 0.7, metalness: 0.2 });
+  obsWallMesh = new THREE.Mesh(wallGeo, wallMat);
+  obsWallMesh.position.set(0, -8, -15);
+  obsWallMesh.castShadow = true;
+  obsWallMesh.receiveShadow = true;
+  swarmObstacleGroup.add(obsWallMesh);
 
-  // 9. PWM Speed Controller Dial on Baseplate
-  const dialMat = new THREE.MeshStandardMaterial({ color: 0x3b82f6, roughness: 0.2, metalness: 0.5 });
-  const dialMesh = new THREE.Mesh(new THREE.CylinderGeometry(8, 8, 10, 24), dialMat);
-  dialMesh.position.set(55, -51, 55);
-  hardwareRigGroup.add(dialMesh);
+  // 2. Canyon Chasm Ledges
+  const ledgeGeo = new THREE.BoxGeometry(42, 28, 55);
+  const ledgeMat = new THREE.MeshStandardMaterial({ color: 0x181e28, roughness: 0.85, metalness: 0.1 });
+  obsChasmLeft = new THREE.Mesh(ledgeGeo, ledgeMat);
+  obsChasmLeft.position.set(-62, -11, 0);
+  obsChasmLeft.receiveShadow = true;
+  swarmObstacleGroup.add(obsChasmLeft);
 
-  // Initial visibility: hidden until Hardware Rig view is chosen
-  hardwareRigGroup.visible = false;
-  swarmGroup.add(hardwareRigGroup);
+  obsChasmRight = new THREE.Mesh(ledgeGeo, ledgeMat);
+  obsChasmRight.position.set(62, -11, 0);
+  obsChasmRight.receiveShadow = true;
+  swarmObstacleGroup.add(obsChasmRight);
+
+  // 3. Heavy Payload / Cargo Box
+  const boxGeo = new THREE.BoxGeometry(15, 11, 15);
+  const boxMat = new THREE.MeshStandardMaterial({ color: 0xffaa00, metalness: 0.85, roughness: 0.2 });
+  obsCargoBox = new THREE.Mesh(boxGeo, boxMat);
+  obsCargoBox.position.set(0, 16, -15);
+  obsCargoBox.castShadow = true;
+  swarmObstacleGroup.add(obsCargoBox);
+
+  swarmGroup.add(swarmObstacleGroup);
+
+  // Apply default formation: Colossal Robotic Hand
+  applyMovieSwarmFormation('hand');
 }
 
-function applySwarmConfiguration(config) {
-  state.swarm.config = config;
+function applyMovieSwarmFormation(formationKey) {
+  state.swarm.formation = formationKey;
+  const count = state.swarm.count;
 
-  const count = swarmMicrorobots.length;
+  // Description & specs database
+  const formationDB = {
+    hand: {
+      name: "Colossal Robotic Hand",
+      badge: "FORMATION: COLOSSAL ROBOTIC HAND",
+      desc: "Microbots self-assemble into a functional articulated hand with palm, wrist, and 5 flexing digits executing coordinated gripping.",
+      rigidity: "High Dynamic (Articulated Grip)",
+      stateText: "SYNCHRONIZED GRIP"
+    },
+    chain: {
+      name: "Articulated Spine Chain",
+      badge: "FORMATION: ARTICULATED SPINE CHAIN",
+      desc: "Multi-unit kinematic centipede chain linked apex-to-ball, executing undulatory traveling-wave crawling locomotion via ESP-NOW sync.",
+      rigidity: "Serial Multi-Link (Traveling Wave)",
+      stateText: "UNDULATORY CRAWL"
+    },
+    bridge: {
+      name: "Suspension Bridge Arch",
+      badge: "FORMATION: SUSPENSION BRIDGE ARCH",
+      desc: "Parabolic catenary arch spanning across two load-bearing support towers. Illustrates high tensile & compressive lattice distribution.",
+      rigidity: "Ultra-High Static Lattice",
+      stateText: "LOAD-BEARING ARCH"
+    },
+    wave: {
+      name: "Dynamic Swarm Wave",
+      badge: "FORMATION: DYNAMIC SWARM WAVE",
+      desc: "Hundreds of Microbots flowing in a collective fluid wave, dynamically rippling in 3D and following neural headband cursor direction.",
+      rigidity: "Fluid Flocking (Reynolds Mesh)",
+      stateText: "NEURAL FLUID FLOW"
+    },
+    tower: {
+      name: "Heavy Support Pillar",
+      badge: "FORMATION: HEAVY SUPPORT PILLAR",
+      desc: "Dense vertical hexagonal column with interlocking facets, engineered for high-altitude vertical payload elevation.",
+      rigidity: "Compressive Column (4.2 kN Capacity)",
+      stateText: "COLUMN RIGID"
+    },
+    obs_wall: {
+      name: "28mm Wall Climb Ramp",
+      badge: "OBSTACLE: 28mm WALL RAMP",
+      desc: "Microbots assemble into an inclined conveyor staircase, lifting payloads over a 28mm vertical barrier.",
+      rigidity: "Inclined Shear Truss",
+      stateText: "PAYLOAD ELEVATION"
+    },
+    obs_chasm: {
+      name: "Canyon Arch Span",
+      badge: "OBSTACLE: 80mm CHASM CROSSING",
+      desc: "Swarm units interlock apex-to-ball across an 80mm void to establish a load-bearing traversal arch.",
+      rigidity: "Interlocking Catenary",
+      stateText: "VOID TRAVERSAL"
+    },
+    obs_cradle: {
+      name: "Heavy Cargo Cradle",
+      badge: "OBSTACLE: CARGO CRADLE",
+      desc: "Swarm forms a multi-tiered circular suspension cradle, lifting heavy equipment aloft with vibration isolation.",
+      rigidity: "Radial Suspension Matrix",
+      stateText: "CRADLE LEVITATION"
+    }
+  };
 
-  if (config === 'ht') {
-    // Head-to-Tail (θ = 0°): Assemble into 6 continuous long chains
-    const chainsCount = 6;
-    const botsPerChain = Math.floor(count / chainsCount);
+  const info = formationDB[formationKey] || formationDB.hand;
 
-    swarmMicrorobots.forEach((bot, idx) => {
-      const chainIdx = idx % chainsCount;
-      const posInChain = Math.floor(idx / chainsCount);
-      const chainAng = (chainIdx / chainsCount) * Math.PI * 2;
+  // Update DOM Telemetry and HUD badges
+  setSafeText('badge-swarm-formation', info.badge);
+  setSafeText('info-swarm-formation', info.name);
+  setSafeText('info-swarm-desc', info.desc);
+  setSafeText('info-swarm-rigidity', info.rigidity);
+  setSafeText('swarm-tele-state', info.stateText);
+  setSafeText('swarm-tele-count', `${count} Movie Microbots`);
+  setSafeText('swarm-tele-mass', `${(count * 0.0183).toFixed(2)} kg Array`);
 
-      // Radially oriented chain extending outward
-      const r = 4.0 + posInChain * 2.5;
-      bot.userData.targetPos.set(Math.cos(chainAng) * r, 0.6, Math.sin(chainAng) * r);
-      bot.userData.targetRot.set(0, -chainAng + Math.PI / 2, 0);
-    });
-
-    document.getElementById('badge-swarm-config').innerText = 'CONFIG: HT ASSEMBLY (0°)';
-    document.getElementById('formula-cav').innerText = 'CA/V = (n - 1) / (a * n) = 3.2 mm⁻¹';
-    document.getElementById('swarm-tele-cav').innerText = '3.2 mm⁻¹ (HT Low Stiffness)';
-    document.getElementById('swarm-tele-speed').innerText = '64.0 mm/s (108 BL/s)';
-  } else if (config === 'sc') {
-    // Slipped-Co-Facial (θ = 45°): Assemble into a dense 2D hexagonal raft
-    const rows = 14;
-    const cols = 14;
-    const spacing = 1.9;
-
-    swarmMicrorobots.forEach((bot, idx) => {
-      const row = Math.floor(idx / cols) - rows / 2;
-      const col = (idx % cols) - cols / 2;
-      const x = col * spacing + (row % 2) * (spacing / 2);
-      const z = row * spacing * 0.866;
-
-      bot.userData.targetPos.set(x, 0.6, z);
-      bot.userData.targetRot.set(0, Math.PI / 4, 0); // 45° diagonal angle
-    });
-
-    document.getElementById('badge-swarm-config').innerText = 'CONFIG: SC ASSEMBLY (45°)';
-    document.getElementById('formula-cav').innerText = 'CA/V = 1.5*(n - 1) / (a * n) = 4.9 mm⁻¹';
-    document.getElementById('swarm-tele-cav').innerText = '4.9 mm⁻¹ (SC Medium Raft)';
-    document.getElementById('swarm-tele-speed').innerText = '34.0 mm/s (High Packing)';
-  } else if (config === 'ff') {
-    // Face-to-Face (θ = 90°): Assemble into 4 thick, ultra-rigid columnar stacks
-    const stacksCount = 4;
-    const botsPerStack = Math.floor(count / stacksCount);
-
-    swarmMicrorobots.forEach((bot, idx) => {
-      const stackIdx = idx % stacksCount;
-      const inStack = Math.floor(idx / stacksCount);
-      const stackAng = (stackIdx / stacksCount) * Math.PI * 2;
-      const centerDist = 12.0;
-
-      const cx = Math.cos(stackAng) * centerDist;
-      const cz = Math.sin(stackAng) * centerDist;
-
-      // Grid within stack
-      const sx = (inStack % 5) * 1.3 - 2.6;
-      const sz = Math.floor(inStack / 5) * 1.3 - 5.0;
-
-      bot.userData.targetPos.set(cx + sx, 0.6, cz + sz);
-      bot.userData.targetRot.set(0, stackAng + Math.PI / 2, 0); // 90° transverse
-    });
-
-    document.getElementById('badge-swarm-config').innerText = 'CONFIG: FF ASSEMBLY (90°)';
-    document.getElementById('formula-cav').innerText = 'CA/V = 2*(n - 1) / (a * n) = 6.5 mm⁻¹';
-    document.getElementById('swarm-tele-cav').innerText = '6.5 mm⁻¹ (FF High Stiffness)';
-    document.getElementById('swarm-tele-speed').innerText = '28.0 mm/s (Impact Crush)';
+  // Manage Obstacle Mesh Props Visibility
+  if (swarmObstacleGroup) {
+    if (formationKey === 'obs_wall') {
+      swarmObstacleGroup.visible = true;
+      obsWallMesh.visible = true;
+      obsChasmLeft.visible = false;
+      obsChasmRight.visible = false;
+      obsCargoBox.visible = true;
+      obsCargoBox.position.set(0, 14, -15);
+    } else if (formationKey === 'obs_chasm') {
+      swarmObstacleGroup.visible = true;
+      obsWallMesh.visible = false;
+      obsChasmLeft.visible = true;
+      obsChasmRight.visible = true;
+      obsCargoBox.visible = false;
+    } else if (formationKey === 'obs_cradle') {
+      swarmObstacleGroup.visible = true;
+      obsWallMesh.visible = false;
+      obsChasmLeft.visible = false;
+      obsChasmRight.visible = false;
+      obsCargoBox.visible = true;
+      obsCargoBox.position.set(0, 16, 0);
+    } else {
+      swarmObstacleGroup.visible = false;
+    }
   }
 
-  // Smoothly tween microrobots to target configurations
-  swarmMicrorobots.forEach(bot => {
+  // Calculate target positions for every active bot
+  movieBots.forEach((bot, idx) => {
+    bot.visible = idx < count;
+    if (idx >= count) return;
+
+    let targetX = 0, targetY = 0, targetZ = 0;
+    let rotX = 0, rotY = 0, rotZ = 0;
+
+    if (formationKey === 'hand') {
+      // Hand layout: Wrist (0..15), Palm (16..55), Thumb (56..71), Index (72..91), Middle (92..113), Ring (114..129), Pinky (130..139)
+      if (idx < 16) {
+        // Wrist
+        const col = (idx % 4) - 1.5;
+        const row = Math.floor(idx / 4);
+        targetX = col * 4.8;
+        targetY = -18 + row * 4.2;
+        targetZ = (Math.random() - 0.5) * 2;
+        rotZ = 0;
+        bot.userData.role = 'wrist';
+      } else if (idx < 56) {
+        // Palm
+        const palmIdx = idx - 16;
+        const col = (palmIdx % 7) - 3.0;
+        const row = Math.floor(palmIdx / 7);
+        targetX = col * 4.6;
+        targetY = -2 + row * 4.2;
+        targetZ = -Math.abs(col) * 0.8;
+        rotY = col * 0.08;
+        bot.userData.role = 'palm';
+      } else if (idx < 72) {
+        // Thumb
+        const tIdx = idx - 56;
+        const angle = -0.7; // angled outward
+        const seg = tIdx * 1.6;
+        targetX = -15 - seg * Math.cos(angle);
+        targetY = 2 + seg * Math.sin(angle);
+        targetZ = 2 + Math.sin(tIdx * 0.4) * 4;
+        rotZ = angle;
+        rotX = 0.3;
+        bot.userData.role = 'thumb';
+        bot.userData.fingerParam = { finger: 'thumb', joint: tIdx };
+      } else if (idx < 92) {
+        // Index Finger
+        const fIdx = idx - 72;
+        targetX = -10;
+        targetY = 16 + fIdx * 2.2;
+        targetZ = Math.sin(fIdx * 0.22) * 5;
+        rotX = -fIdx * 0.08;
+        bot.userData.role = 'index';
+        bot.userData.fingerParam = { finger: 'index', joint: fIdx };
+      } else if (idx < 114) {
+        // Middle Finger (Tallest)
+        const fIdx = idx - 92;
+        targetX = -2;
+        targetY = 17 + fIdx * 2.3;
+        targetZ = Math.sin(fIdx * 0.2) * 5;
+        rotX = -fIdx * 0.07;
+        bot.userData.role = 'middle';
+        bot.userData.fingerParam = { finger: 'middle', joint: fIdx };
+      } else if (idx < 130) {
+        // Ring Finger
+        const fIdx = idx - 114;
+        targetX = 6;
+        targetY = 16 + fIdx * 2.1;
+        targetZ = Math.sin(fIdx * 0.22) * 4.5;
+        rotX = -fIdx * 0.08;
+        bot.userData.role = 'ring';
+        bot.userData.fingerParam = { finger: 'ring', joint: fIdx };
+      } else {
+        // Pinky Finger
+        const fIdx = idx - 130;
+        targetX = 13;
+        targetY = 14 + fIdx * 1.9;
+        targetZ = Math.sin(fIdx * 0.25) * 4;
+        rotX = -fIdx * 0.09;
+        bot.userData.role = 'pinky';
+        bot.userData.fingerParam = { finger: 'pinky', joint: fIdx };
+      }
+    } else if (formationKey === 'chain') {
+      // Articulated Snake Chain: 2 parallel chains crawling forward
+      const chains = 2;
+      const chainIdx = idx % chains;
+      const posInChain = Math.floor(idx / chains);
+      const totalInChain = Math.floor(count / chains);
+
+      const spacing = 5.2;
+      targetX = (chainIdx === 0 ? -9 : 9);
+      targetZ = (posInChain - totalInChain / 2) * spacing;
+      targetY = -12; // Resting on ground
+
+      rotX = Math.PI / 2; // Aligned along chain axis
+      bot.userData.role = 'chain';
+      bot.userData.chainParam = { chainIdx, posInChain };
+    } else if (formationKey === 'bridge') {
+      // Parabolic Suspension Bridge Arch across two glowing pylons
+      const span = 90.0;
+      const leftPylon = -45.0;
+      const rightPylon = 45.0;
+
+      if (idx < 24) {
+        // Left Pylon Tower
+        const pIdx = idx;
+        const level = Math.floor(pIdx / 2);
+        const side = (pIdx % 2) * 4 - 2;
+        targetX = leftPylon;
+        targetY = -22 + level * 4.2;
+        targetZ = side;
+        bot.userData.role = 'pylon';
+      } else if (idx < 48) {
+        // Right Pylon Tower
+        const pIdx = idx - 24;
+        const level = Math.floor(pIdx / 2);
+        const side = (pIdx % 2) * 4 - 2;
+        targetX = rightPylon;
+        targetY = -22 + level * 4.2;
+        targetZ = side;
+        bot.userData.role = 'pylon';
+      } else if (idx < 100) {
+        // Suspension Parabolic Arch
+        const aIdx = idx - 48;
+        const t = aIdx / 52; // 0 to 1 across span
+        const x = leftPylon + t * span;
+        // Parabola: highest in center
+        const archY = 24 - Math.pow((t - 0.5) * 2, 2) * 22;
+        targetX = x;
+        targetY = archY;
+        targetZ = 0;
+        rotZ = -(t - 0.5) * 0.8;
+        bot.userData.role = 'arch';
+      } else {
+        // Horizontal Roadway Deck
+        const dIdx = idx - 100;
+        const t = dIdx / 40;
+        targetX = leftPylon + t * span;
+        targetY = 2; // Deck height
+        targetZ = (dIdx % 2 === 0 ? -3 : 3);
+        rotX = 0;
+        bot.userData.role = 'deck';
+      }
+    } else if (formationKey === 'wave') {
+      // Dynamic Swarm Wave Grid
+      const cols = 14;
+      const col = idx % cols;
+      const row = Math.floor(idx / cols);
+
+      const spacingX = 6.5;
+      const spacingZ = 6.0;
+
+      targetX = (col - cols / 2) * spacingX;
+      targetZ = (row - 5) * spacingZ;
+      targetY = 8; // base wave height
+
+      bot.userData.role = 'wave';
+      bot.userData.waveParam = { gridX: col, gridZ: row };
+    } else if (formationKey === 'tower') {
+      // Heavy Vertical Support Column (Hexagonal stacked rings)
+      const ringBots = 8;
+      const layer = Math.floor(idx / ringBots);
+      const inRing = idx % ringBots;
+      const radius = 9.5;
+      const angle = (inRing / ringBots) * Math.PI * 2 + (layer % 2) * (Math.PI / ringBots);
+
+      targetX = Math.cos(angle) * radius;
+      targetZ = Math.sin(angle) * radius;
+      targetY = -20 + layer * 4.8;
+      rotY = angle;
+      rotX = 0.1;
+      bot.userData.role = 'tower';
+    } else if (formationKey === 'obs_wall') {
+      const stepIdx = Math.floor(idx / 10);
+      const colIdx = (idx % 10) - 4.5;
+      const t = stepIdx / 14;
+      targetX = colIdx * 4.8;
+      targetY = -22 + t * 32;
+      targetZ = 28 - t * 43;
+      rotX = 0.62;
+      bot.userData.role = 'obs_ramp';
+    } else if (formationKey === 'obs_chasm') {
+      const span = 95.0;
+      const t = idx / count;
+      targetX = -47.5 + t * span;
+      const archH = Math.sin(t * Math.PI) * 15.0;
+      targetY = -2 + archH + (idx % 2 === 0 ? 0 : -3.5);
+      targetZ = (idx % 3 - 1) * 5.2;
+      rotZ = -Math.cos(t * Math.PI) * 0.4;
+      bot.userData.role = 'obs_chasm';
+    } else if (formationKey === 'obs_cradle') {
+      const tier = Math.floor(idx / 28);
+      const inTier = idx % 28;
+      const ang = (inTier / 28) * Math.PI * 2;
+      const radius = 12 + tier * 2.5;
+      targetX = Math.cos(ang) * radius;
+      targetZ = Math.sin(ang) * radius;
+      targetY = -8 + tier * 5.0;
+      rotY = ang;
+      rotX = 0.3;
+      bot.userData.role = 'obs_cradle';
+    }
+
+    bot.userData.basePos.set(targetX, targetY, targetZ);
+    bot.userData.targetPos.set(targetX, targetY, targetZ);
+    bot.userData.targetRot.set(rotX, rotY, rotZ);
+
+    // Smooth cinematic morphing
     gsap.to(bot.position, {
-      x: bot.userData.targetPos.x,
-      y: bot.userData.targetPos.y,
-      z: bot.userData.targetPos.z,
-      duration: 1.2,
+      x: targetX,
+      y: targetY,
+      z: targetZ,
+      duration: 1.1 + Math.random() * 0.4,
       ease: "power2.out"
     });
+
     gsap.to(bot.rotation, {
-      x: bot.userData.targetRot.x,
-      y: bot.userData.targetRot.y,
-      z: bot.userData.targetRot.z,
-      duration: 1.2,
+      x: rotX,
+      y: rotY,
+      z: rotZ,
+      duration: 1.1 + Math.random() * 0.4,
       ease: "power2.out"
     });
   });
-
-  // Update button active state
-  document.querySelectorAll('.swarm-config-btn').forEach(b => b.classList.remove('active'));
-  const activeBtn = document.getElementById(`btn-swarm-${config}`);
-  if (activeBtn) activeBtn.classList.add('active');
 }
 
-function setSwarmMission(mission) {
-  state.swarm.mission = mission;
+// Explosive scatter and magnetic re-link animation
+function scatterAndRelinkSwarm() {
+  if (state.swarm.isScattered) return;
+  state.swarm.isScattered = true;
 
-  // Toggle mission props visibility
-  swarmObstacleMesh.visible = (mission === 'climb' || mission === 'throw');
-  swarmTubeMesh.visible = (mission === 'unclog');
-  swarmLiquidMetalMesh.visible = (mission === 'morph');
-  swarmRaftPill.visible = (mission === 'raft');
-  swarmLedMesh.visible = (mission === 'bridge');
+  setSafeText('swarm-tele-state', 'DISPERSED (FREE SWARM)');
 
-  // Match optimal configuration for mission
-  if (mission === 'climb' || mission === 'throw') {
-    applySwarmConfiguration('ht');
-  } else if (mission === 'raft' || mission === 'bridge') {
-    applySwarmConfiguration('sc');
-  } else if (mission === 'unclog' || mission === 'morph') {
-    applySwarmConfiguration('ff');
+  movieBots.forEach((bot, idx) => {
+    if (!bot.visible) return;
+
+    // Random explosive outward trajectory
+    const phi = Math.random() * Math.PI * 2;
+    const theta = (Math.random() - 0.5) * Math.PI;
+    const dist = 50 + Math.random() * 60;
+
+    const explodeX = bot.position.x + Math.cos(phi) * Math.cos(theta) * dist;
+    const explodeY = bot.position.y + Math.sin(theta) * dist;
+    const explodeZ = bot.position.z + Math.sin(phi) * Math.cos(theta) * dist;
+
+    // Phase 1: Fly outward
+    gsap.to(bot.position, {
+      x: explodeX,
+      y: explodeY,
+      z: explodeZ,
+      duration: 0.65,
+      ease: "power2.out",
+      onComplete: () => {
+        // Phase 2: Magnetically snap back together!
+        gsap.to(bot.position, {
+          x: bot.userData.targetPos.x,
+          y: bot.userData.targetPos.y,
+          z: bot.userData.targetPos.z,
+          duration: 1.0,
+          delay: idx * 0.003,
+          ease: "elastic.out(1, 0.45)",
+          onComplete: () => {
+            if (idx === 0) {
+              state.swarm.isScattered = false;
+              const fInfo = {
+                hand: "SYNCHRONIZED GRIP",
+                chain: "UNDULATORY CRAWL",
+                bridge: "LOAD-BEARING ARCH",
+                wave: "NEURAL FLUID FLOW",
+                tower: "COLUMN RIGID"
+              };
+              setSafeText('swarm-tele-state', fInfo[state.swarm.formation] || 'MAGNETICALLY LOCKED');
+            }
+          }
+        });
+      }
+    });
+
+    gsap.to(bot.rotation, {
+      x: Math.random() * Math.PI * 4,
+      y: Math.random() * Math.PI * 4,
+      z: Math.random() * Math.PI * 4,
+      duration: 0.65,
+      ease: "power2.out",
+      onComplete: () => {
+        gsap.to(bot.rotation, {
+          x: bot.userData.targetRot.x,
+          y: bot.userData.targetRot.y,
+          z: bot.userData.targetRot.z,
+          duration: 0.9,
+          ease: "power2.out"
+        });
+      }
+    });
+  });
+}
+
+// --- Dynamic Swarm Simulation Loop ---
+function updateSwarmSimulation(time, delta) {
+  if (state.systemTab !== 'swarm' || state.swarm.isScattered) return;
+
+  const speed = state.swarm.speed;
+  const formation = state.swarm.formation;
+
+  // Neural Cursor Follow: Swarm center shifts toward mouse position
+  if (state.swarm.neuralFollow) {
+    const targetOffset = new THREE.Vector3(
+      state.swarm.mousePos.x * 24,
+      12 + state.swarm.mousePos.y * 16,
+      0
+    );
+    swarmCenterOffset.lerp(targetOffset, 0.04);
+  } else {
+    swarmCenterOffset.lerp(new THREE.Vector3(0, 12, 0), 0.04);
   }
 
-  document.querySelectorAll('.mission-btn').forEach(b => b.classList.remove('active'));
-  const btn = document.getElementById(`btn-mission-${mission}`);
-  if (btn) btn.classList.add('active');
+  movieBots.forEach((bot, idx) => {
+    if (!bot.visible) return;
+
+    const base = bot.userData.basePos;
+
+    if (formation === 'hand') {
+      // Clenching / Breathing Hand Animation
+      const gripPhase = Math.sin(time * speed * 2.2);
+      const role = bot.userData.role;
+
+      if (role === 'index' || role === 'middle' || role === 'ring' || role === 'pinky') {
+        const joint = bot.userData.fingerParam.joint;
+        // Curl fingers forward and down during grip
+        const curlAmount = Math.max(0, gripPhase) * (joint * 0.6);
+        bot.position.z = base.z - curlAmount + swarmCenterOffset.z;
+        bot.position.y = base.y - (curlAmount * 0.4) + (swarmCenterOffset.y - 12);
+        bot.position.x = base.x + swarmCenterOffset.x;
+        bot.rotation.x = bot.userData.targetRot.x - (curlAmount * 0.08);
+      } else if (role === 'thumb') {
+        const curlAmount = Math.max(0, gripPhase) * 6.0;
+        bot.position.x = base.x + curlAmount * 0.4 + swarmCenterOffset.x;
+        bot.position.z = base.z - curlAmount * 0.6 + swarmCenterOffset.z;
+        bot.position.y = base.y + (swarmCenterOffset.y - 12);
+      } else {
+        // Palm and wrist breathe gently
+        bot.position.x = base.x + swarmCenterOffset.x;
+        bot.position.y = base.y + Math.sin(time * 2 + idx * 0.1) * 0.3 + (swarmCenterOffset.y - 12);
+        bot.position.z = base.z + swarmCenterOffset.z;
+      }
+    } else if (formation === 'chain') {
+      // Synchronized Traveling Wave Locomotion (ESP-NOW crawl)
+      const param = bot.userData.chainParam;
+      const wave = Math.sin(time * speed * 4.5 - param.posInChain * 0.35);
+      const waveCos = Math.cos(time * speed * 4.5 - param.posInChain * 0.35);
+
+      bot.position.x = base.x + waveCos * 4.0 + swarmCenterOffset.x;
+      bot.position.y = -12 + Math.abs(wave) * 7.5; // Lifting and planting on ground
+      bot.position.z = base.z + swarmCenterOffset.z;
+
+      // Pitch tilting around magnetic joint
+      bot.rotation.x = Math.PI / 2 + wave * 0.45;
+      bot.rotation.y = waveCos * 0.25;
+    } else if (formation === 'bridge') {
+      // Load-bearing bridge: subtle structural flex under load
+      const role = bot.userData.role;
+      if (role === 'arch' || role === 'deck') {
+        const flex = Math.sin(time * speed * 3 + base.x * 0.06) * 0.6;
+        bot.position.x = base.x + swarmCenterOffset.x;
+        bot.position.y = base.y + flex + (swarmCenterOffset.y - 12);
+        bot.position.z = base.z + swarmCenterOffset.z;
+      } else {
+        bot.position.x = base.x + swarmCenterOffset.x;
+        bot.position.y = base.y + (swarmCenterOffset.y - 12);
+        bot.position.z = base.z + swarmCenterOffset.z;
+      }
+    } else if (formation === 'wave') {
+      // 3D Fluid Swarm Wave (Movie Neural Flocking)
+      const p = bot.userData.waveParam;
+      const ripple = Math.sin(p.gridX * 0.45 + time * speed * 3.5) * Math.cos(p.gridZ * 0.45 + time * speed * 2.5);
+
+      bot.position.x = base.x + swarmCenterOffset.x;
+      bot.position.y = base.y + ripple * 10.0 + (swarmCenterOffset.y - 12);
+      bot.position.z = base.z + swarmCenterOffset.z;
+
+      bot.rotation.x = ripple * 0.4;
+      bot.rotation.z = -ripple * 0.3;
+    } else if (formation === 'tower') {
+      // Heavy Column: subtle compressive breathing
+      const breathe = Math.sin(time * speed * 2 + base.y * 0.1) * 0.4;
+      bot.position.x = base.x * (1 + breathe * 0.03) + swarmCenterOffset.x;
+      bot.position.z = base.z * (1 + breathe * 0.03) + swarmCenterOffset.z;
+      bot.position.y = base.y + (swarmCenterOffset.y - 12);
+    }
+  });
 }
 
 // --- 3D Annotations & Screen-Space Projection ---
@@ -1225,6 +1575,11 @@ function setPodAngles(angle1, angle2) {
   const l2 = document.getElementById('label-pod2-val');
   if (l1) l1.innerText = `${angle1 > 0 ? '+' : ''}${Math.round(angle1)}°`;
   if (l2) l2.innerText = `${angle2 > 0 ? '+' : ''}${Math.round(angle2)}°`;
+
+  // Transmit real-time angles to physical robot if connected
+  if (isHardwareConnected) {
+    sendHardwareSerialCommand(`A:${Math.round(angle1)},${Math.round(angle2)}\n`);
+  }
 }
 
 // --- Step-by-Step Interactive Assembly Guide Engine ---
@@ -1251,22 +1606,24 @@ function setAssemblyGuideStep(stepIndex) {
     pill.classList.toggle('active', idx === stepIndex);
   });
 
-  // Animate Camera to optimal view angle
-  gsap.to(camera.position, {
-    x: stepData.camPos.x,
-    y: stepData.camPos.y,
-    z: stepData.camPos.z,
-    duration: 1.0,
-    ease: "power2.inOut"
-  });
+  // Animate Camera to optimal view angle ONLY when active in assembly guide mode
+  if (state.mode === 'guide') {
+    gsap.to(camera.position, {
+      x: stepData.camPos.x,
+      y: stepData.camPos.y,
+      z: stepData.camPos.z,
+      duration: 1.0,
+      ease: "power2.inOut"
+    });
 
-  gsap.to(controls.target, {
-    x: stepData.camTarget.x,
-    y: stepData.camTarget.y,
-    z: stepData.camTarget.z,
-    duration: 1.0,
-    ease: "power2.inOut"
-  });
+    gsap.to(controls.target, {
+      x: stepData.camTarget.x,
+      y: stepData.camTarget.y,
+      z: stepData.camTarget.z,
+      duration: 1.0,
+      ease: "power2.inOut"
+    });
+  }
 
   // Visual emphasis / Ghosting of parts based on active assembly step
   applyAssemblyStepVisuals(stepIndex);
@@ -1287,26 +1644,29 @@ function applyAssemblyStepVisuals(stepIndex) {
   // Step 5: Add shells
   // Step 6: Full assembly
 
-  collarGroup.visible = (step >= 1);
-  ballMesh.visible = (step >= 1);
+  // Step-based visibility only applies when in Assembly Guide mode
+  if (state.mode === 'guide') {
+    collarGroup.visible = (step >= 1);
+    ballMesh.visible = (step >= 1);
 
-  pod1Magnet.visible = (step >= 2);
-  pod2Magnet.visible = (step >= 2);
+    pod1Magnet.visible = (step >= 2);
+    pod2Magnet.visible = (step >= 2);
 
-  pod1Servo.visible = (step >= 3);
-  pod2Servo.visible = (step >= 3);
+    pod1Servo.visible = (step >= 3);
+    pod2Servo.visible = (step >= 3);
 
-  pod1Pushrod.visible = (step >= 4);
-  pod2Pushrod.visible = (step >= 4);
+    pod1Pushrod.visible = (step >= 4);
+    pod2Pushrod.visible = (step >= 4);
 
-  pod1ShellLower.visible = (step >= 5);
-  pod1ShellUpper.visible = (step >= 5);
-  pod2ShellLower.visible = (step >= 5);
-  pod2ShellUpper.visible = (step >= 5);
+    pod1ShellLower.visible = (step >= 5);
+    pod1ShellUpper.visible = (step >= 5);
+    pod2ShellLower.visible = (step >= 5);
+    pod2ShellUpper.visible = (step >= 5);
 
-  // Pulse the newly introduced component
-  const focus = ASSEMBLY_GUIDE_STEPS[stepIndex].focusPart;
-  pulseObjectById(focus);
+    // Pulse the newly introduced component
+    const focus = ASSEMBLY_GUIDE_STEPS[stepIndex].focusPart;
+    pulseObjectById(focus);
+  }
 }
 
 function updateAssemblyGuideUI() {
@@ -1363,6 +1723,68 @@ function pulseObjectById(id) {
   }
 }
 
+
+// --- Web Serial API Hardware-in-the-Loop Engine ---
+async function toggleHardwareConnection() {
+  if (!('serial' in navigator)) {
+    alert("Web Serial API is not supported in this browser. Please use Google Chrome, Microsoft Edge, or Opera.");
+    return;
+  }
+
+  if (isHardwareConnected) {
+    try {
+      if (hardwareSerialWriter) {
+        await hardwareSerialWriter.close();
+        hardwareSerialWriter = null;
+      }
+      if (hardwareSerialPort) {
+        await hardwareSerialPort.close();
+        hardwareSerialPort = null;
+      }
+    } catch (e) {
+      console.warn("Serial close:", e);
+    }
+    isHardwareConnected = false;
+    setSafeText('hardware-status-val', 'DISCONNECTED');
+    const statusVal = document.getElementById('hardware-status-val');
+    if (statusVal) statusVal.style.color = '#ffaa00';
+    const btn = document.getElementById('btn-connect-hardware');
+    if (btn) btn.innerText = '⚡ Connect Physical Bot (Web Serial)';
+    return;
+  }
+
+  try {
+    hardwareSerialPort = await navigator.serial.requestPort();
+    await hardwareSerialPort.open({ baudRate: 115200 });
+    const textEncoder = new TextEncoderStream();
+    textEncoder.readable.pipeTo(hardwareSerialPort.writable);
+    hardwareSerialWriter = textEncoder.writable.getWriter();
+
+    isHardwareConnected = true;
+    setSafeText('hardware-status-val', 'CONNECTED (115200 BAUD)');
+    const statusVal = document.getElementById('hardware-status-val');
+    if (statusVal) statusVal.style.color = '#00ff88';
+    const btn = document.getElementById('btn-connect-hardware');
+    if (btn) btn.innerText = '🔌 Disconnect Hardware';
+
+    sendHardwareSerialCommand('s\n');
+  } catch (err) {
+    console.error("Web Serial connection failed:", err);
+    setSafeText('hardware-status-val', 'FAILED / CANCELLED');
+    const statusVal = document.getElementById('hardware-status-val');
+    if (statusVal) statusVal.style.color = '#ff3366';
+  }
+}
+
+async function sendHardwareSerialCommand(cmd) {
+  if (!isHardwareConnected || !hardwareSerialWriter) return;
+  try {
+    await hardwareSerialWriter.write(cmd);
+  } catch (e) {
+    console.warn("Serial write error:", e);
+  }
+}
+
 // --- UI Event Listeners ---
 function setupUIEventListeners() {
   // Domain: Physical V1
@@ -1372,14 +1794,175 @@ function setupUIEventListeners() {
   const trackerV1 = document.getElementById('tracker-v1');
   const teleV1 = document.getElementById('telemetry-v1');
 
+  const tabSwarm = document.getElementById('tab-swarm');
+  const panelSwarm = document.getElementById('swarm-controls-panel');
+  const statusSwarm = document.getElementById('status-container-swarm');
+  const trackerSwarm = document.getElementById('tracker-swarm');
+  const teleSwarm = document.getElementById('telemetry-swarm');
+
   if (tabV1) {
     tabV1.addEventListener('click', () => {
       state.systemTab = 'v1';
+      tabV1.classList.add('active');
+      if (tabSwarm) tabSwarm.classList.remove('active');
       worldGroup.visible = true;
       if (swarmGroup) swarmGroup.visible = false;
+
+      if (panelV1) panelV1.classList.remove('hidden');
+      if (panelSwarm) panelSwarm.classList.add('hidden');
+      if (statusV1) statusV1.classList.remove('hidden');
+      if (statusSwarm) statusSwarm.classList.add('hidden');
+      if (trackerV1) trackerV1.classList.remove('hidden');
+      if (trackerSwarm) trackerSwarm.classList.add('hidden');
+      if (teleV1) teleV1.classList.remove('hidden');
+      if (teleSwarm) teleSwarm.classList.add('hidden');
+
       setCameraPreset('iso');
+      create3DAnnotations();
+      update3DAnnotations();
     });
   }
+
+  if (tabSwarm) {
+    tabSwarm.addEventListener('click', () => {
+      state.systemTab = 'swarm';
+      tabSwarm.classList.add('active');
+      if (tabV1) tabV1.classList.remove('active');
+      worldGroup.visible = false;
+      if (swarmGroup) swarmGroup.visible = true;
+
+      if (panelV1) panelV1.classList.add('hidden');
+      if (panelSwarm) panelSwarm.classList.remove('hidden');
+      if (statusV1) statusV1.classList.add('hidden');
+      if (statusSwarm) statusSwarm.classList.remove('hidden');
+      if (trackerV1) trackerV1.classList.add('hidden');
+      if (trackerSwarm) trackerSwarm.classList.remove('hidden');
+      if (teleV1) teleV1.classList.add('hidden');
+      if (teleSwarm) teleSwarm.classList.remove('hidden');
+
+      // Clear annotations in swarm mode
+      const overlay = document.getElementById('annotation-overlay');
+      if (overlay) overlay.innerHTML = '';
+
+      // Frame the entire Movie Swarm formation dynamically
+      gsap.to(camera.position, {
+        x: 0,
+        y: 45,
+        z: 120,
+        duration: 1.2,
+        ease: "power2.inOut"
+      });
+      gsap.to(controls.target, {
+        x: 0,
+        y: 8,
+        z: 0,
+        duration: 1.2,
+        ease: "power2.inOut"
+      });
+    });
+  }
+
+  // --- Swarm Formation Buttons ---
+  const formationMap = {
+    'btn-form-hand': 'hand',
+    'btn-form-chain': 'chain',
+    'btn-form-bridge': 'bridge',
+    'btn-form-wave': 'wave',
+    'btn-form-tower': 'tower'
+  };
+
+  Object.entries(formationMap).forEach(([btnId, fKey]) => {
+    const btn = document.getElementById(btnId);
+    if (btn) {
+      btn.addEventListener('click', () => {
+        Object.keys(formationMap).forEach(id => {
+          const b = document.getElementById(id);
+          if (b) b.classList.remove('active');
+        });
+        btn.classList.add('active');
+        applyMovieSwarmFormation(fKey);
+      });
+    }
+  });
+
+  // Swarm Population Slider
+  const sliderSwarmSize = document.getElementById('slider-swarm-size');
+  if (sliderSwarmSize) {
+    sliderSwarmSize.addEventListener('input', (e) => {
+      state.swarm.count = parseInt(e.target.value, 10);
+      setSafeText('label-swarm-size', `${state.swarm.count} BOTS`);
+      applyMovieSwarmFormation(state.swarm.formation);
+    });
+  }
+
+  // Swarm Speed Slider
+  const sliderSwarmSpeed = document.getElementById('slider-swarm-speed');
+  if (sliderSwarmSpeed) {
+    sliderSwarmSpeed.addEventListener('input', (e) => {
+      state.swarm.speed = parseFloat(e.target.value);
+      setSafeText('label-swarm-speed', `${state.swarm.speed.toFixed(1)}x`);
+    });
+  }
+
+  // Neural Follow Toggle
+  const btnNeural = document.getElementById('btn-toggle-neural');
+  if (btnNeural) {
+    btnNeural.addEventListener('click', () => {
+      state.swarm.neuralFollow = !state.swarm.neuralFollow;
+      btnNeural.classList.toggle('active', state.swarm.neuralFollow);
+    });
+  }
+
+  // Scatter & Re-assemble Button
+  const btnScatter = document.getElementById('btn-swarm-scatter');
+  if (btnScatter) {
+    btnScatter.addEventListener('click', () => {
+      scatterAndRelinkSwarm();
+    });
+  }
+
+  // Web Serial Hardware Connect Button
+  const btnConnectHw = document.getElementById('btn-connect-hardware');
+  if (btnConnectHw) {
+    btnConnectHw.addEventListener('click', toggleHardwareConnection);
+  }
+
+  // Obstacle Sandbox Buttons
+  const obsButtons = {
+    'btn-obs-wall': 'obs_wall',
+    'btn-obs-chasm': 'obs_chasm',
+    'btn-obs-cradle': 'obs_cradle',
+    'btn-obs-clear': 'hand'
+  };
+
+  Object.entries(obsButtons).forEach(([btnId, formKey]) => {
+    const btn = document.getElementById(btnId);
+    if (btn) {
+      btn.addEventListener('click', () => {
+        Object.keys(formationMap).forEach(id => {
+          const b = document.getElementById(id);
+          if (b) b.classList.remove('active');
+        });
+        Object.keys(obsButtons).forEach(id => {
+          const b = document.getElementById(id);
+          if (b) b.classList.remove('active');
+        });
+        if (btnId !== 'btn-obs-clear') {
+          btn.classList.add('active');
+        } else {
+          const handBtn = document.getElementById('btn-form-hand');
+          if (handBtn) handBtn.classList.add('active');
+        }
+        applyMovieSwarmFormation(formKey);
+      });
+    }
+  });
+
+  // Window mousemove listener for Neural Telepathy cursor tracking
+  window.addEventListener('mousemove', (e) => {
+    state.swarm.mousePos.x = (e.clientX / window.innerWidth) * 2 - 1;
+    state.swarm.mousePos.y = -(e.clientY / window.innerHeight) * 2 + 1;
+  });
 
   // Mechanism Mode Buttons for V1
   const btnAssembly = document.getElementById('btn-mode-assembly');
@@ -1620,15 +2203,16 @@ function toggleXrayMode(isXray) {
 }
 
 function setCameraPreset(type) {
-  let targetPos = new THREE.Vector3(75, 45, 95);
+  let targetPos = new THREE.Vector3(110, 36, 85);
   let lookTarget = new THREE.Vector3(0, 0, 0);
 
   switch (type) {
-    case 'iso': targetPos.set(70, 50, 85); break;
-    case 'joint': targetPos.set(24, 14, 28); break;
-    case 'top': targetPos.set(0, 110, 0.01); break;
-    case 'side': targetPos.set(110, 0, 0); break;
-    case 'front': targetPos.set(0, 0, 110); break;
+    case 'iso': targetPos.set(110, 36, 85); break;
+    case 'joint': targetPos.set(34, 16, 28); break;
+    case 'top': targetPos.set(0, 140, 0.01); break;
+    case 'side': targetPos.set(130, 16, 0); break;
+    case 'front': targetPos.set(0, 0, 130); break;
+    case 'desk': targetPos.set(78, 14, 46); break;
   }
 
   gsap.to(camera.position, {
@@ -1653,6 +2237,10 @@ function startGait(gaitType) {
   state.gait = gaitType;
   document.getElementById('btn-gait-antiphase').classList.toggle('active', gaitType === 'antiphase');
   document.getElementById('btn-gait-inphase').classList.toggle('active', gaitType === 'inphase');
+  if (isHardwareConnected) {
+    if (gaitType === 'antiphase') sendHardwareSerialCommand('c\n');
+    else if (gaitType === 'inphase') sendHardwareSerialCommand('i\n');
+  }
 }
 
 function stopGait() {
@@ -1661,6 +2249,9 @@ function stopGait() {
   const b2 = document.getElementById('btn-gait-inphase');
   if (b1) b1.classList.remove('active');
   if (b2) b2.classList.remove('active');
+  if (isHardwareConnected) {
+    sendHardwareSerialCommand('s\n');
+  }
 }
 
 function updateGaits(time) {
@@ -1714,94 +2305,6 @@ function setupWindowResize() {
   });
 }
 
-// --- Swarm Kinetic Simulation Loop ---
-function updateSwarmSimulation(time, delta) {
-  if (state.systemTab !== 'swarm') return;
-
-  const freq = state.swarm.frequency;
-  const omega = freq * Math.PI * 2;
-
-  // 1. Rotate the permanent magnet rig beneath the stage
-  if (swarmMagnetRig) {
-    swarmMagnetRig.rotation.y = time * omega;
-  }
-  if (hardwareRotorRig) {
-    hardwareRotorRig.rotation.y = time * omega;
-  }
-
-  // Animate 2mm hardware cubes inside the petri dish
-  if (hardwareCubes && hardwareCubes.length > 0 && state.swarm.view === 'hardware') {
-    hardwareCubes.forEach((cube, idx) => {
-      const armIdx = idx % 4;
-      const posOnArm = Math.floor(idx / 4);
-      const baseAng = armIdx * (Math.PI / 2) + time * omega * 0.5;
-      const r = 5.0 + posOnArm * 3.2;
-
-      cube.position.x = Math.cos(baseAng) * r;
-      cube.position.z = Math.sin(baseAng) * r;
-      cube.position.y = 10.5 + Math.sin(time * 6 + idx * 0.3) * 0.3;
-      cube.rotation.y = -baseAng;
-    });
-  }
-
-  // 2. Animate Microrobots based on motion mode & configuration
-  if (state.swarm.motionMode === 'spin') {
-    // Spinning & Pivoting mode (low gradient 0.15 T/m)
-    swarmMicrorobots.forEach((bot, idx) => {
-      // Rotate around own axis or swarm cluster center
-      const pivotLift = Math.sin(time * omega + idx * 0.1) * 0.4;
-      bot.position.y = 0.6 + Math.max(0, pivotLift);
-      bot.rotation.y = time * omega * 0.5 + (bot.userData.targetRot ? bot.userData.targetRot.y : 0);
-
-      // In HT climbing mission: chains lift up toward obstacle
-      if (state.swarm.mission === 'climb' && idx < 20) {
-        bot.position.x = bot.userData.targetPos.x + Math.sin(time * 2) * 4;
-        bot.position.y = 0.6 + Math.sin(time * 3 + idx * 0.3) * 3.5; // Climbing height
-      }
-
-      // In HT self-throwing mission: one bot flings over the wall at 15 Hz
-      if (state.swarm.mission === 'throw' && idx === 0) {
-        const cycle = (time * 1.5) % 1.0;
-        if (cycle < 0.3) {
-          bot.position.set(10 + cycle * 35, 1 + Math.sin(cycle / 0.3 * Math.PI) * 12, 0);
-        }
-      }
-    });
-  } else {
-    // Orbital Dragging mode (high gradient 7.0 T/m) - Agile 880 mm/s orbital flight
-    const orbitRadius = 26.0;
-    swarmMicrorobots.forEach((bot, idx) => {
-      const angle = time * omega + (idx / swarmMicrorobots.length) * Math.PI * 0.2;
-      bot.position.x = Math.cos(angle) * orbitRadius;
-      bot.position.z = Math.sin(angle) * orbitRadius;
-      bot.position.y = 1.2 + Math.sin(time * 10 + idx) * 0.5;
-      bot.rotation.y = -angle;
-    });
-
-    // In FF unclog mission: swarm smashes into the occlusion tube
-    if (state.swarm.mission === 'unclog' && swarmTubeMesh) {
-      swarmTubeMesh.scale.x = 1.0 + Math.sin(time * 15) * 0.05; // Impact pulse
-    }
-
-    // In FF morph mission: liquid metal droplet ripples under impact
-    if (state.swarm.mission === 'morph' && swarmLiquidMetalMesh) {
-      swarmLiquidMetalMesh.scale.x = 1.4 + Math.sin(time * 8) * 0.3;
-      swarmLiquidMetalMesh.scale.z = 1.4 - Math.sin(time * 8) * 0.2;
-    }
-  }
-
-  // Raft mission: pill rocks gently on the floating SC raft
-  if (state.swarm.mission === 'raft' && swarmRaftPill) {
-    swarmRaftPill.position.y = 4.2 + Math.sin(time * 3) * 0.3;
-    swarmRaftPill.rotation.x = Math.sin(time * 2) * 0.08;
-  }
-
-  // Bridge mission: LED glows steadily
-  if (state.swarm.mission === 'bridge' && swarmLedMesh) {
-    swarmLedMesh.material.emissiveIntensity = 0.6 + Math.sin(time * 6) * 0.4;
-  }
-}
-
 // --- Main Render Loop ---
 let clock = new THREE.Clock();
 
@@ -1813,6 +2316,9 @@ function animate() {
 
   // Run V1 robotic walking gaits if active
   updateGaits(elapsedTime);
+
+  // Run Movie Swarm Simulation Loop
+  updateSwarmSimulation(elapsedTime, delta);
 
   // Animate V1 magnetic flux line dashes
   if (fluxGroup && state.showFlux) {

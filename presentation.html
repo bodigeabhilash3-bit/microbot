@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Autonomous Modular Microbot V1 — 5-Member Viva Defense Presentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Rajdhani:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: rgba(15, 23, 42, 0.78);
+      --card-border: rgba(255, 255, 255, 0.08);
+      
+      --accent-red: #ef4444;
+      --accent-red-glow: rgba(239, 68, 68, 0.28);
+      --accent-cyan: #06b6d4;
+      --accent-cyan-glow: rgba(6, 182, 212, 0.25);
+      --accent-emerald: #10b981;
+      --accent-amber: #f59e0b;
+      
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      
+      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-heading: 'Rajdhani', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      background: var(--bg);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Ambient Tech Grid Background */
+    .bg-grid {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background-image: 
+        radial-gradient(circle at 50% 15%, rgba(239, 68, 68, 0.09) 0%, transparent 60%),
+        radial-gradient(circle at 85% 85%, rgba(6, 182, 212, 0.07) 0%, transparent 50%),
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Top Navigation Header */
+    header {
+      position: relative;
+      z-index: 20;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 32px;
+      border-bottom: 1px solid var(--card-border);
+      background: rgba(9, 13, 22, 0.92);
+      backdrop-filter: blur(14px);
+      height: 58px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .pulse-dot {
+      width: 10px; height: 10px;
+      background: var(--accent-red);
+      border-radius: 50%;
+      box-shadow: 0 0 12px var(--accent-red);
+      animation: pulseAnim 2s infinite ease-in-out;
+    }
+
+    @keyframes pulseAnim {
+      0%, 100% { transform: scale(1); opacity: 0.9; box-shadow: 0 0 10px var(--accent-red); }
+      50% { transform: scale(1.3); opacity: 0.5; box-shadow: 0 0 20px var(--accent-red); }
+    }
+
+    .brand-title {
+      font-family: var(--font-heading);
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-tag {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: var(--accent-red);
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      padding: 2px 7px;
+      border-radius: 4px;
+      letter-spacing: 0.05em;
+    }
+
+    .speaker-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--accent-cyan);
+    }
+
+    .speaker-indicator .speaker-badge {
+      background: var(--accent-cyan);
+      color: #000;
+      font-weight: 700;
+      padding: 1px 7px;
+      border-radius: 10px;
+      font-size: 0.7rem;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-link {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-family: var(--font-body);
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-link:hover {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: var(--accent-red);
+      color: #fff;
+    }
+
+    /* Main Slide Deck Viewport */
+    main {
+      flex: 1;
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 28px 10px 28px;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.97);
+      width: calc(100vw - 56px);
+      max-width: 1460px;
+      height: calc(100vh - 138px);
+      max-height: 860px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 24px 36px 20px 36px;
+      box-shadow: 0 28px 70px rgba(0,0,0,0.7), 0 0 35px rgba(239, 68, 68, 0.04);
+      backdrop-filter: blur(20px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow-y: auto;
+    }
+
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .slide::-webkit-scrollbar { width: 5px; }
+    .slide::-webkit-scrollbar-track { background: transparent; }
+    .slide::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+
+    /* Slide Header */
+    .slide-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .slide-tag-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .slide-badge {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--accent-red);
+      background: rgba(239, 68, 68, 0.12);
+      padding: 3px 9px;
+      border-radius: 4px;
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      letter-spacing: 0.05em;
+    }
+
+    .speaker-pill {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--accent-cyan);
+      background: rgba(6, 182, 212, 0.1);
+      padding: 3px 9px;
+      border-radius: 4px;
+      border: 1px solid rgba(6, 182, 212, 0.25);
+    }
+
+    .slide-timer-hint {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-dim);
+    }
+
+    .slide-title {
+      font-family: var(--font-heading);
+      font-size: 2.05rem;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: 0.02em;
+      margin-bottom: 4px;
+      background: linear-gradient(135deg, #ffffff 40%, #e2e8f0 70%, var(--accent-red) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .slide-sub {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+      margin-bottom: 14px;
+      font-weight: 400;
+    }
+
+    /* Content Layout Grids */
+    .slide-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-height: 0;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      flex: 1;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      flex: 1;
+    }
+
+    .grid-split-3-2 {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 20px;
+      flex: 1;
+    }
+
+    .grid-split-1-1 {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 20px;
+      flex: 1;
+    }
+
+    /* Modern Glass Cards */
+    .card {
+      background: rgba(18, 26, 43, 0.65);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.2s ease, background 0.2s ease;
+      position: relative;
+    }
+
+    .card:hover {
+      border-color: rgba(255, 255, 255, 0.16);
+      background: rgba(24, 34, 56, 0.75);
+    }
+
+    .card-accent-red { border-top: 3px solid var(--accent-red); }
+    .card-accent-cyan { border-top: 3px solid var(--accent-cyan); }
+    .card-accent-emerald { border-top: 3px solid var(--accent-emerald); }
+    .card-accent-amber { border-top: 3px solid var(--accent-amber); }
+
+    .card-title {
+      font-family: var(--font-heading);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-icon { font-size: 1.1rem; }
+
+    .card-text {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.48;
+    }
+
+    /* Metric Badges */
+    .metric-hero {
+      display: flex;
+      flex-direction: column;
+      padding: 10px 12px;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 8px;
+    }
+
+    .metric-val {
+      font-family: var(--font-mono);
+      font-size: 1.65rem;
+      font-weight: 800;
+      color: var(--accent-red);
+      line-height: 1;
+    }
+
+    .metric-val.cyan { color: var(--accent-cyan); }
+    .metric-val.green { color: var(--accent-emerald); }
+    .metric-val.amber { color: var(--accent-amber); }
+
+    .metric-label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    ul.bullet-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin-top: 6px;
+    }
+
+    ul.bullet-list li {
+      font-size: 0.84rem;
+      color: #cbd5e1;
+      line-height: 1.42;
+      position: relative;
+      padding-left: 18px;
+    }
+
+    ul.bullet-list li::before {
+      content: "▹";
+      position: absolute;
+      left: 0;
+      color: var(--accent-red);
+      font-weight: 700;
+    }
+
+    ul.bullet-list.cyan li::before { color: var(--accent-cyan); }
+    ul.bullet-list.green li::before { color: var(--accent-emerald); }
+
+    /* Technical Media Box */
+    .media-card {
+      background: rgba(10, 15, 26, 0.9);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .media-img-wrapper {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+      min-height: 180px;
+    }
+
+    .media-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+    }
+
+    .media-caption {
+      padding: 7px 12px;
+      background: rgba(15, 23, 42, 0.95);
+      border-top: 1px solid var(--card-border);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .media-caption .fig-num {
+      color: var(--accent-cyan);
+      font-weight: 700;
+    }
+
+    /* Tables */
+    .tech-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+      text-align: left;
+    }
+
+    .tech-table th {
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      font-family: var(--font-heading);
+      font-size: 0.88rem;
+      padding: 7px 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      letter-spacing: 0.04em;
+    }
+
+    .tech-table td {
+      padding: 7px 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--text-muted);
+    }
+
+    .tech-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+      color: #f1f5f9;
+    }
+
+    .tech-table .mono {
+      font-family: var(--font-mono);
+      color: var(--accent-cyan);
+    }
+
+    .tech-table .cost {
+      font-family: var(--font-mono);
+      color: var(--accent-emerald);
+      font-weight: 700;
+    }
+
+    /* Formula Box */
+    .formula-box {
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px dashed rgba(6, 182, 212, 0.4);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-family: var(--font-mono);
+      font-size: 0.84rem;
+      color: #e2e8f0;
+      margin: 6px 0;
+      line-height: 1.5;
+    }
+
+    /* Bottom Defense Takeaway Bar */
+    .takeaway-bar {
+      margin-top: 12px;
+      padding: 8px 16px;
+      background: rgba(239, 68, 68, 0.08);
+      border-left: 3px solid var(--accent-red);
+      border-radius: 0 6px 6px 0;
+      font-size: 0.78rem;
+      color: #cbd5e1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .takeaway-bar strong {
+      color: #fff;
+      font-family: var(--font-heading);
+      letter-spacing: 0.04em;
+      font-size: 0.84rem;
+    }
+
+    /* Footer Navigation */
+    footer {
+      position: relative;
+      z-index: 20;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 32px;
+      background: rgba(9, 13, 22, 0.92);
+      border-top: 1px solid var(--card-border);
+      height: 52px;
+    }
+
+    .slide-dots-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .dot:hover {
+      background: rgba(255, 255, 255, 0.5);
+      transform: scale(1.2);
+    }
+
+    .dot.active {
+      width: 30px;
+      border-radius: 5px;
+      background: var(--accent-red);
+      box-shadow: 0 0 10px var(--accent-red-glow);
+    }
+
+    .controls-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--card-border);
+      color: #fff;
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.9rem;
+    }
+
+    .nav-btn:hover {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: var(--accent-red);
+      color: var(--accent-red);
+    }
+
+    .slide-counter {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      min-width: 75px;
+      text-align: center;
+    }
+
+    .slide-counter strong { color: #fff; font-size: 0.95rem; }
+    .key-hints { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-dim); }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+
+  <!-- Header -->
+  <header>
+    <div class="brand">
+      <div class="pulse-dot"></div>
+      <div>
+        <div class="brand-title">
+          MICROBOT V1 <span class="brand-tag">5-SLIDE DEFENSE DECK</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="header-center">
+      <div class="speaker-indicator" id="currentSpeakerDisplay">
+        <span class="speaker-badge" id="speakerBadge">MEMBER 1</span>
+        <span id="speakerTopic">Project Identity & Problem Formulation</span>
+      </div>
+    </div>
+
+    <div class="nav-actions">
+      <a href="index.html" class="btn-link" title="Open Interactive 3D Simulation">🤖 3D CAD Lab</a>
+      <a href="visual_guide.html" target="_blank" class="btn-link" title="Open Visual Assembly Guide">🔍 Assembly Guide</a>
+      <a href="paper.html" target="_blank" class="btn-link" title="Open Academic Manuscript">📄 Research Paper</a>
+      <button class="btn-link" onclick="toggleFullScreen()" title="Toggle Fullscreen (F)">⛶ Fullscreen</button>
+    </div>
+  </header>
+
+  <!-- Main Slide Viewport -->
+  <main id="slideContainer">
+
+    <!-- ==================== SLIDE 1: MEMBER 1 ==================== -->
+    <section class="slide active" data-slide="0">
+      <div>
+        <div class="slide-meta">
+          <div class="slide-tag-group">
+            <span class="slide-badge">SLIDE 01 / 05 • OVERVIEW & PROBLEM FORMULATION</span>
+            <span class="speaker-pill">SPEAKER: MEMBER 1 (LEAD PRESENTER)</span>
+          </div>
+          <span class="slide-timer-hint">Allocated Time: 0:00 – 2:00</span>
+        </div>
+        <h1 class="slide-title">Autonomous Bio-Inspired Modular Microbot (Microbot V1)</h1>
+        <p class="slide-sub">Resolving the Kinematic Reference Dilemma on Spherical Magnetic Joints for Low-Cost Reconfigurable Swarms</p>
+      </div>
+
+      <div class="slide-body">
+        <div class="grid-split-3-2">
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div class="card card-accent-red">
+              <div class="card-title"><span class="card-icon">🎯</span> Project Mission & The Cinematic Challenge</div>
+              <p class="card-text">
+                Inspired by <em>Big Hero 6</em>, our goal is to build an autonomous, sub-100mm modular robotic pod costing <strong>under ₹1,100 ($12.87)</strong> that crawls independently and aggregates into macroscopic structures (grippers, bridges, pillars) without human intervention.
+              </p>
+              <div class="grid-3" style="margin-top: 10px;">
+                <div class="metric-hero">
+                  <span class="metric-val">₹1,070</span>
+                  <span class="metric-label">Unit BOM Cost</span>
+                </div>
+                <div class="metric-hero">
+                  <span class="metric-val cyan">±38.0°</span>
+                  <span class="metric-label">Pitch Articulation</span>
+                </div>
+                <div class="metric-hero">
+                  <span class="metric-val green">58.4 <span style="font-size: 0.9rem;">mm/s</span></span>
+                  <span class="metric-label">Crawl Velocity</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="card card-accent-cyan">
+              <div class="card-title"><span class="card-icon">⚠️</span> The Core Problem: Kinematic Reference Dilemma</div>
+              <p class="card-text">
+                Consider two pods connected via a mirror-polished 12mm AISI 52100 chrome steel ball held by N42 ring magnets (14.2 N clamp force, μ ≈ 0.08).
+              </p>
+              <div class="formula-box">
+                $$	ext{Joint Friction Torque Limit: } 	au_{friction} = \mu \cdot F_{clamp} \cdot r = \mathbf{0.0031	ext{ N}\cdot	ext{m}}$$
+                $$	ext{Sub-Micro Servo Stall Torque: } 	au_{servo} = 0.45	ext{ kg}\cdot	ext{cm} = \mathbf{0.0441	ext{ N}\cdot	ext{m}} \gg 	au_{friction}$$
+              </div>
+              <p class="card-text" style="font-size: 0.8rem; color: #cbd5e1;">
+                <strong>Free-Spin Slip Failure:</strong> By Newton's 3rd Law, reaction torque simply spins the ball in its socket instead of tilting the pod. <strong>Useful work = 0%</strong>.
+              </p>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div class="media-card" style="flex: 1;">
+              <div class="media-img-wrapper">
+                <img src="images/movie_microbot_unit.jpg" alt="Microbot V1 Hardware Pod" class="media-img">
+              </div>
+              <div class="media-caption">
+                <span><span class="fig-num">FIG 1.1</span> Microbot V1 Unit Architecture</span>
+                <span style="color: var(--accent-emerald);">Sub-100mm Scale</span>
+              </div>
+            </div>
+
+            <div class="card" style="padding: 10px 14px;">
+              <div style="font-family: var(--font-heading); font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 4px;">Literature Benchmark Gap</div>
+              <p style="font-size: 0.76rem; color: var(--text-muted); line-height: 1.35;">
+                • <strong>M-TRAN III / Roombots:</strong> 2-3 DOF, but weigh 440–1400g and cost $2,500–$5,000.<br>
+                • <strong>Harvard Kilobot:</strong> $15 cost, but 0 active DOF (flat 2D vibration only).<br>
+                • <strong>Microbot V1:</strong> 2 active DOF, sub-48g mass, itemized cost ₹1,070 ($12.87).
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="takeaway-bar">
+        <strong>DEFENSE FOCUS (MEMBER 1):</strong> Establishes the physical slip barrier of spherical magnetic joints and proves existing systems cost 95% more or have zero active articulation.
+      </div>
+    </section>
+
+
+    <!-- ==================== SLIDE 2: MEMBER 2 ==================== -->
+    <section class="slide" data-slide="1">
+      <div>
+        <div class="slide-meta">
+          <div class="slide-tag-group">
+            <span class="slide-badge">SLIDE 02 / 05 • MECHANICAL ARCHITECTURE & INNOVATION</span>
+            <span class="speaker-pill">SPEAKER: MEMBER 2 (MECHANICAL SPECIALIST)</span>
+          </div>
+          <span class="slide-timer-hint">Allocated Time: 2:00 – 4:00</span>
+        </div>
+        <h2 class="slide-title">Mechanical CAD, The Equatorial Collar Hub & Buckling Proof</h2>
+        <p class="slide-sub">Tripartite Symmetrical Architecture, Rotational Torque Grounding, and Euler Column Safety</p>
+      </div>
+
+      <div class="slide-body">
+        <div class="grid-split-3-2">
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div class="card card-accent-red">
+              <div class="card-title"><span class="card-icon">💡</span> The Core Innovation: Equatorial Collar Hub</div>
+              <p class="card-text">
+                A 3D-printed PETG ring weighing just <strong>0.68 grams</strong> encircling the equator of the 12mm ball:
+              </p>
+              <ul class="bullet-list" style="margin-top: 6px;">
+                <li><strong>Rotational Grounding:</strong> Outer tabs interlock with Pod B's chassis rim slots, locking parasitic roll ($	heta_{roll} = 0$).</li>
+                <li><strong>Torque Moment Arm ($L = 8.5	ext{ mm}$):</strong> Offsets pushrod attachment 8.5mm from center, converting servo thrust ($F = 1.2	ext{ N}$) into pure bending moment:</li>
+              </ul>
+              <div class="formula-box">
+                $$M_{pitch} = F_{pushrod} 	imes L \cdot \cos(	heta) = 1.2	ext{ N} 	imes 0.0085	ext{ m} = \mathbf{10.2	ext{ mN}\cdot	ext{m}}$$
+                $$\implies \mathbf{10.2	ext{ mN}\cdot	ext{m}} \gg \mathbf{0.0031	ext{ mN}\cdot	ext{m (Friction)} \implies 	ext{Full }\pm38.0^\circ	ext{ Pitch Achieved!}}$$
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <div class="card card-accent-cyan">
+                <div class="card-title" style="font-size: 0.95rem;">Tripartite Architecture</div>
+                <p class="card-text" style="font-size: 0.78rem;">
+                  <strong>Pod A (Tail, ~21g):</strong> Battery & TP4056.<br>
+                  <strong>Core (~6.5g):</strong> Ball, magnets & collar.<br>
+                  <strong>Pod B (Head, ~24g):</strong> MCU & dual servos.<br>
+                  <em>Active Decoupling:</em> No wires cross the joint!
+                </p>
+              </div>
+
+              <div class="card card-accent-emerald">
+                <div class="card-title" style="font-size: 0.95rem;">Euler Buckling Safety</div>
+                <p class="card-text" style="font-size: 0.78rem;">
+                  0.8mm music wire pushrod ($E=210	ext{ GPa}$, $L=18	ext{ mm}$):<br>
+                  $$P_{cr} = rac{\pi^2 E I}{(K L)^2} = \mathbf{24.5	ext{ N}}$$
+                  Servo thrust = $1.2	ext{ N} \implies \mathbf{SF = 20.4 : 1}$.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div class="media-card" style="flex: 1;">
+              <div class="media-img-wrapper">
+                <img src="images/microbot_cutaway_assembly.jpg" alt="CAD Cutaway Assembly" class="media-img">
+              </div>
+              <div class="media-caption">
+                <span><span class="fig-num">FIG 2.1</span> Internal Electronics & Collar Placement</span>
+                <span style="color: var(--accent-cyan);">CAD Cutaway</span>
+              </div>
+            </div>
+
+            <div class="card" style="padding: 10px 14px;">
+              <div style="font-family: var(--font-heading); font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 4px;">FDM 3D Printing Specifications</div>
+              <p style="font-size: 0.76rem; color: var(--text-muted); line-height: 1.35;">
+                • Material: <strong>PETG</strong> (impact tough, >50% elongation vs PLA's 6%).<br>
+                • 0.16mm layer height, 4 walls, 100% infill for collar hub & socket cups.<br>
+                • Radial tolerance: $\pm0.15	ext{ mm}$ ensures smooth spherical glide without wobble.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="takeaway-bar">
+        <strong>DEFENSE FOCUS (MEMBER 2):</strong> Proves the Equatorial Collar Hub solves reaction torque with a 0.68g part, backed by an Euler Buckling Factor of Safety of 20.4 to 1.
+      </div>
+    </section>
+
+
+    <!-- ==================== SLIDE 3: MEMBER 3 ==================== -->
+    <section class="slide" data-slide="2">
+      <div>
+        <div class="slide-meta">
+          <div class="slide-tag-group">
+            <span class="slide-badge">SLIDE 03 / 05 • ELECTRONICS, GAIT & FIRMWARE</span>
+            <span class="speaker-pill">SPEAKER: MEMBER 3 (ELECTRONICS & FIRMWARE)</span>
+          </div>
+          <span class="slide-timer-hint">Allocated Time: 4:00 – 6:00</span>
+        </div>
+        <h2 class="slide-title">Electronics, 4-Phase Crawl Gait & Real-Time Firmware</h2>
+        <p class="slide-sub">ESP32-C3 Power Architecture, Anisotropic Friction Locomotion, and Non-Blocking C++ State Machine</p>
+      </div>
+
+      <div class="slide-body">
+        <div class="grid-split-3-2">
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div class="card card-accent-emerald">
+              <div class="card-title"><span class="card-icon">🐛</span> 4-Phase Bio-Inspired Inchworm Crawl Gait</div>
+              <p class="card-text">
+                Locomotion is generated through directional <strong>friction anisotropy</strong>: Tail silicone pad ($\mu_{tail} = 0.85$) vs. Head PTFE pad ($\mu_{head} = 0.15$):
+              </p>
+              <ul class="bullet-list green" style="margin-top: 6px;">
+                <li><strong>Phase 1 (Extend):</strong> Tail anchors ($\mu_{tail} > \mu_{head}$); servo drives to $+38^\circ$; Head slides forward 18.2mm.</li>
+                <li><strong>Phase 2 (Strike):</strong> Head tilts forward, shifting normal load onto front sliding contact pad.</li>
+                <li><strong>Phase 3 (Contract):</strong> Servo drives to $-38^\circ$; Head anchors while Tail is dragged forward.</li>
+                <li><strong>Phase 4 (Reset):</strong> Pod flattens to $0^\circ$, completing one stride of $\Delta x = 18.2	ext{ mm}$.</li>
+              </ul>
+              <div class="formula-box">
+                $$v_{crawl} = f_{gait} 	imes \Delta x = 3.2	ext{ Hz} 	imes 18.2	ext{ mm} = \mathbf{58.24	ext{ mm/s (WebGL Sim: 58.40 mm/s)}}$$
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <div class="card card-accent-red">
+                <div class="card-title" style="font-size: 0.95rem;">Power & Brownout Defense</div>
+                <p class="card-text" style="font-size: 0.78rem;">
+                  • 150mAh 1S LiPo (25C discharge, 4.2g).<br>
+                  • <strong>100µF Low-ESR Tantalum Cap</strong> buffers 680mA dual servo stall surges, preventing MCU resets.<br>
+                  • Continuous crawl runtime: <strong>26 minutes</strong> (340mA avg).
+                </p>
+              </div>
+
+              <div class="card card-accent-cyan">
+                <div class="card-title" style="font-size: 0.95rem;">Embedded C++ Firmware</div>
+                <p class="card-text" style="font-size: 0.78rem;">
+                  • 5-State FSM (BOOT, CALIB, IDLE, CRAWL, SLAVE).<br>
+                  • Non-blocking `millis()` loop; zero `delay()`.<br>
+                  • <strong>14-bit hardware LEDC PWM</strong> (0.12° precision).<br>
+                  • 1,500ms fail-safe heartbeat watchdog.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div class="media-card" style="flex: 1;">
+              <div class="media-img-wrapper">
+                <img src="images/fig5_circuit_schematic.jpg" alt="Circuit Schematic" class="media-img">
+              </div>
+              <div class="media-caption">
+                <span><span class="fig-num">FIG 3.1</span> Circuit & Decoupling Wiring Schematic</span>
+                <span style="color: var(--accent-red);">Hardware Tested</span>
+              </div>
+            </div>
+
+            <div class="card" style="padding: 10px 14px;">
+              <div style="font-family: var(--font-heading); font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 4px;">Microcontroller Specifications</div>
+              <p style="font-size: 0.76rem; color: var(--text-muted); line-height: 1.35;">
+                • ESP32-C3 SuperMini (160MHz RISC-V, 400KB RAM, 4MB Flash).<br>
+                • Memory Footprint: 242 KB Flash (<6%), 28.4 KB RAM (<7%).<br>
+                • GPIO0 (Pitch) & GPIO1 (Yaw/Collar) hardware PWM timer channels.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="takeaway-bar">
+        <strong>DEFENSE FOCUS (MEMBER 3):</strong> 100µF tantalum decoupling eliminates brownout resets; 4-phase anisotropic friction crawl achieves 58.24 mm/s with deterministic non-blocking C++.
+      </div>
+    </section>
+
+
+    <!-- ==================== SLIDE 4: MEMBER 4 ==================== -->
+    <section class="slide" data-slide="3">
+      <div>
+        <div class="slide-meta">
+          <div class="slide-tag-group">
+            <span class="slide-badge">SLIDE 04 / 05 • SWARM MESH & BOM ECONOMICS</span>
+            <span class="speaker-pill">SPEAKER: MEMBER 4 (SWARM & COST SPECIALIST)</span>
+          </div>
+          <span class="slide-timer-hint">Allocated Time: 6:00 – 8:00</span>
+        </div>
+        <h2 class="slide-title">Multi-Robot Swarm Mesh, Itemized BOM & Validation</h2>
+        <p class="slide-sub">Sub-2ms ESP-NOW Wireless Coordination, Sub-₹1,100 Economics, and Performance Verification</p>
+      </div>
+
+      <div class="slide-body">
+        <div class="grid-split-3-2">
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div class="card card-accent-red">
+              <div class="card-title"><span class="card-icon">📡</span> Sub-2ms ESP-NOW Mesh Protocol</div>
+              <p class="card-text">
+                Standard Wi-Fi introduces 100–3000ms latency due to AP association and DHCP. ESP-NOW transmits raw connectionless MAC-layer frames in just <strong>1.84 milliseconds</strong>:
+              </p>
+              <ul class="bullet-list" style="margin-top: 6px;">
+                <li><strong>24-Byte Control Payload:</strong> Sender ID, Formation Mode (0–8), Target Pitch/Yaw, Sync Timestamp, CRC.</li>
+                <li><strong>9 Formation Primitives:</strong> Single Crawl, Spine Chain, Bridge Span, Tower Pillar, Ramp Inclined, Gripper Hand, Sheet Membrane, Ring Enclosure, Free Swarm.</li>
+                <li><strong>100% Off-Grid:</strong> Operates routerless without internet gateways or cellular infrastructure.</li>
+              </ul>
+            </div>
+
+            <div class="card card-accent-emerald">
+              <div class="card-title"><span class="card-icon">💰</span> Itemized Bill of Materials (BOM)</div>
+              <table class="tech-table">
+                <thead>
+                  <tr>
+                    <th>Component</th>
+                    <th>Specification</th>
+                    <th>Qty</th>
+                    <th>Cost (INR)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>ESP32-C3 SuperMini</td>
+                    <td>160MHz RISC-V, 4MB Flash</td>
+                    <td class="mono">1</td>
+                    <td class="cost">₹260</td>
+                  </tr>
+                  <tr>
+                    <td>Dual 3.7g Coreless Servos</td>
+                    <td>0.45 kg·cm stall torque</td>
+                    <td class="mono">2</td>
+                    <td class="cost">₹280</td>
+                  </tr>
+                  <tr>
+                    <td>150mAh LiPo + TP4056</td>
+                    <td>1S 3.7V 25C + USB-C</td>
+                    <td class="mono">1+1</td>
+                    <td class="cost">₹150</td>
+                  </tr>
+                  <tr>
+                    <td>Chrome Ball + N42 Magnets</td>
+                    <td>12mm AISI 52100 + Dual Rings</td>
+                    <td class="mono">1+2</td>
+                    <td class="cost">₹130</td>
+                  </tr>
+                  <tr>
+                    <td>PETG Chassis & Collar Hub</td>
+                    <td>~34g plastic filament</td>
+                    <td class="mono">1 set</td>
+                    <td class="cost">₹70</td>
+                  </tr>
+                  <tr>
+                    <td>Music Wire & Passives</td>
+                    <td>0.8mm wire + 100µF cap</td>
+                    <td class="mono">1 set</td>
+                    <td class="cost">₹180</td>
+                  </tr>
+                  <tr style="background: rgba(16, 185, 129, 0.1); font-weight: 700;">
+                    <td colspan="3" style="color: #fff;">TOTAL FABRICATION COST PER MODULE</td>
+                    <td class="cost" style="font-size: 1.05rem;">₹1,070 ($12.87)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div class="media-card" style="flex: 1;">
+              <div class="media-img-wrapper">
+                <img src="images/fig6_swarm_topologies.jpg" alt="Swarm Topologies" class="media-img">
+              </div>
+              <div class="media-caption">
+                <span><span class="fig-num">FIG 4.1</span> 9 Decentralized Swarm Formation Modes</span>
+                <span style="color: var(--accent-red);">ESP-NOW Mesh</span>
+              </div>
+            </div>
+
+            <div class="card" style="padding: 10px 14px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3);">
+              <div style="font-family: var(--font-heading); font-size: 0.95rem; font-weight: 700; color: #f87171; margin-bottom: 4px;">Simulation vs Physical Status</div>
+              <p style="font-size: 0.76rem; color: #cbd5e1; line-height: 1.35;">
+                • Pitch ($\pm38.0^\circ$) & Velocity (58.4 mm/s) validated in WebGL 3D CAD Lab.<br>
+                • <strong>Academic Transparency:</strong> Milestones 1–5 complete. Physical Unit #1 fabrication & dynamometer testing is Milestone 6 (immediate next step).
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="takeaway-bar">
+        <strong>DEFENSE FOCUS (MEMBER 4):</strong> Proves sub-₹1,100 unit cost and sub-2ms off-grid mesh coordination, enabling 10-unit swarms for just ₹10,700 ($128.70).
+      </div>
+    </section>
+
+
+    <!-- ==================== SLIDE 5: MEMBER 5 ==================== -->
+    <section class="slide" data-slide="4">
+      <div>
+        <div class="slide-meta">
+          <div class="slide-tag-group">
+            <span class="slide-badge">SLIDE 05 / 05 • APPLICATIONS, ROADMAP & CONCLUSION</span>
+            <span class="speaker-pill">SPEAKER: MEMBER 5 (APPLICATIONS & ROADMAP)</span>
+          </div>
+          <span class="slide-timer-hint">Allocated Time: 8:00 – 10:00</span>
+        </div>
+        <h2 class="slide-title">Applications, Limitations, Engineering Roadmap & Viva Defense</h2>
+        <p class="slide-sub">Deployment Scenarios, Honest Engineering Constraints, Phased Milestones, and Academic Contributions</p>
+      </div>
+
+      <div class="slide-body">
+        <div class="grid-split-3-2">
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div class="grid-2">
+              <div class="card card-accent-cyan">
+                <div class="card-title" style="font-size: 0.95rem;"><span class="card-icon">🔍</span> Operational Deployments</div>
+                <p class="card-text" style="font-size: 0.78rem;">
+                  • <strong>Confined Inspection:</strong> Sub-100mm scale navigates 4-inch chemical pipes and drainage ducts.<br>
+                  • <strong>Urban Search & Rescue:</strong> Pods squeeze into rubble cracks and dock into spine chains to bridge chasms.<br>
+                  • <strong>Adaptive Shoring:</strong> Aggregates into ramps and stabilizing arches.
+                </p>
+              </div>
+
+              <div class="card card-accent-amber">
+                <div class="card-title" style="font-size: 0.95rem;"><span class="card-icon">⚠️</span> Limitations & Mitigations</div>
+                <p class="card-text" style="font-size: 0.78rem;">
+                  • <strong>26-Min Battery:</strong> Sleep duty cycles + conductive dock pads.<br>
+                  • <strong>Magnetic Alignment:</strong> 90° hermaphroditic detents.<br>
+                  • <strong>FDM Shrinkage:</strong> Parametric offset calibration.<br>
+                  • <strong>RF Pipe Attenuation:</strong> Multi-hop packet relaying.
+                </p>
+              </div>
+            </div>
+
+            <div class="card card-accent-emerald">
+              <div class="card-title"><span class="card-icon">🏆</span> Summary of Core Contributions</div>
+              <ul class="bullet-list green" style="font-size: 0.8rem;">
+                <li><strong>1. Kinematic Reference Solved:</strong> Equatorial Collar Hub converts slip into controlled $\pm38^\circ$ pitch.</li>
+                <li><strong>2. Structural Integrity:</strong> Euler column buckling verified with a <strong>20.4 : 1 Factor of Safety</strong>.</li>
+                <li><strong>3. Cost Democratization:</strong> Complete autonomous pod at ₹1,070 ($12.87), >95% cheaper than commercial modules.</li>
+                <li><strong>4. Real-Time Swarm Mesh:</strong> Sub-2ms ESP-NOW firmware across 9 collective formation topologies.</li>
+              </ul>
+            </div>
+
+            <div class="card" style="padding: 10px 14px; background: rgba(0,0,0,0.3);">
+              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem;">
+                <span><strong>Phase 1 (M6):</strong> Physical Fab (14 days)</span>
+                <span><strong>Phase 2 (M7):</strong> EPM Zero-Power Latch</span>
+                <span><strong>Phase 3 (M8):</strong> ToF Perception</span>
+                <span class="mono" style="color: var(--accent-emerald);">Budget: ₹4,500</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div class="media-card" style="flex: 1;">
+              <div class="media-img-wrapper">
+                <img src="images/fig1_microbot_cad_assembly.jpg" alt="Final CAD Assembly" class="media-img">
+              </div>
+              <div class="media-caption">
+                <span><span class="fig-num">FIG 5.1</span> Complete Microbot V1 CAD Model</span>
+                <span style="color: var(--accent-emerald);">Milestones 1–5 Complete</span>
+              </div>
+            </div>
+
+            <div class="card card-accent-red" style="text-align: center; padding: 14px;">
+              <h3 style="font-family: var(--font-heading); font-size: 1.25rem; color: #fff; margin-bottom: 4px;">Panel Viva Defense Routing</h3>
+              <p style="font-size: 0.74rem; color: var(--text-muted); line-height: 1.35;">
+                <strong>M1:</strong> Problem & Literature | <strong>M2:</strong> Collar & Euler Buckling<br>
+                <strong>M3:</strong> Circuit, Battery & Gait | <strong>M4:</strong> ESP-NOW & BOM<br>
+                <strong>M5:</strong> Deployments, Limitations & Roadmap
+              </p>
+              <div style="margin-top: 8px;">
+                <span class="mono" style="font-size: 0.74rem; color: var(--accent-cyan);">github.com/bodigeabhilash3-bit/microbot</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="takeaway-bar">
+        <strong>DEFENSE READY (ALL MEMBERS):</strong> Demonstrates academic maturity, open-source traceability (MIT License), and domain-specialized defense readiness.
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer Navigation Controls -->
+  <footer>
+    <div class="key-hints">
+      Keys: <kbd>←</kbd> <kbd>→</kbd> or <kbd>Space</kbd> • Fullscreen: <kbd>F</kbd>
+    </div>
+
+    <div class="slide-dots-container" id="dotsContainer">
+      <!-- 5 Dots -->
+    </div>
+
+    <div class="controls-group">
+      <button class="nav-btn" onclick="prevSlide()" title="Previous Slide (Left Arrow)">◀</button>
+      <div class="slide-counter" id="slideCounter">
+        <strong id="currentSlideNum">01</strong> / <span id="totalSlidesNum">05</span>
+      </div>
+      <button class="nav-btn" onclick="nextSlide()" title="Next Slide (Right Arrow or Space)">▶</button>
+    </div>
+  </footer>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    let currentSlide = 0;
+
+    const speakerMap = [
+      { speaker: "MEMBER 1", topic: "Project Identity, Motivation & The Kinematic Dilemma" },
+      { speaker: "MEMBER 2", topic: "Mechanical CAD, Equatorial Collar Hub & Buckling Proof" },
+      { speaker: "MEMBER 3", topic: "Electronics, Power, 4-Phase Crawl Gait & Firmware" },
+      { speaker: "MEMBER 4", topic: "Multi-Robot Swarm Mesh, Itemized BOM & Validation" },
+      { speaker: "MEMBER 5", topic: "Applications, Limitations, Roadmap & Viva Defense" }
+    ];
+
+    const dotsContainer = document.getElementById('dotsContainer');
+
+    slides.forEach((_, idx) => {
+      const dot = document.createElement('div');
+      dot.classList.add('dot');
+      if (idx === 0) dot.classList.add('active');
+      dot.title = `Jump to Slide ${idx + 1}: Member ${idx + 1}`;
+      dot.addEventListener('click', () => goToSlide(idx));
+      dotsContainer.appendChild(dot);
+    });
+
+    const dots = document.querySelectorAll('.dot');
+
+    function updateSlide() {
+      slides.forEach((slide, idx) => {
+        slide.classList.toggle('active', idx === currentSlide);
+      });
+
+      dots.forEach((dot, idx) => {
+        dot.classList.toggle('active', idx === currentSlide);
+      });
+
+      document.getElementById('currentSlideNum').innerText = String(currentSlide + 1).padStart(2, '0');
+      document.getElementById('totalSlidesNum').innerText = String(totalSlides).padStart(2, '0');
+
+      const meta = speakerMap[currentSlide] || { speaker: "TEAM", topic: "Project Defense" };
+      document.getElementById('speakerBadge').innerText = meta.speaker;
+      document.getElementById('speakerTopic').innerText = meta.topic;
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides - 1) {
+        currentSlide++;
+        updateSlide();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlide();
+      }
+    }
+
+    function goToSlide(n) {
+      if (n >= 0 && n < totalSlides) {
+        currentSlide = n;
+        updateSlide();
+      }
+    }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    // Keyboard controls
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'Backspace' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        goToSlide(0);
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        goToSlide(totalSlides - 1);
+      } else if (e.key.toLowerCase() === 'f') {
+        e.preventDefault();
+        toggleFullScreen();
+      }
+    });
+
+    // Touch Swipe support
+    let touchStartX = 0;
+    let touchEndX = 0;
+    window.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, false);
+    window.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      if (touchEndX < touchStartX - 50) nextSlide();
+      if (touchEndX > touchStartX + 50) prevSlide();
+    }, false);
+
+    updateSlide();
+  </script>
+</body>
+</html>

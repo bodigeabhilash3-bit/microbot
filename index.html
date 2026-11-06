@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Microbot Architecture Lab — Physical V1 & Cell 2025 Swarm</title>
-  <meta name="description" content="Interactive 3D mechanical prototype, step-by-step physical assembly guide, and Cell Device 2025 magnetic swarm intelligence simulator.">
+  <title>Microbot V1 Architecture Lab — Autonomous Mechatronic Unit</title>
+  <meta name="description" content="Interactive 3D mechanical prototype, step-by-step physical assembly guide, and autonomous microbot kinematics.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -34,11 +34,23 @@
       <div class="system-switcher">
         <button id="tab-v1" class="tab-btn active" title="Mechatronic Single Unit (Servos, Ball & Sockets)">
           <span class="tab-icon">🤖</span>
-          <span>Physical Microbot V1</span>
+          <span>Single Unit (Physical V1)</span>
         </button>
+        <button id="tab-swarm" class="tab-btn" title="Movie-Accurate Multi-Bot Swarm & Formations (Big Hero 6)">
+          <span class="tab-icon">✨</span>
+          <span>Movie Swarm & Coordination</span>
+        </button>
+        <a href="visual_guide.html" target="_blank" class="tab-btn doc-btn" title="Open High-Resolution Visual Mechanical Assembly Guide">
+          <span class="tab-icon">🔍</span>
+          <span>Visual Cutaway Guide</span>
+        </a>
         <a href="paper.html" target="_blank" class="tab-btn doc-btn" title="Open Camera-Ready Research Paper for Physical Printing">
           <span class="tab-icon">📄</span>
           <span>Academic Paper (Print / PDF)</span>
+        </a>
+        <a href="presentation.html" target="_blank" class="tab-btn doc-btn" title="Open Interactive Presentation Slides for College Defense & Viva">
+          <span class="tab-icon">📊</span>
+          <span>Project Defense Slides</span>
         </a>
       </div>
 
@@ -47,6 +59,12 @@
         <span class="badge">GEOMETRY: HEXAGONAL CYLINDER</span>
         <span class="badge highlight">BALL: 12mm CHROME STEEL</span>
         <span class="badge success">MAGNETIC JOINT: PASSIVE NORMAL 5.2N</span>
+      </div>
+
+      <div id="status-container-swarm" class="system-status hidden">
+        <span class="badge highlight" id="badge-swarm-count">SWARM: 140 MOVIE UNITS ACTIVE</span>
+        <span class="badge success" id="badge-swarm-formation">FORMATION: COLOSSAL ROBOTIC HAND</span>
+        <span class="badge" id="badge-swarm-protocol">SYNC PROTOCOL: ESP-NOW MESH</span>
       </div>
     </header>
 
@@ -178,6 +196,85 @@
           <button class="cam-btn" data-cam="top">Top</button>
           <button class="cam-btn" data-cam="side">Side</button>
           <button class="cam-btn" data-cam="front">Front</button>
+          <button class="cam-btn" data-cam="desk">Desk (Movie)</button>
+        </div>
+      </div>
+
+      <!-- Physical Hardware USB Link (Web Serial) -->
+      <div class="panel-section">
+        <h2>PHYSICAL ROBOT LINK</h2>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <button id="btn-connect-hardware" class="btn" style="background: linear-gradient(135deg, #00f3ff, #0066ff); color: #0a0c10; font-weight: 700;">
+            ⚡ Connect Physical Bot (Web Serial)
+          </button>
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.72rem; color: #8b9bb4; padding: 6px 8px; background: rgba(0,0,0,0.35); border-radius: 4px; border: 1px solid rgba(255,255,255,0.06);">
+            <span>HARDWARE STATUS:</span>
+            <span id="hardware-status-val" style="color: #ffaa00; font-weight: 600;">DISCONNECTED</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Floating HUD Left: Movie Swarm & Coordination Director (Big Hero 6) -->
+    <aside id="swarm-controls-panel" class="glass-panel hidden">
+      <div class="panel-section">
+        <h2>BIG HERO 6 FORMATIONS</h2>
+        <div class="button-group" style="display: flex; flex-direction: column; gap: 6px;">
+          <button id="btn-form-hand" class="btn active" title="Assemble into a giant robotic hand with articulating fingers">🦾 Colossal Robotic Hand</button>
+          <button id="btn-form-chain" class="btn" title="Multi-bot snake / centipede chain crawling together with ESP-NOW sync">🐍 Articulated Spine Chain</button>
+          <button id="btn-form-bridge" class="btn" title="Load-bearing suspension bridge / arch spanning across pylons">🌉 Suspension Bridge Arch</button>
+          <button id="btn-form-wave" class="btn" title="Dynamic fluid swarm wave rippling in 3D">🌊 Dynamic Swarm Wave</button>
+          <button id="btn-form-tower" class="btn" title="Vertical hexagonal structural support column">🏛️ Heavy Support Pillar</button>
+        </div>
+      </div>
+
+      <!-- Adaptive Obstacle Interaction Sandbox -->
+      <div class="panel-section">
+        <h2>OBSTACLE INTERACTION</h2>
+        <div class="button-group" style="display: flex; flex-direction: column; gap: 6px;">
+          <button id="btn-obs-wall" class="btn" title="Swarm forms an inclined climbing ramp to elevate over a 28mm wall">🧱 28mm Wall Climb Ramp</button>
+          <button id="btn-obs-chasm" class="btn" title="Swarm interlocks into a catenary bridge spanning a 80mm canyon chasm">🕳️ Canyon Arch Span</button>
+          <button id="btn-obs-cradle" class="btn" title="Swarm forms a multi-tiered cradle holding an elevated payload">📦 Heavy Cargo Cradle</button>
+          <button id="btn-obs-clear" class="btn btn-secondary" title="Remove obstacle props and restore standard formation">✖️ Clear Obstacle Props</button>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="section-header">
+          <label for="slider-swarm-size">SWARM POPULATION</label>
+          <span id="label-swarm-size" class="mono-tag">140 BOTS</span>
+        </div>
+        <input type="range" id="slider-swarm-size" min="20" max="140" value="140" step="5">
+      </div>
+
+      <div class="panel-section">
+        <div class="section-header">
+          <label for="slider-swarm-speed">COORDINATION SPEED</label>
+          <span id="label-swarm-speed" class="mono-tag">1.0x</span>
+        </div>
+        <input type="range" id="slider-swarm-speed" min="0.3" max="2.5" value="1.0" step="0.1">
+
+        <div class="btn-subgroup" style="margin-top: 10px; display: flex; flex-direction: column; gap: 6px;">
+          <button id="btn-toggle-neural" class="btn btn-secondary active">🧠 Neural Transmitter (Follow Cursor)</button>
+          <button id="btn-swarm-scatter" class="btn btn-secondary danger">💥 Scatter & Re-assemble</button>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <h2>COLLECTIVE KINEMATICS</h2>
+        <div class="formula-box">
+          <div class="f-row">
+            <span class="f-label">Magnetic Latch:</span>
+            <code class="f-code">3.8N Apex-to-Ball (N52)</code>
+          </div>
+          <div class="f-row">
+            <span class="f-label">Swarm Protocol:</span>
+            <code class="f-code">ESP-NOW 2.4 GHz Low-Latency</code>
+          </div>
+          <div class="f-row">
+            <span class="f-label">Traveling Wave:</span>
+            <code class="f-code">&Delta;&phi; = 32.5&deg; (Multi-Link)</code>
+          </div>
         </div>
       </div>
     </aside>
@@ -227,6 +324,25 @@
         </ol>
       </div>
 
+      <!-- Swarm Formation Info Card (Visible when Movie Swarm is Active) -->
+      <div class="assembly-tracker hidden" id="tracker-swarm">
+        <h3>COLLECTIVE FORMATION SPECS</h3>
+        <div class="formula-box">
+          <div class="f-row">
+            <span class="f-label">Active Formation:</span>
+            <strong id="info-swarm-formation" style="color: var(--accent-cyan); font-size: 0.82rem;">Colossal Robotic Hand</strong>
+          </div>
+          <div class="f-row">
+            <span class="f-label">Role & Kinematics:</span>
+            <p id="info-swarm-desc" style="font-size: 0.72rem; color: #cdd9e5; line-height: 1.45;">Microbots self-assemble into an articulated robotic hand with palm, wrist, and 5 flexing digits executing coordinated gripping.</p>
+          </div>
+          <div class="f-row">
+            <span class="f-label">Multi-Unit Coupling:</span>
+            <code class="f-code" id="info-swarm-rigidity">5.2N Magnetic Docking Latch</code>
+          </div>
+        </div>
+      </div>
+
     </aside>
 
     <!-- Bottom HUD Bar: Telemetry & Dimensions Legend -->
@@ -252,6 +368,30 @@
         <div class="telemetry-item">
           <span class="t-label">ACTUATOR TORQUE</span>
           <span class="t-value">0.65 kg·cm (5.0x Margin)</span>
+        </div>
+      </div>
+
+      <!-- Movie Swarm Telemetry -->
+      <div id="telemetry-swarm" class="telemetry-row hidden">
+        <div class="telemetry-item">
+          <span class="t-label">COORDINATED UNITS</span>
+          <span class="t-value" id="swarm-tele-count">140 Movie Microbots</span>
+        </div>
+        <div class="telemetry-item">
+          <span class="t-label">MAGNETIC ATTRACTION</span>
+          <span class="t-value">5.2N Joint / 3.8N Apex</span>
+        </div>
+        <div class="telemetry-item">
+          <span class="t-label">WIRELESS PROTOCOL</span>
+          <span class="t-value">ESP-NOW 2.4 GHz (&lt;1ms)</span>
+        </div>
+        <div class="telemetry-item">
+          <span class="t-label">TOTAL SWARM MASS</span>
+          <span class="t-value" id="swarm-tele-mass">2.56 kg Array</span>
+        </div>
+        <div class="telemetry-item">
+          <span class="t-label">KINEMATIC STATE</span>
+          <span class="t-value" id="swarm-tele-state" style="color: var(--accent-cyan);">SYNCHRONIZED FORMATION</span>
         </div>
       </div>
 

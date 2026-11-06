@@ -16,9 +16,12 @@
 #endif
 
 // --- Pin Configuration ---
-#if defined(ESP32)
-  const int SERVO1_PIN = 1;  // GPIO 1 (D1)
-  const int SERVO2_PIN = 2;  // GPIO 2 (D2)
+#if defined(ESP8266)
+  const int SERVO1_PIN = D1;  // GPIO 5 (NodeMCU D1)
+  const int SERVO2_PIN = D2;  // GPIO 4 (NodeMCU D2)
+#elif defined(ESP32)
+  const int SERVO1_PIN = 1;   // GPIO 1 (D1)
+  const int SERVO2_PIN = 2;   // GPIO 2 (D2)
 #else
   const int SERVO1_PIN = 9;   // Arduino D9
   const int SERVO2_PIN = 10;  // Arduino D10
@@ -39,6 +42,9 @@ GaitMode currentGait = ANTI_PHASE_CRAWL;
 
 unsigned long previousMillis = 0;
 float phaseTime = 0.0;
+float currentPos1 = NEUTRAL_ANGLE;
+float currentPos2 = NEUTRAL_ANGLE;
+const float SLEW_RATE_LIMIT = 4.5f; // Max degree change per 15ms loop (eliminates brownout spikes)
 
 void setup() {
   Serial.begin(115200);
@@ -181,12 +187,16 @@ void updateGaitMotion() {
   }
 
   // Constrain to mechanical limits (±38° max)
-  angle1 = constrain(angle1, NEUTRAL_ANGLE - MAX_AMPLITUDE, NEUTRAL_ANGLE + MAX_AMPLITUDE);
-  angle2 = constrain(angle2, NEUTRAL_ANGLE - MAX_AMPLITUDE, NEUTRAL_ANGLE + MAX_AMPLITUDE);
+  float target1 = constrain(angle1, NEUTRAL_ANGLE - MAX_AMPLITUDE, NEUTRAL_ANGLE + MAX_AMPLITUDE);
+  float target2 = constrain(angle2, NEUTRAL_ANGLE - MAX_AMPLITUDE, NEUTRAL_ANGLE + MAX_AMPLITUDE);
 
-  servoPod1.write(angle1);
-  servoPod2.write(angle2);
+  // Soft-start slew rate filter (prevents abrupt acceleration & battery voltage sag)
+  currentPos1 += constrain(target1 - currentPos1, -SLEW_RATE_LIMIT, SLEW_RATE_LIMIT);
+  currentPos2 += constrain(target2 - currentPos2, -SLEW_RATE_LIMIT, SLEW_RATE_LIMIT);
 
-  // 20ms update period (~50Hz loop)
+  servoPod1.write((int)round(currentPos1));
+  servoPod2.write((int)round(currentPos2));
+
+  // 15ms update period (~66Hz smooth loop)
   delay(15);
 }
